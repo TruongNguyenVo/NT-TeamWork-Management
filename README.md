@@ -10,7 +10,7 @@ scoop install symfony-cli
 ```
 Setting Database in .env file
 ```
-DATABASE_URL="mysql://root:@127.0.0.1:3306/trainingproject?serverVersion=8.0.32&charset=utf8mb4"
+DATABASE_URL="mysql://root:@127.0.0.1:3306/trainingproject?serverVersion=mariadb-10.4.11&charset=utf8mb4"
 ```
 Create database
 ```
@@ -34,7 +34,7 @@ php bin/console make:crud
 ```
 
 Error
-+ Add serverVersion=mariadb-10.4.11
++ Add serverVersion=mariadb-10.4.11 when you see  `The metadata storage is not up to date, please run the sync-metadata-storage command to fix this issue.`
 ```
 DATABASE_URL="mysql://root:@127.0.0.1:3306/trainingproject?serverVersion=mariadb-10.4.11&charset=utf8mb4"
 ```
