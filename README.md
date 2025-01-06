@@ -48,3 +48,15 @@ public function buildForm(FormBuilderInterface $builder, array $options): void
         ;
     }
 ```
+## Change Route in Controller
+```
+#[Route('/')]
+final class ProductController extends AbstractController{
+    #[Route(name: 'app_product_index', methods: ['GET'])]
+    public function index(ProductRepository $productRepository): Response
+    {
+        return $this->render('product/index.html.twig', [
+            'products' => $productRepository->findAll(),
+        ]);
+    }
+```
