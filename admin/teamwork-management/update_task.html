@@ -358,7 +358,7 @@
         <div class="container">
             <div class="page-inner">
               <div class="page-header">
-                <h3 class="fw-bold mb-3">NTTeam</h3>
+                <h3 class="fw-bold mb-3">Tạo công việc mới</h3>
                 <ul class="breadcrumbs mb-3">
                   <li class="nav-home">
                     <a href="#">
@@ -369,33 +369,50 @@
                     <i class="icon-arrow-right"></i>
                   </li>
                   <li class="nav-item">
-                    <a href="#">Xem tất cả nhóm</a>
-                  </li>
-                  <li class="separator">
-                    <i class="icon-arrow-right"></i>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#">Tạo nhóm mới</a>
+                    <a href="#">Đồ Án 1</a>
                   </li>
                 </ul>
               </div>
                 <form class ="row" action="" enctype="multipart/form-data">
                   <div class="mb-3">
-                    <label for="name" class="form-label">Tên nhóm</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Nhập nhóm tại đây">
+                    <label for="name" class="form-label">Tên công việc</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Nhập tên công việc">
+                  </div>
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Ngày bắt đầu:</label>
+                    <input type="datetime-local" class="form-control" name="startDate">
+                  </div>
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Ngày kết thúc:</label>
+                    <input type="datetime-local" class="form-control" name="endDate">
                   </div>
                   <div class="mb-3">
                     <label for="office" class="form-label">Mô tả</label>
                     <textarea class="form-control" rows="5" name="description" id=""></textarea>
                   </div>
+                  <div class="mb-3">
+                    <label class="form-label">Tệp công việc hiện có:</label><br>
+                  </div>
+                  <div class="mb-3">
+                    <label for="files" class="form-label">Thêm tệp mới</label>
+                    <input type="file" name="files" class="form-control"  multiple/>
+                  </div>
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Người đảm nhận</label>
+                    <select class="form-select" name="category" id="">
+                      <option value="">--Chọn người đảm nhận--</option>
+                      <option value="">Nguyên Trường</option>
+                      <option value="">Trường Nguyên</option>
+                    </select>
+                  </div>
                   <div class="mb-3-md">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
-                    <button type="submit" class="btn btn-primary">Tạo</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
                   </div>
               </div>
   
             </form>
-            </div>
+        </div>
       <!-- End Custom template -->
     </div>
     <!--   Core JS Files   -->
