@@ -379,217 +379,164 @@
                     <i class="icon-arrow-right"></i>
                   </li>
                   <li class="nav-item">
-                    <a href="#">Tổng quan</a>
+                    <a href="#">Thông tin thành viên</a>
                   </li>
                 </ul>
               </div>
               <div class="row">
+
   
-                <div class="col-md-12" id="task-info">
+                <div class="col-md-12" id="member-info">
                   <div class="card">
                     <div class="card-header">
-                        <div class="d-flex align-items-center">
-                            <h4 class="card-title">Thông tin công việc</h4>
-                            <button
-                              class="btn btn-primary btn-round ms-auto"
-                              data-bs-toggle="modal"
-                              data-bs-target="#addRowModal"
-                            >
-                              <i class="fa fa-plus"></i>
-                              Thêm công việc mới
-                            </button>
-                          </div>
+                      <div class="d-flex align-items-center">
+                        <h4 class="card-title">Thông tin thành viên</h4>
+                      </div>
                     </div>
                     <div class="card-body">
+  
                       <div class="table-responsive">
                         <table
-                          id="basic-datatables"
+                          id="add-row"
                           class="display table table-striped table-hover"
                         >
                           <thead>
+                            
                             <tr>
-                              <th>Công việc</th>
-                              <th>Đảm nhận</th>
-                              <th>Bắt đầu</th>
-                              <th>Kết thúc</th>
+                              <th>Tên thành viên</th>
+                              <th>Ngày tham gia</th>
                               <th>Trạng thái</th>
-                              <th>Thao tác</th>
+                              <th style="width: 10%">Thao tác</th>
                             </tr>
                           </thead>
-                            <tbody>
+                          <tbody>
                             <tr data-task='{"name": "Viết báo cáo", "assignee": "Trường Nguyên", "start_date": "01/01/2022", "end_date": "01/02/2022", "status": "Không hoàn thành"}' onclick="postData(this)">
-                                <td>Viết báo cáo</td>
-                                <td>Trường Nguyên</td>
-                                <td>01/01/2022</td>
-                                <td>01/02/2022</td>
-                                <td>
-                                    Không hoàn thành
-                                </td>
-                                <td>
-                                    <div class="form-button-action">
-                                        <button type="button" data-bs-toggle="tooltip" title="Chỉnh sửa thông tin" class="btn btn-link btn-primary" data-original-title="Edit Task">
-                                          <i class="fa fa-edit"></i>
-                                          </button>
-                                        <button type="button" data-bs-toggle="tooltip" title="Giao người khác" class="btn btn-link btn-primary" data-original-title="Remove">
-                                        <i class="fa fa-arrow-right"></i>
-                                        </button>
-                                        <button type="button" data-bs-toggle="tooltip" title="Xóa công việc" class="btn btn-link btn-danger" data-original-title="Remove">
-                                          <i class="fa fa-times"></i>
-                                          </button>
-                                    </div>
-                                </td>
-                            </tr>
-                              <tr>
-                                <td>Viết báo cáo</td>
-                                <td>Trường Nguyên</td>
-                                <td>01/01/2022</td>
-                                <td>01/02/2022</td>
-                                <td>
-                                    Hoàn thành
-                                </td>
-                                <td>
-                                    <div class="form-button-action">
-                                        <button
-                                        type="button"
-                                        data-bs-toggle="tooltip"
-                                        title="Xem chi tiết"
-                                        class="btn btn-link btn-primary">
-                                            <i class="fa fa-eye"></i>
-                                        </button>
-                                        <button type="button" data-bs-toggle="tooltip" title="Hoàn tác thành đang xử lý" class="btn btn-link btn-warning">
-                                        <i class="fa fa-undo"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Viết báo cáo</td>
-                                <td>Trường Nguyên</td>
-                                <td>01/01/2022</td>
-                                <td>01/02/2022</td>
-                                <td>
-                                    Đang xử lý
-                                </td>
-                                <td>
-                                    <div class="form-button-action">
-                                        <button
-                                        type="button"
-                                        data-bs-toggle="tooltip"
-                                        title="Xem chi tiết"
-                                        class="btn btn-link btn-primary">
-                                            <i class="fa fa-eye"></i>
-                                        </button>
-                                        
-                                        <button type="button" data-bs-toggle="tooltip" title="Chỉnh sửa thông tin" class="btn btn-link btn-primary" data-original-title="Edit Task">
-                                        <i class="fa fa-edit"></i>
-                                        </button>
-
-                                        <button type="button" data-bs-toggle="tooltip" title="Xóa công việc" class="btn btn-link btn-danger" data-original-title="Remove">
-                                        <i class="fa fa-times"></i>
-                                        </button>
-                                    </div>
-
-                            </tr>
-                            <tr>
-                              <td>Viết báo cáo</td>
                               <td>Trường Nguyên</td>
                               <td>01/01/2022</td>
-                              <td>01/02/2022</td>
                               <td>
-                                  Đang nhận xét
+                                Đang nhận công việc
                               </td>
                               <td>
-                                  <div class="form-button-action">
-                                      <button
-                                      type="button"
-                                      data-bs-toggle="tooltip"
-                                      title="Xem chi tiết"
-                                      class="btn btn-link btn-primary">
-                                          <i class="fa fa-eye"></i>
-                                      </button>
-
-                                      <button type="button" data-bs-toggle="tooltip" title="Chỉnh sửa thông tin" class="btn btn-link btn-primary" data-original-title="Edit Task">
-                                      <i class="fa fa-edit"></i>
-                                      </button>
-
-                                      <button
-                                      type="button"
-                                      data-bs-toggle="tooltip"
-                                      title="Duyệt công việc"
-                                      class="btn btn-link btn-success">
-                                          <i class="fa fa-check"></i>
-                                      </button>
-
-                                  </div>
-
-                          </tr>
-
-                          <tr>
-                            <td>Viết báo cáo</td>
-                            <td>Trường Nguyên</td>
-                            <td>01/01/2022</td>
-                            <td>01/02/2022</td>
-                            <td>
-                                Chưa giao
-                            </td>
-                            <td>
                                 <div class="form-button-action">
-                                    
-                                    <button type="button" data-bs-toggle="tooltip" title="Chỉnh sửa thông tin" class="btn btn-link btn-primary" data-original-title="Edit Task">
-                                    <i class="fa fa-edit"></i>
-                                    </button>
+                                  <button
+                                    type="button"
+                                    data-bs-toggle="tooltip"
+                                    title="Xem chi tiết thành viên"
+                                    class="btn btn-link btn-primary"
+                                  >
+                                    <i class="fa fa-eye"></i>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    data-bs-toggle="tooltip"
+                                    title="Xóa thành viên"
+                                    class="btn btn-link btn-danger"
+                                    data-original-title="Remove"
+                                  >
+                                    <i class="fa fa-times"></i>
+                                  </button>
+                                </div>
+                              </td>  
+                              
+                              </tr>
+                              <tr>
+                                <td>Trường Nguyên</td>
+                                <td></td>
+                                <td>
+                                  Đang chờ duyệt
+                                </td>
+                                <td>
+                                  <div class="form-button-action">
 
-                                    <button type="button" data-bs-toggle="tooltip" title="Thêm người tiếp nhận" class="btn btn-link btn-primary" data-original-title="Edit Task">
-                                      <i class="fa fa-user-plus"></i>
-                                      </button>
-                                    
+                                    <button
+                                      type="button"
+                                      data-bs-toggle="tooltip"
+                                      title="Xem chi tiết thành viên"
+                                      class="btn btn-link btn-primary"
+                                    >
+                                      <i class="fa fa-eye"></i>
+                                    </button>
                                     <button
                                     type="button"
                                     data-bs-toggle="tooltip"
-                                    title="Xóa công việc"
-                                    class="btn btn-link btn-danger">
-                                        <i class="fa fa-times"></i>
+                                    title="Duyệt thành viên"
+                                    class="btn btn-link btn-success"
+                                  >
+                                    <i class="fa fa-check"></i>
+                                  </button>
+                                    <button
+                                      type="button"
+                                      data-bs-toggle="tooltip"
+                                      title="Không duyệt"
+                                      class="btn btn-link btn-warning"
+                                      data-original-title="Remove"
+                                    >
+                                      <i class="fa fa-ban"></i>
                                     </button>
+                                  </div>
+                                </td> 
+                              </tr> 
+                              <tr>
+                                <td>Trường Nguyên</td>
+                                <td>01/01/2025</td>
+                                <td>
+                                  Chưa có việc
+                                </td>
+                                <td>
+                                  <div class="form-button-action">
 
-                                </div>
-
-                        </tr>
-
+                                    <button
+                                      type="button"
+                                      data-bs-toggle="tooltip"
+                                      title="Xem chi tiết thành viên"
+                                      class="btn btn-link btn-primary"
+                                    >
+                                      <i class="fa fa-eye"></i>
+                                    </button>
+                                    <button
+                                    type="button"
+                                    data-bs-toggle="tooltip"
+                                    title="Thêm công việc cho thành viên"
+                                    class="btn btn-link btn-secondary"
+                                  >
+                                    <i class="fa fa-plus"></i>
+                                  </button>
+                                  </div>
+                                </td> 
+                              </tr>                     
+                          </tbody>
                           <tfoot>
                             <tr>
-                              <th>Tên công việc</th>
-                              <th>Người đảm nhận</th>
-                              <th>Bắt đầu</th>
-                              <th>Kết thúc</th>
+                              <th>Tên thành viên</th>
+                              <th>Ngày tham gia</th>
                               <th>Trạng thái</th>
                               <th>Thao tác</th>
                             </tr>
                           </tfoot>
-                        <tbody>
-
-                        </tbody>
+                          <tbody>
+                            
+                          </tbody>
                         </table>
-
-                        
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- khung hien thi binh luan -->
-                <div class="col-md-12" id="task-comment">
+                <!-- khung hien thi thanh vien -->
+                <div class="col-md-12" id="member-detail">
                   <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex align-items-center">
-                            <h4 class="card-title">Các bình luận của công việc: Tạo khung bài báo cáo - Đồ Án 1</h4>
+                    <div class="card-header">                        
+                        <div class="member-info mb-4">
+                          <h4>Thông tin chung của thành viên</h4>
+                          <p><strong>Tên:</strong> <span id="memberName">Trường Nguyên</span></p>
+                          <p><strong>Số nhóm đã tham gia:</strong> <span id="manyGroup">10</span></p>
+                          <p><strong>Tỷ lệ hoàn thành công việc đúng hạn:</strong> <span>100%</span></p>
+
                         </div>
-                        <form id="commentForm" onsubmit="addComment(event, this)" class="mt-3">
-                          <div class="mb-3">
-                            <label for="commentContent" class="form-label">Nội dung</label>
-                            <textarea class="form-control" id="commentContent" rows="3" required></textarea>
-                          </div>
-                          <button type="submit" class="btn btn-primary">Thêm bình luận</button>
-                        </form>
+
+                        <div class="d-flex align-items-center">
+                          <h4 class="card-title">Chi tiết công việc:</h4>
+                      </div>
                     </div>
                     <div class="card-body">
                       <div class="table-responsive">
@@ -600,29 +547,30 @@
                           <thead>
                             <tr>
                               
-                              <th>Đảm nhận</th>
-                              <th>Người nhận xét</th>
-                              <th>Nội dung</th>
-                              <th>Thời gian</th>
+                              <th>Tên công việc</th>
+                              <th>Ngày nhận</th>
+                              <th>Trạng thái</th>
+                              <th>Thao tác</th>
                              
                             </tr>
                           </thead>
                             <tbody>
                             <tr>
-                                
-                                <td>Trường Nguyên</td>
-                                <td>Nguyên Trường</td>
-                                <td>Cần thêm một mục lục vào nha.</td>
-                                <td>01/01/2022</td>
+                              <td>Viết báo cáo</td>
+                              <td>01/01/2022</td>
+                              <td>
+                                Đang nhận công việc
+                              </td>
+                            </tr>
 
                           <tfoot>
                             <tr>
                               
-                              <th>Người đảm nhận</th>
-                              <th>Người nhận xét</th>
-                              <th>Nội dung</th>
-                              <th>Thời gian</th>
-                              
+                              <th>Tên công việc</th>
+                              <th>Ngày nhận</th>
+                              <th>Trạng thái</th>
+                              <th>Thao tác</th>
+
                             </tr>
                           </tfoot>
                         <tbody>
@@ -635,11 +583,9 @@
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
-
 
       <!-- End Custom template -->
     </div>
@@ -716,11 +662,9 @@
   </body>
 </html>
 
-<!-- nguyen script -->
 <script>
-
-  // post api
-  function postData(row) {
+   // post api
+   function postData(row) {
     // const taskData = JSON.parse(row.getAttribute('data-task'));
     // fetch('/your-api-endpoint', {
     //   method: 'POST',
@@ -738,23 +682,7 @@
     // });
     console.log(row);
     // scroll to comment section
-    document.getElementById('task-comment').scrollIntoView();
+    document.getElementById('member-detail').scrollIntoView();
   }
-  function addComment(event, form) {
-      event.preventDefault();
-      const content = form.querySelector('#commentContent').value;
-      const date = new Date().toLocaleDateString();
-      const commentsContent = form.closest('.card').querySelector('tbody');
-      
-      const commentRow = document.createElement('tr');
-      commentRow.innerHTML = `
-        <td>Trường Nguyên</td>
-        <td>${content}</td>
-        <td>${date}</td>
-      `;
-      commentsContent.appendChild(commentRow);
-
-      form.reset();
-    }
 
 </script>
