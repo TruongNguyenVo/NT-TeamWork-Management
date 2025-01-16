@@ -80,4 +80,66 @@ DEMO:
 {% endblock %}
 ```
 ## FORM
+Trong Symfony, Form là một thành phần quan trọng giúp bạn tạo, xử lý và tái sử dụng các biểu mẫu một cách hiệu quả. Thay vì tạo các biểu mẫu trực tiếp trong tệp template, Symfony cung cấp một hệ thống Form mạnh mẽ, cho phép bạn xây dựng các biểu mẫu phức tạp với khả năng tùy chỉnh cao.
 link: `https://soapy-cave-a36.notion.site/Project-2-17590144b88f81d29c48ddaea3fadc0d`
+DEMO:
+1. Tạo một lớp FormType
+1.1 Sử dụng lệnh để tạo form: `php bin/console make:form ContactType`
+1.2 Định nghĩa các trường trong biểu mẫu
+   ```
+class ContactType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('name', TextType::class, [
+                'label' => 'Tên của bạn',
+            ])
+            ->add('email', EmailType::class, [
+                'label' => 'Email của bạn',
+            ])
+            ->add('message', TextareaType::class, [
+                'label' => 'Nội dung tin nhắn',
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => 'Gửi',
+            ]);
+    }
+}
+   ```
+3. Sử dụng Form trong Controller
+```
+class ContactController extends AbstractController
+{
+    /**
+     * @Route("/contact", name="contact")
+     */
+    public function contact(Request $request): Response
+    {
+        $form = $this->createForm(ContactType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Xử lý dữ liệu biểu mẫu
+            $data = $form->getData();
+            // ...
+            return $this->redirectToRoute('contact_success');
+        }
+
+        return $this->render('contact/contact.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+}
+```
+4. Hiển thị form trong Template
+```
+{# templates/contact/contact.html.twig #}
+{{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.message) }}
+    {{ form_row(form.save) }}
+{{ form_end(form) }}
+```
