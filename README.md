@@ -80,9 +80,9 @@ DEMO:
 {% endblock %}
 ```
 ## FORM
-Trong Symfony, Form là một thành phần quan trọng giúp bạn tạo, xử lý và tái sử dụng các biểu mẫu một cách hiệu quả. Thay vì tạo các biểu mẫu trực tiếp trong tệp template, Symfony cung cấp một hệ thống Form mạnh mẽ, cho phép bạn xây dựng các biểu mẫu phức tạp với khả năng tùy chỉnh cao.
-link: `https://soapy-cave-a36.notion.site/Project-2-17590144b88f81d29c48ddaea3fadc0d`
-***DEMO***:
+Trong Symfony, Form là một thành phần quan trọng giúp bạn tạo, xử lý và tái sử dụng các biểu mẫu một cách hiệu quả. Thay vì tạo các biểu mẫu trực tiếp trong tệp template, Symfony cung cấp một hệ thống Form mạnh mẽ, cho phép bạn xây dựng các biểu mẫu phức tạp với khả năng tùy chỉnh cao.  
+link: `https://soapy-cave-a36.notion.site/Project-2-17590144b88f81d29c48ddaea3fadc0d`  
+***DEMO***:  
 **1. Tạo một lớp FormType**  
 1.1 *Sử dụng lệnh để tạo form: `php bin/console make:form ContactType`*  
 1.2 *Định nghĩa các trường trong biểu mẫu*  
