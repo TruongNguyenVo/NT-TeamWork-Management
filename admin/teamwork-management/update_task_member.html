@@ -354,331 +354,65 @@
           <!-- End Navbar -->
         </div>
 
+
         <div class="container">
-          <div class="page-inner">
-            <div class="page-header">
-              <h3 class="fw-bold mb-3">Nhóm quản lý</h3>
-              <ul class="breadcrumbs mb-3">
-                <li class="nav-home">
-                  <a href="#">
-                    <i class="icon-home"></i>
-                  </a>
-                </li>
-                <li class="separator">
-                  <i class="icon-arrow-right"></i>
-                </li>
-                <li class="nav-item">
-                  <a href="#">Tất cả nhóm</a>
-                </li>
-              </ul>
-            </div>
-            <div class="row">
-
-              <div class="col-md-12">
-                <div class="card">
-                  <div class="card-header">
-                    <div class="d-flex align-items-center">
-                      <!-- <h4 class="card-title">Add Row</h4> -->
-                      <a
-                      href="update_group.html"
-                      class="btn btn-primary btn-round ms-auto"
-                    >
-                      <i class="fa fa-plus"></i>
-                      Thêm nhóm mới
+            <div class="page-inner">
+              <div class="page-header">
+                <h3 class="fw-bold mb-3">Tạo công việc mới</h3>
+                <ul class="breadcrumbs mb-3">
+                  <li class="nav-home">
+                    <a href="#">
+                      <i class="icon-home"></i>
                     </a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">Đồ Án 1</a>
+                  </li>
+                </ul>
+              </div>
+                <form class ="row" action="" enctype="multipart/form-data">
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Tên công việc</label>
+                    <input disabled type="text" class="form-control" id="name" name="name" placeholder="Nhập tên công việc">
                   </div>
-                  <div class="card-body">
-
-                    <div class="table-responsive">
-                      <table
-                        id="add-row"
-                        class="display table table-striped table-hover"
-                      >
-                        <thead>
-                          <tr>
-                            <th>Tên nhóm</th>
-                            <th>Ngày tạo</th>
-                            <th>Số lượng thành viên</th>
-                            <th style="width: 10%">Thao tác</th>
-                          </tr>
-                        </thead>
-                        <tfoot>
-                          <tr>
-                            <th>Tên nhóm</th>
-                            <th>Ngày tạo</th>
-                            <th>Số lượng thành viên</th>
-                            <th>Thao tác</th>
-                          </tr>
-                        </tfoot>
-                        <tbody>
-                          <tr>
-                            <td>Tiger Nixon</td>
-                            <td>System Architect</td>
-                            <td>Edinburgh</td>
-                            <td>
-                              <div class="form-button-action">
-                                <button
-                                  type="button"
-                                  data-bs-toggle="tooltip"
-                                  title="Xem chi tiết nhóm"
-                                  class="btn btn-link btn-primary btn-lg"
-                                  data-original-title="Edit Task"
-                                >
-                                  <i class="fa fa-eye"></i>
-                                </button>
-                                <button
-                                  type="button"
-                                  data-bs-toggle="tooltip"
-                                  title="Sửa thông tin nhóm"
-                                  class="btn btn-link btn-primary btn-lg"
-                                  data-original-title="Edit Task"
-                                >
-                                  <i class="fa fa-edit"></i>
-                                </button>
-                                <button
-                                  type="button"
-                                  data-bs-toggle="tooltip"
-                                  title="Giải tán nhóm"
-                                  class="btn btn-link btn-danger"
-                                  data-original-title="Remove"
-                                >
-                                  <i class="fa fa-times"></i>
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Ngày bắt đầu:</label>
+                    <input disabled type="datetime-local" class="form-control" name="startDate">
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+                  <div class="mb-3">
+                    <label for="office" class="form-label">Mô tả</label>
+                    <textarea disabled class="form-control" rows="5" name="description" id=""></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Tệp công việc hiện có:</label><br>
+                  </div>
 
-        <footer class="footer">
-          <div class="container-fluid d-flex justify-content-between">
-            <nav class="pull-left">
-              <ul class="nav">
-                <li class="nav-item">
-                  <a class="nav-link" href="http://www.themekita.com">
-                    ThemeKita
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#"> Help </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#"> Licenses </a>
-                </li>
-              </ul>
-            </nav>
-            <div class="copyright">
-              2024, made with <i class="fa fa-heart heart text-danger"></i> by
-              <a href="http://www.themekita.com">ThemeKita</a>
-            </div>
-            <div>
-              Distributed by
-              <a target="_blank" href="https://themewagon.com/">ThemeWagon</a>.
-            </div>
-          </div>
-        </footer>
-      </div>
+                  <hr class="my-4">
 
-      <!-- Custom template | don't include it in your project! -->
-      <div class="custom-template">
-        <div class="title">Settings</div>
-        <div class="custom-content">
-          <div class="switcher">
-            <div class="switch-block">
-              <h4>Logo Header</h4>
-              <div class="btnSwitch">
-                <button
-                  type="button"
-                  class="selected changeLogoHeaderColor"
-                  data-color="dark"
-                ></button>
-                <button
-                  type="button"
-                  class="selected changeLogoHeaderColor"
-                  data-color="blue"
-                ></button>
-                <button
-                  type="button"
-                  class="changeLogoHeaderColor"
-                  data-color="purple"
-                ></button>
-                <button
-                  type="button"
-                  class="changeLogoHeaderColor"
-                  data-color="light-blue"
-                ></button>
-                <button
-                  type="button"
-                  class="changeLogoHeaderColor"
-                  data-color="green"
-                ></button>
-                <button
-                  type="button"
-                  class="changeLogoHeaderColor"
-                  data-color="orange"
-                ></button>
-                <button
-                  type="button"
-                  class="changeLogoHeaderColor"
-                  data-color="red"
-                ></button>
-                <button
-                  type="button"
-                  class="changeLogoHeaderColor"
-                  data-color="white"
-                ></button>
-                <br />
-                <button
-                  type="button"
-                  class="changeLogoHeaderColor"
-                  data-color="dark2"
-                ></button>
-                <button
-                  type="button"
-                  class="changeLogoHeaderColor"
-                  data-color="blue2"
-                ></button>
-                <button
-                  type="button"
-                  class="changeLogoHeaderColor"
-                  data-color="purple2"
-                ></button>
-                <button
-                  type="button"
-                  class="changeLogoHeaderColor"
-                  data-color="light-blue2"
-                ></button>
-                <button
-                  type="button"
-                  class="changeLogoHeaderColor"
-                  data-color="green2"
-                ></button>
-                <button
-                  type="button"
-                  class="changeLogoHeaderColor"
-                  data-color="orange2"
-                ></button>
-                <button
-                  type="button"
-                  class="changeLogoHeaderColor"
-                  data-color="red2"
-                ></button>
-              </div>
-            </div>
-            <div class="switch-block">
-              <h4>Navbar Header</h4>
-              <div class="btnSwitch">
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="dark"
-                ></button>
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="blue"
-                ></button>
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="purple"
-                ></button>
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="light-blue"
-                ></button>
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="green"
-                ></button>
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="orange"
-                ></button>
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="red"
-                ></button>
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="white"
-                ></button>
-                <br />
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="dark2"
-                ></button>
-                <button
-                  type="button"
-                  class="selected changeTopBarColor"
-                  data-color="blue2"
-                ></button>
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="purple2"
-                ></button>
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="light-blue2"
-                ></button>
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="green2"
-                ></button>
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="orange2"
-                ></button>
-                <button
-                  type="button"
-                  class="changeTopBarColor"
-                  data-color="red2"
-                ></button>
-              </div>
-            </div>
-            <div class="switch-block">
-              <h4>Sidebar</h4>
-              <div class="btnSwitch">
-                <button
-                  type="button"
-                  class="selected changeSideBarColor"
-                  data-color="white"
-                ></button>
-                <button
-                  type="button"
-                  class="changeSideBarColor"
-                  data-color="dark"
-                ></button>
-                <button
-                  type="button"
-                  class="changeSideBarColor"
-                  data-color="dark2"
-                ></button>
-              </div>
-            </div>
-          </div>
+      <!-- Submission Content Section -->
+      <div class="col-12">
+        <h5>Nội dung nộp</h5>
+        <div class="mb-3">
+          <label for="submissionDescription" class="form-label">Mô tả nội dung công việc đã nộp</label>
+          <textarea class="form-control" rows="5" name="submissionDescription" id="submissionDescription"></textarea>
         </div>
-        <div class="custom-toggle">
-          <i class="icon-settings"></i>
+        <div class="mb-3">
+          <label for="submissionFiles" class="form-label">Nộp tệp đính kèm</label>
+          <input type="file" name="submissionFiles" class="form-control" multiple>
         </div>
       </div>
+                  <div class="mb-3-md">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <button type="submit" class="btn btn-success">Nộp</button>
+                  </div>
+              </div>
+  
+            </form>
+        </div>
       <!-- End Custom template -->
     </div>
     <!--   Core JS Files   -->
