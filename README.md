@@ -84,9 +84,9 @@ Trong Symfony, Form là một thành phần quan trọng giúp bạn tạo, xử
 link: `https://soapy-cave-a36.notion.site/Project-2-17590144b88f81d29c48ddaea3fadc0d`
 DEMO:
 1. Tạo một lớp FormType
-1.1 Sử dụng lệnh để tạo form: `php bin/console make:form ContactType`
+1.1 Sử dụng lệnh để tạo form: `php bin/console make:form ContactType`  
 1.2 Định nghĩa các trường trong biểu mẫu
-   ```
+```
 class ContactType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -106,7 +106,7 @@ class ContactType extends AbstractType
             ]);
     }
 }
-   ```
+ ```
 3. Sử dụng Form trong Controller
 ```
 class ContactController extends AbstractController
