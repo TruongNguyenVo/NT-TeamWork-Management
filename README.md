@@ -60,3 +60,24 @@ final class ProductController extends AbstractController{
         ]);
     }
 ```
+# Document
+## TWIG:
+Trong Symfony, Twig là một template engine được tích hợp sẵn, giúp tách biệt logic ứng dụng khỏi giao diện hiển thị. Điều này cho phép bạn xây dựng các trang web một cách hiệu quả và dễ bảo trì hơn.  
+link: `https://congruous-brother-204.notion.site/Note-Twig-17971ea8591f801cbeeec65cbc8d9b55`  
+DEMO:
+```
+{% extends 'base.html.twig' %}
+{% block body %}
+    <h1>Danh sách bài viết</h1>
+    <ul>
+        {% for article in articles %}
+            <li>
+                <h2>{{ article.title }}</h2>
+                <p>{{ article.content }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+```
+## FORM
+link: `https://soapy-cave-a36.notion.site/Project-2-17590144b88f81d29c48ddaea3fadc0d`
