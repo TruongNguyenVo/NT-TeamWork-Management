@@ -1,4 +1,4 @@
-`Update [4/1/2024]`
+`Update [16/1/2024]`
 # Project:
 ## Start Project:
 1. Change policy in `PowerShell` to allow download scripts in internet if this have valid signature in currently user
@@ -59,4 +59,87 @@ final class ProductController extends AbstractController{
             'products' => $productRepository->findAll(),
         ]);
     }
+```
+# Document
+## TWIG:
+Trong Symfony, Twig là một template engine được tích hợp sẵn, giúp tách biệt logic ứng dụng khỏi giao diện hiển thị. Điều này cho phép bạn xây dựng các trang web một cách hiệu quả và dễ bảo trì hơn.  
+link: `https://congruous-brother-204.notion.site/Note-Twig-17971ea8591f801cbeeec65cbc8d9b55`  
+DEMO:
+```
+{% extends 'base.html.twig' %}
+{% block body %}
+    <h1>Danh sách bài viết</h1>
+    <ul>
+        {% for article in articles %}
+            <li>
+                <h2>{{ article.title }}</h2>
+                <p>{{ article.content }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+```
+## FORM
+Trong Symfony, Form là một thành phần quan trọng giúp bạn tạo, xử lý và tái sử dụng các biểu mẫu một cách hiệu quả. Thay vì tạo các biểu mẫu trực tiếp trong tệp template, Symfony cung cấp một hệ thống Form mạnh mẽ, cho phép bạn xây dựng các biểu mẫu phức tạp với khả năng tùy chỉnh cao.  
+link: `https://soapy-cave-a36.notion.site/Project-2-17590144b88f81d29c48ddaea3fadc0d`  
+***DEMO***:  
+**1. Tạo một lớp FormType**  
+1.1 *Sử dụng lệnh để tạo form: `php bin/console make:form ContactType`*  
+1.2 *Định nghĩa các trường trong biểu mẫu*  
+```
+class ContactType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('name', TextType::class, [
+                'label' => 'Tên của bạn',
+            ])
+            ->add('email', EmailType::class, [
+                'label' => 'Email của bạn',
+            ])
+            ->add('message', TextareaType::class, [
+                'label' => 'Nội dung tin nhắn',
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => 'Gửi',
+            ]);
+    }
+}
+ ```
+**2. Sử dụng Form trong Controller**
+```
+class ContactController extends AbstractController
+{
+    /**
+     * @Route("/contact", name="contact")
+     */
+    public function contact(Request $request): Response
+    {
+        $form = $this->createForm(ContactType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Xử lý dữ liệu biểu mẫu
+            $data = $form->getData();
+            // ...
+            return $this->redirectToRoute('contact_success');
+        }
+
+        return $this->render('contact/contact.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+}
+```
+**3. Hiển thị form trong Template**
+```
+{# templates/contact/contact.html.twig #}
+{{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.message) }}
+    {{ form_row(form.save) }}
+{{ form_end(form) }}
 ```
