@@ -36,6 +36,8 @@ DATABASE_URL="mysql://root:@127.0.0.1:3306/trainingproject?serverVersion=mariadb
 # Tip and Trick
 ## All Command In Symfony
 `php bin/console list`
+## Help to know specific command
+`php bin/console help make:entity`
 ## Change dislay's category in product to `name` instead of `id`
 In /Form/ProductType.php:
 ```
