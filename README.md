@@ -65,7 +65,7 @@ final class ProductController extends AbstractController{
     }
 ```
 ## Add In Entity
-### **UNIQUE
+### **UNIQUE**
 ```
     /**
      * @ORM\Column(type="string", length=255, unique=true)
