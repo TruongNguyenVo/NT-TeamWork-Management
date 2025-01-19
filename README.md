@@ -70,6 +70,12 @@ In `php bin/console make:entity` can't make unique, so when i made entity succes
 ```
 ## Seeder:  
 `php bin/console make:seeder`
+## Encode Password
+`php bin/console security:encode-password`
+## View All Route
+`php bin/console debug:router`
+## Update Database
+`php bin/console doctrine:schema:update --force`
 # Document
 ## TWIG:
 Trong Symfony, Twig là một template engine được tích hợp sẵn, giúp tách biệt logic ứng dụng khỏi giao diện hiển thị. Điều này cho phép bạn xây dựng các trang web một cách hiệu quả và dễ bảo trì hơn.  
