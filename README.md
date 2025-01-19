@@ -64,13 +64,80 @@ final class ProductController extends AbstractController{
         ]);
     }
 ```
-## Add Unique  
-In `php bin/console make:entity` can't make unique, so when i made entity successfully, i will add `unique` such as:  
+## Add In Entity
+### **UNIQUE
 ```
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      */
     private $name;
+```
+### **NotBlank**
+```
+    /**
+     * @Assert\NotBlank(message="Username should not be blank")
+     */
+    private $username;
+```
+### **Length**
+```
+/**
+     * @Assert\Length(min=6, minMessage="Password must be at least 6 characters long")
+     */
+    private $password;
+```
+### **Email**
+```
+    /**
+     * @Assert\Email(message="Please enter a valid email address")
+     */
+    private $email;
+```
+### **Regex**
+```
+/**
+     * @Assert\Regex(
+     *     pattern="/^\d{10}$/",
+     *     message="Phone number should be exactly 10 digits"
+     * )
+     */
+    private $phoneNumber;
+```
+### **Range**
+```
+/**
+     * @Assert\Range(min=18, max=100, notInRangeMessage="Age must be between {{ min }} and {{ max }}.")
+     */
+    private $age;
+```
+### **CallBack**
+Date Delivery is not greater than date order  
+```
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Type("\DateTime")
+     */
+    private $orderDate;
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Type("\DateTime")
+     */
+    private $deliveryDate;
+
+    /**
+     * @Assert\Callback
+     */
+    public function validateDeliveryDate(ExecutionContextInterface $context, $payload)
+    {
+        // Kiểm tra nếu deliveryDate nhỏ hơn orderDate
+        if ($this->deliveryDate < $this->orderDate) {
+            $context->buildViolation('The delivery date cannot be earlier than the order date.')
+                ->atPath('deliveryDate') // Chỉ ra trường bị lỗi
+                ->addViolation(); // Thêm lỗi vào validate
+        }
+    }
+
 ```
 ## Seeder:  
 `php bin/console make:seeder`
