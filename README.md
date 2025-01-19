@@ -65,7 +65,7 @@ final class ProductController extends AbstractController{
     }
 ```
 ## Add Unique  
-In `php bin/console make:entity` can't make unique, so when i made entity successfully, i still add `unique` such as:  
+In `php bin/console make:entity` can't make unique, so when i made entity successfully, i will add `unique` such as:  
 ```
     /**
      * @ORM\Column(type="string", length=255, unique=true)
