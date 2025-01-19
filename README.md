@@ -64,7 +64,7 @@ final class ProductController extends AbstractController{
         ]);
     }
 ```
-## Add In Entity
+## Add Validation In Entity
 ### **UNIQUE**
 ```
     /**
