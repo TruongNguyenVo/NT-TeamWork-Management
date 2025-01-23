@@ -34,6 +34,10 @@ Add serverVersion=mariadb-10.4.11 when you see this issue.
 DATABASE_URL="mysql://root:@127.0.0.1:3306/trainingproject?serverVersion=mariadb-10.4.11&charset=utf8mb4"
 ```
 # Tip and Trick
+## All Command In Symfony
+`php bin/console list`
+## Help to know specific command
+`php bin/console help make:entity`
 ## Change dislay's category in product to `name` instead of `id`
 In /Form/ProductType.php:
 ```
@@ -60,6 +64,89 @@ final class ProductController extends AbstractController{
         ]);
     }
 ```
+## Add Validation In Entity
+### **UNIQUE**
+```
+    /**
+     * @ORM\Column(type="string", length=255, unique=true)
+     */
+    private $name;
+```
+### **NotBlank**
+```
+    /**
+     * @Assert\NotBlank(message="Username should not be blank")
+     */
+    private $username;
+```
+### **Length**
+```
+/**
+     * @Assert\Length(min=6, minMessage="Password must be at least 6 characters long")
+     */
+    private $password;
+```
+### **Email**
+```
+    /**
+     * @Assert\Email(message="Please enter a valid email address")
+     */
+    private $email;
+```
+### **Regex**
+```
+/**
+     * @Assert\Regex(
+     *     pattern="/^\d{10}$/",
+     *     message="Phone number should be exactly 10 digits"
+     * )
+     */
+    private $phoneNumber;
+```
+### **Range**
+```
+/**
+     * @Assert\Range(min=18, max=100, notInRangeMessage="Age must be between {{ min }} and {{ max }}.")
+     */
+    private $age;
+```
+### **CallBack**
+Date Delivery is not greater than date order  
+```
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Type("\DateTime")
+     */
+    private $orderDate;
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Type("\DateTime")
+     */
+    private $deliveryDate;
+
+    /**
+     * @Assert\Callback
+     */
+    public function validateDeliveryDate(ExecutionContextInterface $context, $payload)
+    {
+        // Kiểm tra nếu deliveryDate nhỏ hơn orderDate
+        if ($this->deliveryDate < $this->orderDate) {
+            $context->buildViolation('The delivery date cannot be earlier than the order date.')
+                ->atPath('deliveryDate') // Chỉ ra trường bị lỗi
+                ->addViolation(); // Thêm lỗi vào validate
+        }
+    }
+
+```
+## Seeder:  
+`php bin/console make:seeder`
+## Encode Password
+`php bin/console security:encode-password`
+## View All Route
+`php bin/console debug:router`
+## Update Database
+`php bin/console doctrine:schema:update --force`
 # Document
 ## TWIG:
 Trong Symfony, Twig là một template engine được tích hợp sẵn, giúp tách biệt logic ứng dụng khỏi giao diện hiển thị. Điều này cho phép bạn xây dựng các trang web một cách hiệu quả và dễ bảo trì hơn.  
