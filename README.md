@@ -34,6 +34,11 @@ Add serverVersion=mariadb-10.4.11 when you see this issue.
 DATABASE_URL="mysql://root:@127.0.0.1:3306/trainingproject?serverVersion=mariadb-10.4.11&charset=utf8mb4"
 ```
 # Tip and Trick
+## Debug
+```
+dump($exception->getMessage());
+die();
+```
 ## All Command In Symfony
 `php bin/console list`
 ## Help to know specific command
