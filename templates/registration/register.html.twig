@@ -174,32 +174,32 @@
     <div class="title">Đăng ký</div>
     <div class="content">
       <!-- Registration form -->
-      <form action="#">
+      {{ form_start(registrationForm) }}
         <div class="user-details">
           <!-- Input for First Name -->
           <div class="input-box">
             <span class="details">Họ</span>
-            <input type="text" required>
+            {{ form_widget(registrationForm.lastName, {'attr': {'class': 'form-control'}}) }}
           </div>
           <!-- Input for Last Name -->
           <div class="input-box">
             <span class="details">Tên</span>
-            <input type="text" required>
+            {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-control'}}) }}
           </div>
           <!-- Input for Email -->
           <div class="input-box full-width">
             <span class="details">Email</span>
-            <input type="email" required>
+            {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
           </div>
           <!-- Input for Password -->
           <div class="input-box full-width">
             <span class="details">Mật khẩu</span>
-            <input type="password" required>
+            {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
           </div>
           <!-- Input for Confirm Password -->
           <div class="input-box full-width">
             <span class="details">Nhập lại mật khẩu</span>
-            <input type="password" required>
+            {{ form_widget(registrationForm.confirmPassword, {'attr': {'class': 'form-control'}}) }}
           </div>
         </div>
         <!-- Submit button and Google Sign-Up button -->
@@ -209,7 +209,7 @@
             <i class="fa fa-google"></i> Đăng ký bằng Google
           </a>
         </div>
-      </form>
+      {{ form_end(registrationForm) }}
       <!-- Login link -->
       <div class="login-link">
         <span>Đã có tài khoản? <a href="/login">Đăng nhập</a></span>
