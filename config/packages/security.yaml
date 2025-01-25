@@ -17,7 +17,11 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            custom_authenticator: App\Service\GoogleAuthenticator
+            custom_authenticator:
+                - App\Security\GoogleAuthenticator
+                - App\Security\LoginFormAuthenticator
+            entry_point: App\Security\LoginFormAuthenticator
+
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
