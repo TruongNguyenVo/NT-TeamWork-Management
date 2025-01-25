@@ -53,6 +53,9 @@ class GoogleAuthenticator extends OAuth2Authenticator implements AuthenticationE
         // Lấy thông tin người dùng từ Google
         $googleUser = $client->fetchUserFromToken($accessToken);
 
+        // dump($googleUser); // DONE
+        // die();
+
         // Lấy email của người dùng từ Google
         $email = $googleUser->getEmail();
 
@@ -63,12 +66,13 @@ class GoogleAuthenticator extends OAuth2Authenticator implements AuthenticationE
     if (!$user) {
         $user = new User();
         $user->setEmail($email);
-        $user->setUsername("Test");
-        $user->setFullname($googleUser->getName());
+        $user->setFirstname($googleUser->getFirstName());
+        $user->setLastname($googleUser->getLastName());
+        // $user->setFullname($googleUser->getName());
 
         // Lưu người dùng mới vào cơ sở dữ liệu
-        // $this->entityManager->persist($user);
-        // $this->entityManager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
 
     }
