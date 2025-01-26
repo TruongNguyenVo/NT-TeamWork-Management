@@ -20,6 +20,9 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\CustomCre
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\NullCredentials;
+use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
 class GoogleAuthenticator extends OAuth2Authenticator implements AuthenticationEntryPointInterface
 {
@@ -76,8 +79,16 @@ class GoogleAuthenticator extends OAuth2Authenticator implements AuthenticationE
 
 
     }
-    dump("Toi day roi"); // DONE
-    die();
+    // dump("Toi day roi"); // DONE
+    // die();
+    // Return a SelfValidatingPassport
+    return new SelfValidatingPassport(
+        userBadge: new UserBadge($user->getUserIdentifier(), fn () => $user),
+        badges: [
+            new RememberMeBadge(),
+        ]
+    );
+    
         
     }
 
@@ -88,9 +99,10 @@ class GoogleAuthenticator extends OAuth2Authenticator implements AuthenticationE
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
+        dump($exception);
+        die();
 
-
-        return new RedirectResponse($this->router->generate('app_user_index'));
+        return new RedirectResponse($this->router->generate('app_login'));
     }
 
     public function start(Request $request, AuthenticationException $authException = null): Response
