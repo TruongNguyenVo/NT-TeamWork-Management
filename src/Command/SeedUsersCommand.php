@@ -40,7 +40,22 @@ class SeedUsersCommand extends Command
     {
         $faker = FakerFactory::create();
         
-        for ($i = 1; $i <= 10; $i++) {
+        //defalut user
+        $email_edu = new User();
+        $email_edu->setFirstname('Nguyên');
+        $email_edu->setLastname('Võ Trường');
+        $email_edu->setEmail('vtnguyenhttt2211025@student.ctuet.edu.vn');
+
+        $email_personal = new User();
+        $email_personal->setFirstname('Nguyên');
+        $email_personal->setLastname('Trường');
+        $email_personal->setEmail('vonguyen.0407@gmail.com');
+
+        $this->entityManager->persist($email_edu);
+        $this->entityManager->persist($email_personal);
+
+
+        for ($i = 1; $i <= 30; $i++) {
             $user = new User();
             $user->setFirstname($faker->firstName);
             $user->setLastname($faker->lastName);

@@ -180,26 +180,32 @@
           <div class="input-box">
             <span class="details">Họ</span>
             {{ form_widget(registrationForm.lastName, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(registrationForm.lastName) }}
+
           </div>
           <!-- Input for Last Name -->
           <div class="input-box">
             <span class="details">Tên</span>
             {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(registrationForm.firstName) }}
           </div>
           <!-- Input for Email -->
           <div class="input-box full-width">
             <span class="details">Email</span>
             {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(registrationForm.email) }}
           </div>
           <!-- Input for Password -->
           <div class="input-box full-width">
             <span class="details">Mật khẩu</span>
             {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(registrationForm.plainPassword) }}
           </div>
           <!-- Input for Confirm Password -->
           <div class="input-box full-width">
             <span class="details">Nhập lại mật khẩu</span>
             {{ form_widget(registrationForm.confirmPassword, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(registrationForm.confirmPassword) }}
           </div>
         </div>
         <!-- Submit button and Google Sign-Up button -->
