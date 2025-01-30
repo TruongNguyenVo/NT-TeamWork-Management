@@ -2,26 +2,25 @@
 
 namespace App\Entity;
 
-use App\Repository\GroupRepository;
+use App\Repository\RoomRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: GroupRepository::class)]
-#[ORM\Table(name: '`group`')]
-class Group
+#[ORM\Entity(repositoryClass: RoomRepository::class)]
+class Room
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column(length: 1000, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -61,7 +60,7 @@ class Group
         return $this->description;
     }
 
-    public function setDescription(?string $description): static
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
