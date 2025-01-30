@@ -1,4 +1,4 @@
-`Update [16/1/2024]`
+`Update [25/1/2024]`
 # Project:
 ## Start Project:
 1. Change policy in `PowerShell` to allow download scripts in internet if this have valid signature in currently user
@@ -34,6 +34,11 @@ Add serverVersion=mariadb-10.4.11 when you see this issue.
 DATABASE_URL="mysql://root:@127.0.0.1:3306/trainingproject?serverVersion=mariadb-10.4.11&charset=utf8mb4"
 ```
 # Tip and Trick
+## Debug
+```
+dump($exception->getMessage());
+die();
+```
 ## All Command In Symfony
 `php bin/console list`
 ## Help to know specific command
@@ -139,9 +144,12 @@ Date Delivery is not greater than date order
     }
 
 ```
-## Seeder:  
-`php bin/console make:seeder`
-## Encode Password
+## Seeder:   
+1. Install Faker: `composer require fakerphp/faker --dev`
+2. Create Seeder: `php bin/console make:command app:seed-users`
+3. Edit Seeder Command in `src/Command/SeedUsersCommand.php`
+4. Run Seeder: `php bin/console app:seed-users`
+## Encode Password:
 `php bin/console security:encode-password`
 ## View All Route
 `php bin/console debug:router`

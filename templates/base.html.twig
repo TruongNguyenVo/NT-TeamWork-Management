@@ -144,65 +144,7 @@
                     </form>
                   </ul>
                 </li>
-                <li class="nav-item topbar-icon dropdown hidden-caret">
-                  <a
-                    class="nav-link dropdown-toggle"
-                    href="#"
-                    id="messageDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                  <i class="fa fa-bell"></i>
-                  <span class="notification">4</span>
-                  </a>
-                  <ul
-                    class="dropdown-menu messages-notif-box animated fadeIn"
-                    aria-labelledby="messageDropdown"
-                  >
-                    <li>
-                      <div
-                        class="dropdown-title d-flex justify-content-between align-items-center"
-                      >
-                        Thông báo
-                        <a href="#" class="small">Đánh dấu đọc tất cả</a>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="message-notif-scroll scrollbar-outer">
-                        <div class="notif-center">
-                            <a href="#">
-                                <div class="notif-content">
-                                  <span class="subject">Đồ Án 1</span>
-                                  <span class="block">Trường Nguyên đã đồng ý công việc bạn giao.</span>                                  
-                                  <span class="time">5 minutes ago</span>
-                                </div>
-                              </a>
-                              <a href="#">
-                                <div class="notif-content">
-                                  <span class="subject">Pháp luật đại cương</span>
-                                  <span class="block">Trường Nguyên đã bình luận về công việc của bạn.</span>                                  
-                                  <span class="time">5 minutes ago</span>
-                                </div>
-                              </a><a href="#">
-                                <div class="notif-content">
-                                  <span class="subject">Đồ Án 1</span>
-                                  <span class="block">Trường Nguyên đã hoàn thành công việc bạn giao.</span>                                  
-                                  <span class="time">5 minutes ago</span>
-                                </div>
-                              </a><a href="#">
-                                <div class="notif-content">
-                                  <span class="subject">Đồ Án 1</span>
-                                  <span class="block">Trường Nguyên đã tham gia nhóm.</span>                                  
-                                  <span class="time">5 minutes ago</span>
-                                </div>
-                              </a>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </li>
+                
 
                 <li class="nav-item topbar-user dropdown hidden-caret">
                   <a
@@ -211,45 +153,26 @@
                     href="#"
                     aria-expanded="false"
                   >
-                    <div class="avatar-sm">
-                      <img
-                        src="../assets/img/profile.jpg"
-                        alt="..."
-                        class="avatar-img rounded-circle"
-                      />
-                    </div>
                     <span class="profile-username">
-                      <span class="op-7">Hi,</span>
-                      <span class="fw-bold">Hizrian</span>
+                      <span class="op-7">Chào,</span>
+                      <span class="fw-bold">{{app.user?app.user.firstname:''}}</span>
                     </span>
                   </a>
                   <ul class="dropdown-menu dropdown-user animated fadeIn">
                     <div class="dropdown-user-scroll scrollbar-outer">
                       <li>
                         <div class="user-box">
-                          <div class="avatar-lg">
-                            <img
-                              src="../assets/img/profile.jpg"
-                              alt="image profile"
-                              class="avatar-img rounded"
-                            />
-                          </div>
                           <div class="u-text">
-                            <h4>Hizrian</h4>
-                            <p class="text-muted">hello@example.com</p>
-                            <a
-                              href="profile.html"
-                              class="btn btn-xs btn-secondary btn-sm"
-                              >View Profile</a
-                            >
+                            <h4>{{app.user ? app.user.lastname : ''}} {{ app.user ? app.user.firstname :''}}</h4>
+                            <p class="text-muted">{{app.user? app.user.email:''}}</p>
                           </div>
                         </div>
                       </li>
                       <li>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Account Setting</a>
+                        <a class="dropdown-item" href="/profile">Cài đặt tài khoản</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Logout</a>
+                        <a class="dropdown-item" href="/{{app.user ? 'logout' : ''}}">Đăng xuất</a>
                       </li>
                     </div>
                   </ul>
@@ -278,7 +201,8 @@
     <script src="../assets/js/plugin/datatables/datatables.min.js"></script>
     <!-- Kaiadmin JS -->
     <script src="../assets/js/kaiadmin.min.js"></script>
-    <!-- Kaiadmin DEMO methods, don't include it in your project! -->
-    <script src="../assets/js/setting-demo2.js"></script>
+    
   </body>
 </html>
+{% block javascripts%}
+{% endblock %}
