@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\RoomRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,6 +27,17 @@ class Room
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createDate = null;
+
+    /**
+     * @var Collection<int, UserRoom>
+     */
+    #[ORM\OneToMany(targetEntity: UserRoom::class, mappedBy: 'room')]
+    private Collection $userRooms;
+
+    public function __construct()
+    {
+        $this->userRooms = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -75,6 +88,36 @@ class Room
     public function setCreateDate(\DateTimeInterface $createDate): static
     {
         $this->createDate = new \DateTime();
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserRoom>
+     */
+    public function getUserRooms(): Collection
+    {
+        return $this->userRooms;
+    }
+
+    public function addUserRoom(UserRoom $userRoom): static
+    {
+        if (!$this->userRooms->contains($userRoom)) {
+            $this->userRooms->add($userRoom);
+            $userRoom->setRoom($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserRoom(UserRoom $userRoom): static
+    {
+        if ($this->userRooms->removeElement($userRoom)) {
+            // set the owning side to null (unless already changed)
+            if ($userRoom->getRoom() === $this) {
+                $userRoom->setRoom(null);
+            }
+        }
 
         return $this;
     }
