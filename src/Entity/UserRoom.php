@@ -17,9 +17,13 @@ class UserRoom
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'userRooms')]
-    private ?room $room = null;
+    private ?Room $room = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\Regex(
+        pattern: "/^(active|pending|left)$/i",
+        message: "Trạng thái không đúng. Chỉ hỗ trợ các trạng thái: active, left, pending"
+    )]
     private ?string $status = null;
 
     #[ORM\Column(length: 100)]
@@ -42,12 +46,12 @@ class UserRoom
         return $this;
     }
 
-    public function getRoom(): ?room
+    public function getRoom(): ?Room
     {
         return $this->room;
     }
 
-    public function setRoom(?room $room): static
+    public function setRoom(?Room $room): static
     {
         $this->room = $room;
 

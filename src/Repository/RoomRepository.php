@@ -3,16 +3,20 @@
 namespace App\Repository;
 
 use App\Entity\Room;
+use App\Entity\UserRoom;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @extends ServiceEntityRepository<Room>
  */
 class RoomRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $entityManager;
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
+        $this->entityManager = $entityManager;
         parent::__construct($registry, Room::class);
     }
 
@@ -30,6 +34,51 @@ class RoomRepository extends ServiceEntityRepository
     //            ->getResult()
     //        ;
     //    }
+    public function createRoom($room,$user)
+    {
+        //viet transaction, mac dinh nguoi tao phong la admin
+        try{
+            $entityManager->beginTransaction();
+            $room->setCreateDate(new \DateTime()); //set ngay tao phong
+            $userGroup = new UserRoom();
+            // dump("toidayroi");
+            // die();
+            $userGroup->setUser($user);
+            $userGroup->setRoom($room);
+            $userGroup->setRole("admin");
+            $userGroup->setStatus("joined");
+            $entityManager->persist($room);
+            $entityManager->persist($userGroup);
+            $entityManager->flush();
+            $entityManager->commit();
+            return true;
+        }
+        catch(\Exception $e){
+            //rollback
+            $entityManager->rollback();
+            dump($e->getMessage());
+            die();
+            return false;
+            
+        }
+    }
+    public function fillAllByRole($role, $user)
+    {
+        $result = $this->createQueryBuilder('r')
+            ->select('r, COUNT(ur.id) AS memberCount')  // Select room and count of members
+            ->innerJoin('r.userRooms', 'ur')
+            ->andWhere('ur.user = :user')
+            ->andWhere('ur.role = :role')
+            ->setParameter('user', $user)
+            ->setParameter('role', $role)
+            ->groupBy('r.id')  // Group by Room ID to count correctly
+            ->getQuery()
+            ->getResult();
+
+        // dump($result);
+        // die();
+        return $result;
+    }
 
     //    public function findOneBySomeField($value): ?Room
     //    {

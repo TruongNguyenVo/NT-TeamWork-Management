@@ -6,6 +6,7 @@ use App\Entity\Room;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class RoomType extends AbstractType
 {
@@ -14,10 +15,12 @@ class RoomType extends AbstractType
         $builder
             ->add('name')
             ->add('password')
-            ->add('description')
-            ->add('createDate', null, [
-                'widget' => 'single_text',
+            ->add('description', TextareaType::class, [
+                'required' => false,
             ])
+            // ->add('createDate', null, [
+            //     'widget' => 'single_text',
+            // ])
         ;
     }
 

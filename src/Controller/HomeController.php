@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Form\ProfileType;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\RoomRepository;
 
 class HomeController extends AbstractController
 {
@@ -20,14 +21,14 @@ class HomeController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    //trang quan ly nhom
-    #[Route('/', name: 'app_home')]
-    public function index(): Response
+    #[Route('/', name: 'app_home', methods: ['GET'])]
+    public function index(RoomRepository $roomRepository): Response
     {
         return $this->render('home/index.html.twig', [
-            
-        ]); 
+            'rooms' => $roomRepository->fillAllByRole("admin", $this->getUser()),
+        ]);
     }
+    
     //trang thay doi thong tin nguoi dung
     #[Route('/profile', name: 'app_profile', methods: ['GET'])]
     public function showProfile(Request $request): Response
