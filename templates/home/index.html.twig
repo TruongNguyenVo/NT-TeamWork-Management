@@ -179,33 +179,31 @@
                             <td>{{room.memberCount}}</td>
                             <td>
                               <div class="form-button-action">
-                                <button
-                                  type="button"
-                                  data-bs-toggle="tooltip"
+                                <a
+                                  href="{{ path('app_room_show', {'id': room.0.id}) }}"
+                                  type="button"                                  
                                   title="Xem chi tiết nhóm"
-                                  class="btn btn-link btn-primary btn-lg"
-                                  data-original-title="Edit Task"
+                                  class="btn btn-link btn-primary btn-lg"                                  
                                 >
                                   <i class="fa fa-eye"></i>
-                                </button>
-                                <button
+                                </a>
+                                <a
+                                  href="{{ path('app_room_show', {'id': room.0.id}) }}"
                                   type="button"
-                                  data-bs-toggle="tooltip"
                                   title="Sửa thông tin nhóm"
                                   class="btn btn-link btn-primary btn-lg"
-                                  data-original-title="Edit Task"
+                                
                                 >
                                   <i class="fa fa-edit"></i>
-                                </button>
-                                <button
+                                </a>
+                                <a
+                                  href="{{ path('app_room_delete', {'id': room.0.id}) }}"
                                   type="button"
-                                  data-bs-toggle="tooltip"
                                   title="Giải tán nhóm"
-                                  class="btn btn-link btn-danger"
-                                  data-original-title="Remove"
+                                  class="btn btn-link btn-danger btn-lg"
                                 >
                                   <i class="fa fa-times"></i>
-                                </button>
+                                </a>
                               </div>
                             </td>
                           </tr>
