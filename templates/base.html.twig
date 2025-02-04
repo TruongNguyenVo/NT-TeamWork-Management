@@ -73,8 +73,113 @@
 
 
         <!-- ////////////////////////////DIFFERENCE////////////////////////////// -->
-        {% block sidebar%}
-        {% endblock %}
+        <div class="sidebar-wrapper scrollbar scrollbar-inner">
+          <div class="sidebar-content">
+            <ul class="nav nav-secondary">
+              <li class="nav-section">
+                <span class="sidebar-mini-icon">
+                  <i class="fa fa-ellipsis-h"></i>
+                </span>
+                <h4 class="text-section">NTTeam</h4>
+              </li>
+
+              <!-- Quản lý công việc nhóm tại đây -->
+              <li class="nav-item active">
+                <a data-bs-toggle="collapse" href="#submenu">
+                  <i class="fas fa-bars"></i>
+                  <p>Nhóm quản lý</p>
+                  <span class="caret"></span>
+                </a>
+                <div class="collapse show" id="submenu">
+                  <ul class="nav nav-collapse">
+                    <li class="active">
+                      <a href="../tables/tables.html">
+                        <span class="sub-item">Xem tất cả nhóm</span>
+                      </a>
+                    </li>
+                    </li>
+                    <li>
+                      <a data-bs-toggle="collapse" href="#subnav1">
+                        <span class="sub-item">Đồ Án 1</span>
+                        <span class="caret"></span>
+                      </a>
+                      <div class="collapse" id="subnav1">
+                        <ul class="nav nav-collapse subnav">
+                          <li>
+                            <a href="#">
+                              <span class="sub-item">Tổng quan nhóm</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <span class="sub-item">Thông tin công việc</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <span class="sub-item">Thông tin thành viên</span>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </li>
+                    <li>
+                      <a data-bs-toggle="collapse" href="#subnav2">
+                        <span class="sub-item">Pháp luật đại cương</span>
+                        <span class="caret"></span>
+                      </a>
+                      <div class="collapse" id="subnav2">
+                        <ul class="nav nav-collapse subnav">
+                          <li>
+                            <a href="#">
+                              <span class="sub-item">Tổng quan</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <span class="sub-item">Thông tin công việc</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <span class="sub-item">Thông tin thành viên</span>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+              <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#tables">
+                  <i class="fas fa-table"></i>
+                  <p>Các nhóm tham gia</p>
+                  <span class="caret"></span>
+                </a>
+                <div class="collapse" id="tables">
+                  <ul class="nav nav-collapse">
+                    <li>
+                      <a href="../tables/tables.html">
+                        <span class="sub-item">Tham gia nhóm mới</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="../tables/tables.html">
+                        <span class="sub-item">Đồ án 1</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="../tables/datatables.html">
+                        <span class="sub-item">Pháp luật đại cương</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
 
 
       </div>

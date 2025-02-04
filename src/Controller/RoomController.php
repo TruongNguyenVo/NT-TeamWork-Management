@@ -64,6 +64,22 @@ final class RoomController extends AbstractController
             'form' => $form,
         ]);
     }
+    #[Route('/attend', name: 'app_room_attend', methods: ['GET', 'POST'])]
+    public function attend(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        
+        // dump($request->request->all());
+        // die();
+        $room = new Room();
+        $form = $this->createForm(RoomType::class, $room);
+        $form->handleRequest($request);
+
+
+        return $this->render('room/attend.html.twig', [
+            'room' => $room,
+            'form' => $form,
+        ]);
+    }
 
     #[Route('/{id}', name: 'app_room_show', methods: ['GET'])]
     public function show(Room $room): Response

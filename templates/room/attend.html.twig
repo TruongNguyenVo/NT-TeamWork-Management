@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tham gia nhóm{% endblock %}
+
+{% block body %}
+<div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <div class="card mt-5">
+                <div class="card-header">
+                  <h4 class="card-title">Tham gia nhóm</h4>
+                </div>
+                <div class="card-body">
+                  <form id="createGroupForm">
+                    <div class="mb-3">
+                      <label for="groupId" class="form-label">ID Nhóm</label>
+                      <input type="text" class="form-control" id="groupId" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="groupPassword" class="form-label">Mật khẩu</label>
+                      <input type="password" class="form-control" id="groupPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Tham gia nhóm</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+{% endblock %}
