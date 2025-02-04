@@ -34,6 +34,10 @@ Add serverVersion=mariadb-10.4.11 when you see this issue.
 DATABASE_URL="mysql://root:@127.0.0.1:3306/trainingproject?serverVersion=mariadb-10.4.11&charset=utf8mb4"
 ```
 # Tip and Trick
+## I dont know how to fix? -> delete cache
+```
+php bin/console cache:clear
+```
 ## Debug
 ```
 dump($exception->getMessage());

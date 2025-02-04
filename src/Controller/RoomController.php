@@ -100,21 +100,53 @@ final class RoomController extends AbstractController
     #[Route('/{id}/delete', name: 'app_room_delete', methods: ['GET', 'POST'])]
     public function delete(Request $request, Room $room, EntityManagerInterface $entityManager): Response
     {
+        $form = $this->createForm(RoomType::class, $room);
         // dump("o xoa roi", $request, $room);
         // die();
         if($request->getMethod() == 'POST'){
             if ($this->isCsrfTokenValid('delete'.$room->getId(), $request->getPayload()->getString('_token'))) {
-                $entityManager->remove($room);
-                $entityManager->flush();
+                try{
+                    $entityManager->beginTransaction();
+                    // Tìm tất cả các record trong bảng userroom liên quan đến phòng
+                    $userRooms = $entityManager->createQueryBuilder()
+                        ->select('ur')
+                        ->from(UserRoom::class, 'ur')
+                        ->where('ur.room = :room')
+                        ->setParameter('room', $room)
+                        ->getQuery()
+                        ->getResult();
+
+
+                    // Xóa các record đó
+                    foreach ($userRooms as $userRoom) {
+                        $entityManager->remove($userRoom);
+                    }
+
+                    // Xóa phòng
+                    $entityManager->remove($room);
+                    // dump("xoa thanh cong");
+                    // die();
+                    $entityManager->flush();
+
+                    $entityManager->commit();
+                }
+                catch(\Exception $e){
+                    $entityManager->rollback();
+                    dump($e->getMessage());
+                    die();
+                }
+
                 return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
             }
             else{
-                return $this->redirectToRoute('app_room_delete', [], Response::HTTP_SEE_OTHER);
+                dump("bug roi");
+                die();
             }
             
         }
-        return $this->render('room/_delete_form.html.twig', [
+        return $this->render('room/delete.html.twig', [
             'room' => $room,
+            'form' => $form,
         ]);
         
 
