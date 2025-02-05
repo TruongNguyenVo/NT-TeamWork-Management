@@ -98,12 +98,15 @@
                       </a>
                     </li>
                     </li>
+                    
+                    {% set count = 1 %}
+                    {% for room in sidebar.room.admin%}
                     <li>
-                      <a data-bs-toggle="collapse" href="#subnav1">
-                        <span class="sub-item">Đồ Án 1</span>
+                      <a data-bs-toggle="collapse" href="#subnav{{ count }}">
+                        <span class="sub-item">{{room.0.name}}</span>
                         <span class="caret"></span>
                       </a>
-                      <div class="collapse" id="subnav1">
+                      <div class="collapse" id="subnav{{ count }}">
                         <ul class="nav nav-collapse subnav">
                           <li>
                             <a href="#">
@@ -123,31 +126,9 @@
                         </ul>
                       </div>
                     </li>
-                    <li>
-                      <a data-bs-toggle="collapse" href="#subnav2">
-                        <span class="sub-item">Pháp luật đại cương</span>
-                        <span class="caret"></span>
-                      </a>
-                      <div class="collapse" id="subnav2">
-                        <ul class="nav nav-collapse subnav">
-                          <li>
-                            <a href="#">
-                              <span class="sub-item">Tổng quan</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#">
-                              <span class="sub-item">Thông tin công việc</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#">
-                              <span class="sub-item">Thông tin thành viên</span>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </li>
+                    {% set count = count + 1 %}
+                    {% endfor %}
+
                   </ul>
                 </div>
               </li>
@@ -164,16 +145,16 @@
                         <span class="sub-item">Tham gia nhóm mới</span>
                       </a>
                     </li>
+
+                    {% for room in sidebar.room.member%}
                     <li>
                       <a href="../tables/tables.html">
-                        <span class="sub-item">Đồ án 1</span>
+                        <span class="sub-item">{{ room.0.name }}</span>
                       </a>
                     </li>
-                    <li>
-                      <a href="../tables/datatables.html">
-                        <span class="sub-item">Pháp luật đại cương</span>
-                      </a>
-                    </li>
+                    {% endfor %}
+
+
                   </ul>
                 </div>
               </li>

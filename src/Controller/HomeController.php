@@ -25,7 +25,7 @@ class HomeController extends AbstractController
     public function index(RoomRepository $roomRepository): Response
     {
         return $this->render('home/index.html.twig', [
-            'rooms' => $roomRepository->fillAllByRole("admin", $this->getUser()),
+            'rooms' => $roomRepository->findAllByRole("admin", $this->getUser()),
         ]);
     }
     

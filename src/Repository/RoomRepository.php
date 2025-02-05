@@ -62,7 +62,7 @@ class RoomRepository extends ServiceEntityRepository
             
         }
     }
-    public function fillAllByRole($role, $user)
+    public function findAllByRole($role, $user)
     {
         $result = $this->createQueryBuilder('r')
             ->select('r, COUNT(ur.id) AS memberCount')  // Select room and count of members
