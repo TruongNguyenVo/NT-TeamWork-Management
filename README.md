@@ -48,7 +48,7 @@ services:
 ## Case mismatch between loaded and declared class names: "App\Entity\category" vs "App\Entity\Category".
 *. Review and change type in Enity
 # Tip and Trick
-## I dont know how to fix? -> delete cache
+## Dont know how to fix? -> delete cache
 ```
 php bin/console cache:clear
 ```
