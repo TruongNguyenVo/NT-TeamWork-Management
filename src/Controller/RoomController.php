@@ -6,6 +6,7 @@ use App\Entity\Room;
 use App\Entity\UserRoom;
 use App\Form\User;
 use App\Form\RoomType;
+use App\Form\AttendType;
 use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,7 +40,7 @@ final class RoomController extends AbstractController
     {
         
         $room = new Room();
-        $form = $this->createForm(RoomType::class, $room);
+        $form = $this->createForm(AttendType::class, $room);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -71,8 +72,39 @@ final class RoomController extends AbstractController
         // dump($request->request->all());
         // die();
         $room = new Room();
-        $form = $this->createForm(RoomType::class, $room);
+        $form = $this->createForm(AttendType::class, $room);
+        if($request->getMethod() == 'POST'){
         $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                // Lấy giá trị của trường password
+                $password = $form->get('password')->getData();
+                $id = $form->get('id')->getData();
+
+                $findRoom =  $this->roomRepository->findOneBy(['id' => $id]);
+                $existUserInRoom = $this->roomRepository->existsUserInRoom($this->getUser(), $findRoom);
+
+                // dump($existUserInRoom);
+                // die();
+
+                if($password == $findRoom->getPassword() && $existUserInRoom == false){
+                    $userGroup = new UserRoom();
+                    $userGroup->setUser($this->getUser());
+                    $userGroup->setRoom($findRoom);
+                    $userGroup->setRole("member");
+                    $userGroup->setStatus("pending");
+                    $entityManager->persist($userGroup);
+                    $entityManager->flush();
+
+                    // dump("toi post attend roi", $request, $password, $findRoom);
+                    // die();
+                    return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+                }
+                else{
+                    return $this->redirectToRoute('app_room_attend', [], Response::HTTP_SEE_OTHER);
+                }
+                
+            }
+        }
 
 
         return $this->render('room/attend.html.twig', [

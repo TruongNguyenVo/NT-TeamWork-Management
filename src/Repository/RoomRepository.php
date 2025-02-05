@@ -34,7 +34,7 @@ class RoomRepository extends ServiceEntityRepository
     //            ->getResult()
     //        ;
     //    }
-    public function createRoom($room,$user)
+    public function createRoom($room, $user)
     {
         //viet transaction, mac dinh nguoi tao phong la admin
         try{
@@ -79,6 +79,19 @@ class RoomRepository extends ServiceEntityRepository
         // die();
         return $result;
     }
+
+    public function existsUserInRoom($user, $room): bool
+{
+    $count = $this->getEntityManager()->createQuery(
+        'SELECT COUNT(ur) FROM App\Entity\UserRoom ur 
+        WHERE ur.user = :user AND ur.room = :room'
+    )
+    ->setParameter('user', $user)
+    ->setParameter('room', $room)
+    ->getSingleScalarResult();
+
+    return $count >= 1 ? true: false;
+}
 
     //    public function findOneBySomeField($value): ?Room
     //    {

@@ -11,20 +11,22 @@
                   <h4 class="card-title">Tham gia nhóm</h4>
                 </div>
                 <div class="card-body">
-                  <form id="createGroupForm">
+                  {{ form_start(form, {'action': path('app_room_attend'), 'method': 'POST', 'attr': {'class': 'd-inline'}}) }}
                     <div class="mb-3">
                       <label for="groupId" class="form-label">ID Nhóm</label>
-                      <input type="text" class="form-control" id="groupId" required>
+                      {{ form_widget(form.id, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.id) }}
                     </div>
                     <div class="mb-3">
                       <label for="groupPassword" class="form-label">Mật khẩu</label>
-                      <input type="password" class="form-control" id="groupPassword" required>
+                      {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.password) }}
                     </div>
                     <button type="submit" class="btn btn-primary">Tham gia nhóm</button>
-                  </form>
+                  {{form_end(form)}}
                 </div>
               </div>
             </div>
           </div>
-        </div>
+</div>
 {% endblock %}
