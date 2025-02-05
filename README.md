@@ -33,6 +33,20 @@ Add serverVersion=mariadb-10.4.11 when you see this issue.
 ```
 DATABASE_URL="mysql://root:@127.0.0.1:3306/trainingproject?serverVersion=mariadb-10.4.11&charset=utf8mb4"
 ```
+## Cannot autowire service "App\EventSubscriber\SideBarSubscriber": argument "$security" of method "__construct()" has type "Symfony\Component\Security\Core\Security" but this class was not found.
+*. Add service in `services.yaml`
+```
+services:
+    App\EventSubscriber\SideBarSubscriber:
+        arguments:
+            $security: '@security.helper'
+        tags:
+            - { name: 'kernel.event_subscriber' }
+```
+*. Change `use Symfony\Component\Security\Core\Security` to `use Symfony\Bundle\SecurityBundle\Security`
+
+## Case mismatch between loaded and declared class names: "App\Entity\category" vs "App\Entity\Category".
+*. Review and change type in Enity
 # Tip and Trick
 ## I dont know how to fix? -> delete cache
 ```
