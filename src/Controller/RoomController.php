@@ -195,9 +195,13 @@ final class RoomController extends AbstractController
         return $this->render('room/delete.html.twig', [
             'room' => $room,
             'form' => $form,
-        ]);
-        
-
-        
+        ]);    
+    }
+    #[Route(path:'/{id}/overview', name:'app_room_overview', methods: ['GET'])]
+    public function overviewRoom(Request $request): Response
+    {
+        // dump($request);
+        // die();
+        return $this->render('room/overview.html.twig');
     }
 }

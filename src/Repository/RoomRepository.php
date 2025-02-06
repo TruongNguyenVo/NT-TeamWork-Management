@@ -38,7 +38,7 @@ class RoomRepository extends ServiceEntityRepository
     {
         //viet transaction, mac dinh nguoi tao phong la admin
         try{
-            $entityManager->beginTransaction();
+            $this->entityManager->beginTransaction();
             $room->setCreateDate(new \DateTime()); //set ngay tao phong
             $userGroup = new UserRoom();
             // dump("toidayroi");
@@ -47,22 +47,21 @@ class RoomRepository extends ServiceEntityRepository
             $userGroup->setRoom($room);
             $userGroup->setRole("admin");
             $userGroup->setStatus("joined");
-            $entityManager->persist($room);
-            $entityManager->persist($userGroup);
-            $entityManager->flush();
-            $entityManager->commit();
+            $this->entityManager->persist($room);
+            $this->entityManager->persist($userGroup);
+            $this->entityManager->flush();
+            $this->entityManager->commit();
             return true;
         }
         catch(\Exception $e){
             //rollback
-            $entityManager->rollback();
+            $this->entityManager->rollback();
             dump($e->getMessage());
             die();
-            return false;
             
         }
     }
-    public function findAllByRole($role, $user)
+    public function findAllByRole($role, $user, $status=null)
     {
         $result = $this->createQueryBuilder('r')
             ->select('r, COUNT(ur.id) AS memberCount')  // Select room and count of members
@@ -71,13 +70,16 @@ class RoomRepository extends ServiceEntityRepository
             ->andWhere('ur.role = :role')
             ->setParameter('user', $user)
             ->setParameter('role', $role)
-            ->groupBy('r.id')  // Group by Room ID to count correctly
-            ->getQuery()
-            ->getResult();
+            ->groupBy('r.id');
+        if($status !== null){
+            $result->andWhere('ur.status = :status')
+           ->setParameter('status', $status);
+        }
 
         // dump($result);
         // die();
-        return $result;
+        return $result->getQuery()
+                       ->getResult();
     }
 
     public function existsUserInRoom($user, $room): bool
