@@ -31,7 +31,7 @@ class UserRoom
     private ?string $role = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $joindDate = null;
+    private ?\DateTimeInterface $joinDate = null;
 
     public function getId(): ?int
     {
@@ -86,13 +86,13 @@ class UserRoom
         return $this;
     }
 
-    public function getJoindDate(): ?\DateTimeInterface
+    public function getJoinDate(): ?\DateTimeInterface
     {
-        return $this->joindDate;
+        return $this->joinDate;
     }
-    public function setJoindDate(?\DateTimeInterface $joindDate): static
+    public function setJoinDate(?\DateTimeInterface $joinDate): static
     {
-        $this->joindDate = new \DateTime();
+        $this->joinDate = new \DateTime();
         return $this;
     }
 }

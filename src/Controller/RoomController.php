@@ -268,4 +268,11 @@ final class RoomController extends AbstractController
             return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
     }
+
+    //THAY DOI TRANG THAI QUAN LY THANH VIEN
+    #[Route(path:'{id}/member/{userId}/status', name:'app_room_member_status', methods: ['POST'])]
+    public function changeStatus(Request $request): Response
+    {
+        
+    }
 }

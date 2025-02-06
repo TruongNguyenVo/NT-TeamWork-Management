@@ -56,8 +56,8 @@
                           <tbody>
                         {% for member in members %}
                             <tr data-task='{"name": "Viết báo cáo", "assignee": "Trường Nguyên", "start_date": "01/01/2022", "end_date": "01/02/2022", "status": "Không hoàn thành"}' onclick="postData(this)">
-                              <td>Trường Nguyên</td>
-                              <td>01/01/2022</td>
+                              <td>{{member.user.lastname}} {{member.user.firstname}}</td>
+                              <td>{{ member.joinDate ? member.joinDate|date('Y-m-d') : 'Chưa được duyệt' }}</td>
                               <td>
                                 Đang nhận công việc
                               </td>
@@ -71,10 +71,20 @@
                                   >
                                     <i class="fa fa-eye"></i>
                                   </button>
+                                  {% if member.status == 'pending' %}
+                                    <button
+                                      type="button"
+                                      data-bs-toggle="tooltip"
+                                      title="Duyệt thành viên"
+                                      class="btn btn-link btn-success"
+                                    >
+                                      <i class="fa fa-check"></i>
+                                    </button>
+                                  {% endif %}
                                   <button
                                     type="button"
                                     data-bs-toggle="tooltip"
-                                    title="Xóa thành viên"
+                                    title="Từ chối"
                                     class="btn btn-link btn-danger"
                                     data-original-title="Remove"
                                   >
@@ -85,34 +95,7 @@
                               
                               </tr>
                               {% endfor %}
-                              <tr>
-                                <td>Trường Nguyên</td>
-                                <td>01/01/2025</td>
-                                <td>
-                                  Chưa có việc
-                                </td>
-                                <td>
-                                  <div class="form-button-action">
-
-                                    <button
-                                      type="button"
-                                      data-bs-toggle="tooltip"
-                                      title="Xem chi tiết thành viên"
-                                      class="btn btn-link btn-primary"
-                                    >
-                                      <i class="fa fa-eye"></i>
-                                    </button>
-                                    <button
-                                    type="button"
-                                    data-bs-toggle="tooltip"
-                                    title="Thêm công việc cho thành viên"
-                                    class="btn btn-link btn-secondary"
-                                  >
-                                    <i class="fa fa-plus"></i>
-                                  </button>
-                                  </div>
-                                </td> 
-                              </tr>                     
+            
                           </tbody>
                           <tfoot>
                             <tr>
@@ -195,4 +178,29 @@
               </div>
             </div>
           </div>
+{% endblock %}
+{% block javascripts %}
+<script>
+  // post api
+   function postData(row) {
+    // const taskData = JSON.parse(row.getAttribute('data-task'));
+    // fetch('/your-api-endpoint', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify(taskData)
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //   console.log('Success:', data);
+    // })
+    // .catch((error) => {
+    //   console.error('Error:', error);
+    // });
+    console.log(row);
+    // scroll to comment section
+    document.getElementById('member-detail').scrollIntoView();
+  }
+</script>
 {% endblock %}
