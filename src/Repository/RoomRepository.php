@@ -34,6 +34,8 @@ class RoomRepository extends ServiceEntityRepository
     //            ->getResult()
     //        ;
     //    }
+
+    //TAO PHONG MOI
     public function createRoom($room, $user)
     {
         //viet transaction, mac dinh nguoi tao phong la admin
@@ -61,10 +63,12 @@ class RoomRepository extends ServiceEntityRepository
             
         }
     }
+
+    //TIM TAT CA CAC PHONG BANG ROLE
     public function findAllByRole($role, $user, $status=null)
     {
         $result = $this->createQueryBuilder('r')
-            ->select('r, COUNT(ur.id) AS memberCount')  // Select room and count of members
+            ->select('r, COUNT(ur.id) AS memberCount')
             ->innerJoin('r.userRooms', 'ur')
             ->andWhere('ur.user = :user')
             ->andWhere('ur.role = :role')
@@ -79,9 +83,10 @@ class RoomRepository extends ServiceEntityRepository
         // dump($result);
         // die();
         return $result->getQuery()
-                       ->getResult();
+                    ->getResult();
     }
 
+    //HAM KIEM TRA USER CO TRONG ROOM HAY KHONG
     public function existsUserInRoom($user, $room): bool
 {
     $count = $this->getEntityManager()->createQuery(
@@ -94,6 +99,46 @@ class RoomRepository extends ServiceEntityRepository
 
     return $count >= 1 ? true: false;
 }
+
+    //HAM KIEM TRA NGUOI DUNG TRONG ROOM CO VAI TRO DO HAY KHONG
+    public function isRole($user, $room, $role){
+        $query = $this->createQueryBuilder('r')
+                        ->innerJoin('r.userRooms', 'ur')
+                        ->where('r.id = :room')
+                        ->andWhere('ur.user = :user')
+                        ->andWhere('ur.role = :role')
+                        ->setParameter('user', $user)
+                        ->setParameter('role', $role)
+                        ->setParameter('room', $room);
+        
+        $result = $query->getQuery()->getScalarResult();
+        return $result >= 1;
+
+    }
+
+
+    //TIM TAT CA CAC THANH VIEN DUA VAO ROOM
+    public function findUserByRoom($room, $role = 'member', $status = null)
+    {
+        $dql = 'SELECT ur FROM App\Entity\UserRoom ur WHERE ur.role = :role AND ur.room = :room';
+        
+        if ($status !== null) {
+            $dql .= ' AND ur.status = :status';
+        }
+    
+        $query = $this->getEntityManager()->createQuery($dql)
+            ->setParameter('room', $room)
+            ->setParameter('role', $role);
+    
+        if ($status !== null) {
+            $query->setParameter('status', $status);
+        }
+
+        // dump( $query->getResult());
+        // die();
+
+        return $query->getResult();
+    }
 
     //    public function findOneBySomeField($value): ?Room
     //    {

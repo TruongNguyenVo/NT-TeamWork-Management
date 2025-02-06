@@ -1,0 +1,198 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Quản lý thành viên{% endblock %}
+
+{% block body %}
+        <div class="container">
+            <div class="page-inner">
+              <div class="page-header">
+                <h3 class="fw-bold mb-3">NTTeam</h3>
+                <ul class="breadcrumbs mb-3">
+                  <li class="nav-home">
+                    <a href="#">
+                      <i class="icon-home"></i>
+                    </a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">{{ room.name }}</a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">Thông tin thành viên</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="row">
+
+  
+                <div class="col-md-12" id="member-info">
+                  <div class="card">
+                    <div class="card-header">
+                      <div class="d-flex align-items-center">
+                        <h4 class="card-title">Thông tin thành viên</h4>
+                      </div>
+                    </div>
+                    <div class="card-body">
+  
+                      <div class="table-responsive">
+                        <table
+                          id="add-row"
+                          class="display table table-striped table-hover"
+                        >
+                          <thead>
+                            
+                            <tr>
+                              <th>Tên thành viên</th>
+                              <th>Ngày tham gia</th>
+                              <th>Trạng thái</th>
+                              <th style="width: 10%">Thao tác</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                        {% for member in members %}
+                            <tr data-task='{"name": "Viết báo cáo", "assignee": "Trường Nguyên", "start_date": "01/01/2022", "end_date": "01/02/2022", "status": "Không hoàn thành"}' onclick="postData(this)">
+                              <td>Trường Nguyên</td>
+                              <td>01/01/2022</td>
+                              <td>
+                                Đang nhận công việc
+                              </td>
+                              <td>
+                                <div class="form-button-action">
+                                  <button
+                                    type="button"
+                                    data-bs-toggle="tooltip"
+                                    title="Xem chi tiết thành viên"
+                                    class="btn btn-link btn-primary"
+                                  >
+                                    <i class="fa fa-eye"></i>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    data-bs-toggle="tooltip"
+                                    title="Xóa thành viên"
+                                    class="btn btn-link btn-danger"
+                                    data-original-title="Remove"
+                                  >
+                                    <i class="fa fa-times"></i>
+                                  </button>
+                                </div>
+                              </td>
+                              
+                              </tr>
+                              {% endfor %}
+                              <tr>
+                                <td>Trường Nguyên</td>
+                                <td>01/01/2025</td>
+                                <td>
+                                  Chưa có việc
+                                </td>
+                                <td>
+                                  <div class="form-button-action">
+
+                                    <button
+                                      type="button"
+                                      data-bs-toggle="tooltip"
+                                      title="Xem chi tiết thành viên"
+                                      class="btn btn-link btn-primary"
+                                    >
+                                      <i class="fa fa-eye"></i>
+                                    </button>
+                                    <button
+                                    type="button"
+                                    data-bs-toggle="tooltip"
+                                    title="Thêm công việc cho thành viên"
+                                    class="btn btn-link btn-secondary"
+                                  >
+                                    <i class="fa fa-plus"></i>
+                                  </button>
+                                  </div>
+                                </td> 
+                              </tr>                     
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <th>Tên thành viên</th>
+                              <th>Ngày tham gia</th>
+                              <th>Trạng thái</th>
+                              <th>Thao tác</th>
+                            </tr>
+                          </tfoot>
+                          <tbody>
+                            
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- khung hien thi thanh vien -->
+                <div class="col-md-12" id="member-detail">
+                  <div class="card">
+                    <div class="card-header">                        
+                        <div class="member-info mb-4">
+                          <h4>Thông tin chung của thành viên</h4>
+                          <p><strong>Tên:</strong> <span id="memberName">Trường Nguyên</span></p>
+                          <p><strong>Số nhóm đã tham gia:</strong> <span id="manyGroup">10</span></p>
+                          <p><strong>Tỷ lệ hoàn thành công việc đúng hạn:</strong> <span>100%</span></p>
+
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                          <h4 class="card-title">Chi tiết công việc:</h4>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table
+                          id="basic-datatables"
+                          class="display table table-striped table-hover"
+                        >
+                          <thead>
+                            <tr>
+                              
+                              <th>Tên công việc</th>
+                              <th>Ngày nhận</th>
+                              <th>Trạng thái</th>
+                              <th>Thao tác</th>
+                             
+                            </tr>
+                          </thead>
+                            <tbody>
+                            <tr>
+                              <td>Viết báo cáo</td>
+                              <td>01/01/2022</td>
+                              <td>
+                                Đang nhận công việc
+                              </td>
+                            </tr>
+
+                          <tfoot>
+                            <tr>
+                              
+                              <th>Tên công việc</th>
+                              <th>Ngày nhận</th>
+                              <th>Trạng thái</th>
+                              <th>Thao tác</th>
+
+                            </tr>
+                          </tfoot>
+                        <tbody>
+
+                        </tbody>
+                        </table>
+
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+{% endblock %}

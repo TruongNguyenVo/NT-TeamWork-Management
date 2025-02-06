@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRoomRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: UserRoomRepository::class)]
 class UserRoom
@@ -28,6 +29,9 @@ class UserRoom
 
     #[ORM\Column(length: 100)]
     private ?string $role = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $joindDate = null;
 
     public function getId(): ?int
     {
@@ -79,6 +83,16 @@ class UserRoom
     {
         $this->role = $role;
 
+        return $this;
+    }
+
+    public function getJoindDate(): ?\DateTimeInterface
+    {
+        return $this->joindDate;
+    }
+    public function setJoindDate(?\DateTimeInterface $joindDate): static
+    {
+        $this->joindDate = new \DateTime();
         return $this;
     }
 }

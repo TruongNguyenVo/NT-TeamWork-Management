@@ -197,11 +197,75 @@ final class RoomController extends AbstractController
             'form' => $form,
         ]);    
     }
+
+    //hien thi trang XEM TONG QUAN
     #[Route(path:'/{id}/overview', name:'app_room_overview', methods: ['GET'])]
     public function overviewRoom(Request $request): Response
     {
+        $roomId = $request->attributes->get('id');
+        if($roomId !== null){
+            $room = $this->roomRepository->find($roomId);
+            if($room !== null){
+                // dump($roomId, $request,$room);
+                // die();
+                $isAdmin = $this->roomRepository->isRole($this->getUser(), $room->getId(), "admin");
+                if($isAdmin === true){
+                    return $this->render('room/overview.html.twig');
+                    // dump($isAdmin, $request);
+                    // die();
+                }
+                else{
+                    return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+                }
+            }
+            else{
+                return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+            }
+
+        // dump($roomId, $request);
+        // die();
+        // return $this->render('room/overview.html.twig');
+        }
+        else{
+            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+        }
+    }
+
+    //thi thi trang THONG TIN THANH VIEN
+    #[Route(path:'/{id}/member', name:'app_room_member', methods: ['GET'])]
+    public function viewMember(Request $request): Response
+    {
         // dump($request);
         // die();
-        return $this->render('room/overview.html.twig');
+        $roomId = $request->attributes->get('id');
+        if($roomId !== null){
+            $room = $this->roomRepository->find($roomId);
+            if($room !== null){
+                // dump($roomId, $request,$room);
+                // die();
+                $isAdmin = $this->roomRepository->isRole($this->getUser(), $room->getId(), "admin");
+                if($isAdmin === true){
+                    $memberInRoom = $this->roomRepository->findUserByRoom($room->getId(),);
+                    // dump($memberInRoom);
+                    // die();
+
+                    return $this->render('room/member.html.twig', [
+                        'room' => $room,
+                        'members' => $memberInRoom
+                    ]);
+                    // dump($isAdmin, $request);
+                    // die();
+                }
+                else{
+                    return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+                }
+            }
+            else{
+                return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+            }
+        }
+        else{
+            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+        }
     }
 }
