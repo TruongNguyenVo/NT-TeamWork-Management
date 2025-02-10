@@ -22,8 +22,8 @@ class UserRoom
 
     #[ORM\Column(length: 100)]
     #[Assert\Regex(
-        pattern: "/^(active|pending|left)$/i",
-        message: "Trạng thái không đúng. Chỉ hỗ trợ các trạng thái: active, left, pending"
+        pattern: "/^(joined|pending|left|removed)$/i",
+        message: "Trạng thái không đúng. Chỉ hỗ trợ các trạng thái: joined, left, pending và removed"
     )]
     private ?string $status = null;
 
@@ -69,6 +69,10 @@ class UserRoom
 
     public function setStatus(string $status): static
     {
+        if($status === "joined")
+        {
+            $this->joinDate = new \DateTime();
+        }
         $this->status = $status;
 
         return $this;

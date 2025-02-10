@@ -72,24 +72,39 @@
                                     <i class="fa fa-eye"></i>
                                   </button>
                                   {% if member.status == 'pending' %}
-                                    <button
-                                      type="button"
-                                      data-bs-toggle="tooltip"
-                                      title="Duyệt thành viên"
-                                      class="btn btn-link btn-success"
-                                    >
-                                      <i class="fa fa-check"></i>
-                                    </button>
+              <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
+              <input type="hidden" name="userId" value="{{ member.user.id }}">
+              <input type="hidden" name="status" value="joined">
+              <button type="submit" data-bs-toggle="tooltip" title="Duyệt thành viên" class="btn btn-link btn-success">
+              <i class="fa fa-check"></i>
+            </button>
+            </form>
                                   {% endif %}
-                                  <button
-                                    type="button"
-                                    data-bs-toggle="tooltip"
-                                    title="Từ chối"
-                                    class="btn btn-link btn-danger"
-                                    data-original-title="Remove"
-                                  >
+                                  {% if member.status == 'joined' %}
+                                  <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
+                                    <input type="hidden" name="userId" value="{{ member.user.id }}">
+                                    <input type="hidden" name="status" value="left">
+                                    <button type="submit" data-bs-toggle="tooltip" title="Mời ra khỏi nhóm" class="btn btn-link btn-danger">
                                     <i class="fa fa-times"></i>
                                   </button>
+                                  </form>
+                                  {% elseif member.status == "left" %}
+                                  {# <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
+                                    <input type="hidden" name="userId" value="{{ member.user.id }}">
+                                    <input type="hidden" name="status" value="deny">
+                                    <button type="submit" data-bs-toggle="tooltip" title="Từ chối" class="btn btn-link btn-danger">
+                                    <i class="fa fa-ban"></i>
+                                  </button>
+                                  </form> #}
+                                  {% else %}
+                                    <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
+                                    <input type="hidden" name="userId" value="{{ member.user.id }}">
+                                    <input type="hidden" name="status" value="deny">
+                                    <button type="submit" data-bs-toggle="tooltip" title="Từ chối" class="btn btn-link btn-danger">
+                                    <i class="fa fa-ban"></i>
+                                  </button>
+                                  </form>
+                                  {% endif %}
                                 </div>
                               </td>
                               

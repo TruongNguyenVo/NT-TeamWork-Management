@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\UserRoom;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @extends ServiceEntityRepository<UserRoom>
@@ -16,8 +17,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserRoomRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $entityManager;
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
+        $this->entityManager = $entityManager;
         parent::__construct($registry, UserRoom::class);
     }
 

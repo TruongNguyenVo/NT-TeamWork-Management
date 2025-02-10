@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Room;
 use App\Entity\UserRoom;
+use App\Form\ChangeStatusUserRoomType;
 use App\Form\User;
 use App\Form\RoomType;
 use App\Form\AttendType;
 use App\Repository\RoomRepository;
+use App\Repository\UserRoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,8 +23,10 @@ final class RoomController extends AbstractController
 {
     private $entityManager;
     private $roomRepository;
-    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository)
+    private $roomUserRepository;
+    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository)
     {
+        $this->roomUserRepository = $roomUserRepository;
         $this->roomRepository = $roomRepository;
         $this->entityManager = $entityManager;
     }
@@ -238,6 +242,7 @@ final class RoomController extends AbstractController
     {
         // dump($request);
         // die();
+
         $roomId = $request->attributes->get('id');
         if($roomId !== null){
             $room = $this->roomRepository->find($roomId);
@@ -252,7 +257,8 @@ final class RoomController extends AbstractController
 
                     return $this->render('room/member.html.twig', [
                         'room' => $room,
-                        'members' => $memberInRoom
+                        'members' => $memberInRoom,
+                        // 'form' => $form->createView(),
                     ]);
                     // dump($isAdmin, $request);
                     // die();
@@ -271,9 +277,58 @@ final class RoomController extends AbstractController
     }
 
     //THAY DOI TRANG THAI QUAN LY THANH VIEN
-    #[Route(path:'{id}/member/{userId}/status', name:'app_room_member_status', methods: ['POST'])]
+    #[Route(path:'/{id}/member/status', name:'app_room_member_status', methods: ['POST'])]
     public function changeStatus(Request $request): Response
     {
-        
+        $userId = $request->request->get('userId');
+        $status = $request->request->get('status');
+        $roomId = $request->attributes->get('id');
+
+        $roomUser = $this->roomUserRepository->findOneBy([
+            'user' => $userId,
+            'room' => $roomId,
+        ]);
+        if ($roomUser) {
+            // Cập nhật trạng thái
+            if( $status === 'deny')
+            {
+                $this->entityManager->remove($roomUser);
+            }
+            else{
+                $roomUser->setStatus($status);
+                
+            }
+                $this->entityManager->flush();
+                // dump($request->request->all(), $userId, $status, $roomId);
+                // die();
+            // Chuyển hướng về trang thông tin thành viên
+            return $this->redirectToRoute('app_room_member', ['id' => $roomId]);
+
+        }
+
+        // dump($request->request->all(), $userId, $status, $roomId);
+        // die();
+            // Nếu không tìm thấy UserRoom, chuyển hướng về trang chủ
+        return $this->redirectToRoute('app_home');
+    }
+
+    //HAM XEM OVERVIEW CUA THANH VIEN
+    #[Route(path:'/{id}/overview/member', name:'app_room_overview', methods: ['GET'])]
+    public function overviewMember(Request $request): Response
+    {
+        $roomId = $request->attributes->get('id');
+        if($roomId !== null){
+            $room = $this->roomRepository->find($roomId);
+            if($room !== null){
+                    return $this->render('room/overviewMember.html.twig',
+                ['room'=> $room]);
+            }
+            else{
+                return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+            }
+        }
+        else{
+            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+        }
     }
 }
