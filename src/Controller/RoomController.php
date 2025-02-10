@@ -210,7 +210,8 @@ final class RoomController extends AbstractController
                 // die();
                 $isAdmin = $this->roomRepository->isRole($this->getUser(), $room->getId(), "admin");
                 if($isAdmin === true){
-                    return $this->render('room/overview.html.twig');
+                    return $this->render('room/overview.html.twig',
+                ['room'=> $room]);
                     // dump($isAdmin, $request);
                     // die();
                 }

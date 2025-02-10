@@ -18,7 +18,7 @@
                     <i class="icon-arrow-right"></i>
                   </li>
                   <li class="nav-item">
-                    <a href="#">Đồ Án 1</a>
+                    <a href="#">{{room.name}}</a>
                   </li>
                   <li class="separator">
                     <i class="icon-arrow-right"></i>
@@ -41,11 +41,11 @@
                       <form id="groupInfoForm">
                         <div class="mb-3">
                           <label for="groupName" class="form-label">Tên nhóm</label>
-                          <input type="text" class="form-control" id="groupName" value="Đồ Án 1" readonly>
+                          <input type="text" class="form-control" id="groupName" value="{{room.name}}" readonly>
                         </div>
                         <div class="mb-3">
                           <label for="groupDescription" class="form-label">Mô tả nhóm</label>
-                          <textarea class="form-control" id="groupDescription" rows="3" readonly>Mô tả về nhóm Đồ Án 1</textarea>
+                          <textarea class="form-control" id="groupDescription" rows="3" readonly>{{room.description}}</textarea>
                         </div>
 <div class="mb-3">
   <label for="groupLeader" class="form-label">Trưởng nhóm</label>
@@ -406,3 +406,22 @@
             </div>
           </div>
 {% endblock %}
+{% block javascripts %}
+<script>
+  function enableEditing() {
+    document.getElementById('groupName').readOnly = false;
+    document.getElementById('groupDescription').readOnly = false;
+    document.getElementById('groupLeader').disabled = false; // Change readOnly to disabled
+    document.getElementById('saveButton').classList.remove('d-none');
+    document.getElementById('cancelButton').classList.remove('d-none');
+  }
+
+  function cancelEditing() {
+    document.getElementById('groupName').readOnly = true;
+    document.getElementById('groupDescription').readOnly = true;
+    document.getElementById('groupLeader').disabled = true; // Change readOnly to disabled
+    document.getElementById('saveButton').classList.add('d-none');
+    document.getElementById('cancelButton').classList.add('d-none');
+  }
+</script>
+{% endblock javascripts %}
