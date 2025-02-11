@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRoomRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: UserRoomRepository::class)]

@@ -48,9 +48,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: UserRoom::class, mappedBy: 'user')]
     private Collection $userRooms;
 
+    /**
+     * @var Collection<int, Task>
+     */
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'leader')]
+    private Collection $leader;
+
+    /**
+     * @var Collection<int, Task>
+     */
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'member')]
+    private Collection $member;
+
     public function __construct()
     {
         $this->userRooms = new ArrayCollection();
+        $this->leader = new ArrayCollection();
+        $this->member = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -185,5 +199,70 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Task>
+     */
+    public function getLeader(): Collection
+    {
+        return $this->leader;
+    }
+
+    public function addLeader(Task $leader): static
+    {
+        if (!$this->leader->contains($leader)) {
+            $this->leader->add($leader);
+            $leader->setLeader($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLeader(Task $leader): static
+    {
+        if ($this->leader->removeElement($leader)) {
+            // set the owning side to null (unless already changed)
+            if ($leader->getLeader() === $this) {
+                $leader->setLeader(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Task>
+     */
+    public function getMember(): Collection
+    {
+        return $this->member;
+    }
+
+    public function addMember(Task $member): static
+    {
+        if (!$this->member->contains($member)) {
+            $this->member->add($member);
+            $member->setMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMember(Task $member): static
+    {
+        if ($this->member->removeElement($member)) {
+            // set the owning side to null (unless already changed)
+            if ($member->getMember() === $this) {
+                $member->setMember(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getFullName(): string
+    {
+        return $this->lastname . ' ' . $this->firstname;
     }
 }
