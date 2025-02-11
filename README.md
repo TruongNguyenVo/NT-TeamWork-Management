@@ -48,6 +48,12 @@ services:
 ## Case mismatch between loaded and declared class names: "App\Entity\category" vs "App\Entity\Category".
 *. Review and change type in Enity
 # Tip and Trick
+## Create new branch from `dev`'s branch
+```
+git checkout dev       # Chuyển sang nhánh dev (nếu chưa ở đó)
+git pull origin dev    # Cập nhật nhánh dev mới nhất từ remote
+git checkout -b ten-nhanh-moi  # Tạo nhánh mới từ dev và chuyển sang đó
+```
 ## Dont know how to fix? -> delete cache
 ```
 php bin/console cache:clear
