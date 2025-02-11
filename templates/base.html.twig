@@ -14,7 +14,7 @@
     />
 
     <!-- Fonts and icons -->
-    <script src="../assets/js/plugin/webfont/webfont.min.js"></script>
+    <script src="{{ asset('assets/js/plugin/webfont/webfont.min.js') }}"></script>
     <script>
       WebFont.load({
         google: { families: ["Public Sans:300,400,500,600,700"] },
@@ -25,7 +25,7 @@
             "Font Awesome 5 Brands",
             "simple-line-icons",
           ],
-          urls: ["../assets/css/fonts.min.css"],
+          urls: ["{{ asset('assets/css/fonts.min.css') }}"],
         },
         active: function () {
           sessionStorage.fonts = true;
@@ -34,12 +34,12 @@
     </script>
 
     <!-- CSS Files -->
-    <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="../assets/css/plugins.min.css" />
-    <link rel="stylesheet" href="../assets/css/kaiadmin.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/plugins.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/kaiadmin.min.css') }}">
 
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link rel="stylesheet" href="../assets/css/demo.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}">
   </head>
   <body>
     <div class="wrapper">
@@ -73,8 +73,95 @@
 
 
         <!-- ////////////////////////////DIFFERENCE////////////////////////////// -->
-        {% block sidebar%}
-        {% endblock %}
+        <div class="sidebar-wrapper scrollbar scrollbar-inner">
+          <div class="sidebar-content">
+            <ul class="nav nav-secondary">
+              <li class="nav-section">
+                <span class="sidebar-mini-icon">
+                  <i class="fa fa-ellipsis-h"></i>
+                </span>
+                <h4 class="text-section">NTTeam</h4>
+              </li>
+
+              <!-- Quản lý công việc nhóm tại đây -->
+              <li class="nav-item active">
+                <a data-bs-toggle="collapse" href="#submenu">
+                  <i class="fas fa-bars"></i>
+                  <p>Nhóm quản lý</p>
+                  <span class="caret"></span>
+                </a>
+                <div class="collapse show" id="submenu">
+                  <ul class="nav nav-collapse">
+                    <li class="active">
+                      <a href="../tables/tables.html">
+                        <span class="sub-item">Xem tất cả nhóm</span>
+                      </a>
+                    </li>
+                    </li>
+                    
+                    {% set count = 1 %}
+                    {% for room in sidebar.room.admin%}
+                    <li>
+                      <a data-bs-toggle="collapse" href="#subnav{{ count }}">
+                        <span class="sub-item">{{room.0.name}}</span>
+                        <span class="caret"></span>
+                      </a>
+                      <div class="collapse" id="subnav{{ count }}">
+                        <ul class="nav nav-collapse subnav">
+                          <li>
+                            <a href="#">
+                              <span class="sub-item">Tổng quan nhóm</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <span class="sub-item">Thông tin công việc</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <span class="sub-item">Thông tin thành viên</span>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </li>
+                    {% set count = count + 1 %}
+                    {% endfor %}
+
+                  </ul>
+                </div>
+              </li>
+              <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#tables">
+                  <i class="fas fa-table"></i>
+                  <p>Các nhóm tham gia</p>
+                  <span class="caret"></span>
+                </a>
+                <div class="collapse" id="tables">
+                  <ul class="nav nav-collapse">
+                    <li>
+                      <a href="../tables/tables.html">
+                        <span class="sub-item">Tham gia nhóm mới</span>
+                      </a>
+                    </li>
+
+                    {% for room in sidebar.room.member%}
+                      <li>
+                        <a href="../tables/tables.html">
+                          <span class="sub-item">{{ room.0.name }}</span>
+                        </a>
+                      </li>
+
+                    {% endfor %}
+
+
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
 
 
       </div>
@@ -184,25 +271,25 @@
         </div>
 
         <!-- /////////////////////////////////DIFFERENCE////////////////////////////// -->
-        {% block container%}
+        {% block body%}
         {% endblock %}
         <!-- //////////////////////////////////////////////////////////////////////// -->
         
       <!-- End Custom template -->
     </div>
     <!--   Core JS Files   -->
-    <script src="../assets/js/core/jquery-3.7.1.min.js"></script>
-    <script src="../assets/js/core/popper.min.js"></script>
-    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="{{ asset('assets/js/core/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
 
     <!-- jQuery Scrollbar -->
-    <script src="../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="{{ asset('assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
     <!-- Datatables -->
-    <script src="../assets/js/plugin/datatables/datatables.min.js"></script>
+    <script src="{{ asset('assets/js/plugin/datatables/datatables.min.js') }}"></script>
     <!-- Kaiadmin JS -->
-    <script src="../assets/js/kaiadmin.min.js"></script>
+    <script src="{{ asset('assets/js/kaiadmin.min.js') }}"></script>
     
   </body>
 </html>
-{% block javascripts%}
+{% block javascripts %}
 {% endblock %}

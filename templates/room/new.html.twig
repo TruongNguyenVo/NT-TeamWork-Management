@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %} 
+
+{% block title %}Nhóm quản lý{% endblock %}
+    
+        
+        {# container #}
+        {% block body %}
+        <div class="container">
+            <div class="page-inner">
+              <div class="page-header">
+                <h3 class="fw-bold mb-3">NTTeam</h3>
+                <ul class="breadcrumbs mb-3">
+                  <li class="nav-home">
+                    <a href="#">
+                      <i class="icon-home"></i>
+                    </a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">Các nhóm tham gia</a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">Tạo nhóm mới</a>
+                  </li>
+                </ul>
+              </div>
+                {{ form_start(form) }}
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Tên nhóm</label>
+                    {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder':'Nhập tên nhóm của bạn tại đây'}}) }}
+                    {{ form_errors(form.name) }}
+                  </div>
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Mật khẩu</label>
+                    {{ form_widget(form.password, {'attr': {'class': 'form-control', 'placeholder':'Nhập mật khẩu nhóm của bạn tại đây'}}) }}
+                    {{ form_errors(form.password) }}
+                  </div>
+                  <div class="mb-3">
+                    <label for="office" class="form-label">Mô tả</label>
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder':'Nhập mô tả nhóm của bạn tại đây', 'rows':'5'}, 'type': 'textarea'}) }}
+                    {{ form_errors(form.description) }}
+                  </div>
+                  <div class="mb-3-md">
+                    <a href="{{path('app_home')}}" class="btn btn-danger">Đóng</a>
+                    <button type="submit" class="btn btn-primary">Tạo</button>
+                  </div>
+              </div>
+  
+            {{ form_end(form) }}
+            </div>
+            </div>
+        </div>
+        {% endblock %}

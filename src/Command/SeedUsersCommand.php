@@ -38,8 +38,8 @@ class SeedUsersCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $faker = FakerFactory::create();
-        
+        $faker = FakerFactory::create('vi_VN');
+         
         //defalut user
         $email_edu = new User();
         $email_edu->setFirstname('Nguyên');
@@ -55,7 +55,7 @@ class SeedUsersCommand extends Command
         $this->entityManager->persist($email_personal);
 
 
-        for ($i = 1; $i <= 30; $i++) {
+        for ($i = 1; $i <= 8; $i++) {
             $user = new User();
             $user->setFirstname($faker->firstName);
             $user->setLastname($faker->lastName);

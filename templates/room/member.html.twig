@@ -1,0 +1,221 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Quản lý thành viên{% endblock %}
+
+{% block body %}
+        <div class="container">
+            <div class="page-inner">
+              <div class="page-header">
+                <h3 class="fw-bold mb-3">NTTeam</h3>
+                <ul class="breadcrumbs mb-3">
+                  <li class="nav-home">
+                    <a href="#">
+                      <i class="icon-home"></i>
+                    </a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">{{ room.name }}</a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">Thông tin thành viên</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="row">
+
+  
+                <div class="col-md-12" id="member-info">
+                  <div class="card">
+                    <div class="card-header">
+                      <div class="d-flex align-items-center">
+                        <h4 class="card-title">Thông tin thành viên</h4>
+                      </div>
+                    </div>
+                    <div class="card-body">
+  
+                      <div class="table-responsive">
+                        <table
+                          id="add-row"
+                          class="display table table-striped table-hover"
+                        >
+                          <thead>
+                            
+                            <tr>
+                              <th>Tên thành viên</th>
+                              <th>Ngày tham gia</th>
+                              <th>Trạng thái</th>
+                              <th style="width: 10%">Thao tác</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                        {% for member in members %}
+                            <tr data-task='{"name": "Viết báo cáo", "assignee": "Trường Nguyên", "start_date": "01/01/2022", "end_date": "01/02/2022", "status": "Không hoàn thành"}' onclick="postData(this)">
+                              <td>{{member.user.lastname}} {{member.user.firstname}}</td>
+                              <td>{{ member.joinDate ? member.joinDate|date('Y-m-d') : 'Chưa được duyệt' }}</td>
+                              <td>
+                                Đang nhận công việc
+                              </td>
+                              <td>
+                                <div class="form-button-action">
+                                  <button
+                                    type="button"
+                                    data-bs-toggle="tooltip"
+                                    title="Xem chi tiết thành viên"
+                                    class="btn btn-link btn-primary"
+                                  >
+                                    <i class="fa fa-eye"></i>
+                                  </button>
+                                  {% if member.status == 'pending' %}
+              <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
+              <input type="hidden" name="userId" value="{{ member.user.id }}">
+              <input type="hidden" name="status" value="joined">
+              <button type="submit" data-bs-toggle="tooltip" title="Duyệt thành viên" class="btn btn-link btn-success">
+              <i class="fa fa-check"></i>
+            </button>
+            </form>
+                                  {% endif %}
+                                  {% if member.status == 'joined' %}
+                                  <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
+                                    <input type="hidden" name="userId" value="{{ member.user.id }}">
+                                    <input type="hidden" name="status" value="left">
+                                    <button type="submit" data-bs-toggle="tooltip" title="Mời ra khỏi nhóm" class="btn btn-link btn-danger">
+                                    <i class="fa fa-times"></i>
+                                  </button>
+                                  </form>
+                                  {% elseif member.status == "left" %}
+                                  {# <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
+                                    <input type="hidden" name="userId" value="{{ member.user.id }}">
+                                    <input type="hidden" name="status" value="deny">
+                                    <button type="submit" data-bs-toggle="tooltip" title="Từ chối" class="btn btn-link btn-danger">
+                                    <i class="fa fa-ban"></i>
+                                  </button>
+                                  </form> #}
+                                  {% else %}
+                                    <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
+                                    <input type="hidden" name="userId" value="{{ member.user.id }}">
+                                    <input type="hidden" name="status" value="deny">
+                                    <button type="submit" data-bs-toggle="tooltip" title="Từ chối" class="btn btn-link btn-danger">
+                                    <i class="fa fa-ban"></i>
+                                  </button>
+                                  </form>
+                                  {% endif %}
+                                </div>
+                              </td>
+                              
+                              </tr>
+                              {% endfor %}
+            
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <th>Tên thành viên</th>
+                              <th>Ngày tham gia</th>
+                              <th>Trạng thái</th>
+                              <th>Thao tác</th>
+                            </tr>
+                          </tfoot>
+                          <tbody>
+                            
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- khung hien thi thanh vien -->
+                <div class="col-md-12" id="member-detail">
+                  <div class="card">
+                    <div class="card-header">                        
+                        <div class="member-info mb-4">
+                          <h4>Thông tin chung của thành viên</h4>
+                          <p><strong>Tên:</strong> <span id="memberName">Trường Nguyên</span></p>
+                          <p><strong>Số nhóm đã tham gia:</strong> <span id="manyGroup">10</span></p>
+                          <p><strong>Tỷ lệ hoàn thành công việc đúng hạn:</strong> <span>100%</span></p>
+
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                          <h4 class="card-title">Chi tiết công việc:</h4>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table
+                          id="basic-datatables"
+                          class="display table table-striped table-hover"
+                        >
+                          <thead>
+                            <tr>
+                              
+                              <th>Tên công việc</th>
+                              <th>Ngày nhận</th>
+                              <th>Trạng thái</th>
+                              <th>Thao tác</th>
+                             
+                            </tr>
+                          </thead>
+                            <tbody>
+                            <tr>
+                              <td>Viết báo cáo</td>
+                              <td>01/01/2022</td>
+                              <td>
+                                Đang nhận công việc
+                              </td>
+                            </tr>
+
+                          <tfoot>
+                            <tr>
+                              
+                              <th>Tên công việc</th>
+                              <th>Ngày nhận</th>
+                              <th>Trạng thái</th>
+                              <th>Thao tác</th>
+
+                            </tr>
+                          </tfoot>
+                        <tbody>
+
+                        </tbody>
+                        </table>
+
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+{% endblock %}
+{% block javascripts %}
+<script>
+  // post api
+   function postData(row) {
+    // const taskData = JSON.parse(row.getAttribute('data-task'));
+    // fetch('/your-api-endpoint', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify(taskData)
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //   console.log('Success:', data);
+    // })
+    // .catch((error) => {
+    //   console.error('Error:', error);
+    // });
+    console.log(row);
+    // scroll to comment section
+    document.getElementById('member-detail').scrollIntoView();
+  }
+</script>
+{% endblock %}
