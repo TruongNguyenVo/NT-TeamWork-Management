@@ -206,6 +206,9 @@ final class RoomController extends AbstractController
     #[Route(path:'/{id}/overview', name:'app_room_overview', methods: ['GET'])]
     public function overviewRoom(Request $request): Response
     {
+        // dump('');
+        // die('');
+
         $roomId = $request->attributes->get('id');
         if($roomId !== null){
             $room = $this->roomRepository->find($roomId);
@@ -312,8 +315,14 @@ final class RoomController extends AbstractController
         return $this->redirectToRoute('app_home');
     }
 
+    //HAM HIEN THI TRANG THONG TIN TASK
+    #[Route(path:'/{id}/task', name:'app_room_task', methods:['GET'])]
+    public function viewTask(Request $request):Response{
+        return $this->render('task/index.html.twig');
+    }
+
     //HAM XEM OVERVIEW CUA THANH VIEN
-    #[Route(path:'/{id}/overview/member', name:'app_room_overview', methods: ['GET'])]
+    #[Route(path:'/{id}/overview/member', name:'app_room_overview_member', methods: ['GET'])]
     public function overviewMember(Request $request): Response
     {
         $roomId = $request->attributes->get('id');
@@ -331,4 +340,5 @@ final class RoomController extends AbstractController
             return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
     }
+    
 }
