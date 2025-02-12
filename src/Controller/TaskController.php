@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Task;
 use App\Entity\Room;
+use App\Entity\User;
 use App\Form\CreateTaskType;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
@@ -44,9 +45,10 @@ final class TaskController extends AbstractController
         // die();
 
         $memberInRoom = $this->roomRepository->findUserByRoom($room,"member", "joined");
-        $adminInRoom = $this->roomRepository->findUserByRoom($room,"admin","joined");
 
-        // dump($memberInRoom, $adminInRoom);
+        $adminInRoom = $this->roomRepository->findUserByRoom($room,"admin","joined")[0]->getUser();
+
+        // dump($adminInRoom);
         // die();
 
         $task = new Task();
@@ -56,27 +58,53 @@ final class TaskController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // dump("co the luu roi a",$form->getData());
             // die();
-            $file=$form->get('pathAttachment')->getData();
-            if(file_exists($file)) {
-                try {
-                    $newFilename = uniqid().'.'.$file->guessExtension();
-                    $file->move(
-                        $this->getParameter('uploads_directory'), // Định nghĩa trong config/services.yaml
-                        $newFilename
-                    );
-                    // dump("luu file duoc r");
+
+            //DUNG TRANSACTION DE LUU TASK
+            try {
+                $this->entityManager->beginTransaction();
+                $task->setRoom($room);
+                $task->setLeader($adminInRoom);
+                
+                //LUU MEMBER
+                // $task->setMember($memberInRoom ?? null);
+                $memberId = $request->get("member");
+                // dump($memberId);
+                // die();
+                if($memberId !== "null"){
+                    $member = $this->entityManager->getRepository(User::class)->find($memberId);
+                    // dump($member);
                     // die();
-                } catch (FileException $e) {
-                    // Xử lý lỗi upload
-                    dump($e->getMessage());
-                    die("");
+                    if ($member) {
+                        $task->setMember($member);
+                    }
+                    
                 }
+
+                //LUU FILE NEU CO
+                $file = $form->get("pathAttachment")->getData();
+                if(file_exists($file)) {
+                        $newFilename = uniqid().'.'.$file->guessExtension();
+                        $file->move(
+                            $this->getParameter('uploads_directory'),
+                            $newFilename
+                    );
+                    $task->setPathAttachment($newFilename);
+                }
+
+
+                $this->entityManager->persist($task);
+
+                $this->entityManager->flush();
+                $this->entityManager->commit();
+
+                // dump($task, $request);
+                // die("");
+
+            } catch (\Exception $exception ) {
+                dump("Error in app_task_new", $exception->getMessage());
+                die();
             }
-
-            $entityManager->persist($task);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_room_task', [], Response::HTTP_SEE_OTHER);
         }
         // else {
         //     $errors = [];
@@ -91,8 +119,8 @@ final class TaskController extends AbstractController
             'task' => $task,
             'form' => $form,
             'room' => $room,
-            'admin' => $adminInRoom,
-            'member' => $memberInRoom,
+            // 'admin' => $adminInRoom,
+            'members' => $memberInRoom,
 
         ]);
     }
@@ -133,4 +161,5 @@ final class TaskController extends AbstractController
 
         return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
     }
+
 }
