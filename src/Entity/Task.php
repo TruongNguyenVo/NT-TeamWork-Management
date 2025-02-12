@@ -4,8 +4,13 @@ namespace App\Entity;
 
 use App\Repository\TaskRepository;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\User;
+use App\Entity\Group;
+use App\Entity\UserRoom;
+use Doctrine\ORM\EntityManagerInterface;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 class Task
@@ -74,6 +79,7 @@ class Task
 
     public function getMember(): ?User
     {
+        
         return $this->member;
     }
 

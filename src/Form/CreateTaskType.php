@@ -18,7 +18,7 @@ use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
-class TaskType extends AbstractType
+class CreateTaskType extends AbstractType
 {
     private RoomRepository $roomRepository;
     private EntityManagerInterface $entityManager;
@@ -43,17 +43,17 @@ class TaskType extends AbstractType
                 'required' => false,
 
             ])
-            ->add('resultContent', TextareaType::class,
-            [
-                'required' => false,
+            // ->add('resultContent', TextareaType::class,
+            // [
+            //     'required' => false,
 
-            ])
-            ->add('resultAttachment', FileType::class,
-            [
-                'mapped' => false,
-                'required' => false,
+            // ])
+            // ->add('resultAttachment', FileType::class,
+            // [
+            //     'mapped' => false,
+            //     'required' => false,
 
-            ])
+            // ])
             ->add('startDate', DateTimeType::class, [
                 'widget' => 'single_text',
                 'data' => new \DateTime('+2 hours'),
@@ -61,10 +61,10 @@ class TaskType extends AbstractType
             ->add('endDate', null, [
                 'widget' => 'single_text',
             ])
-            ->add('finishDate', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('status', TextType::class)
+            // ->add('finishDate', null, [
+            //     'widget' => 'single_text',
+            // ])
+            // ->add('status', TextType::class)
 
             // ->add('leader', EntityType::class, [
             //     'class' => User::class,

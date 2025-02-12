@@ -317,8 +317,16 @@ final class RoomController extends AbstractController
 
     //HAM HIEN THI TRANG THONG TIN TASK
     #[Route(path:'/{id}/task', name:'app_room_task', methods:['GET'])]
-    public function viewTask(Request $request):Response{
-        return $this->render('task/index.html.twig');
+    public function viewTask(Request $request, Room $room):Response{
+
+        $roomId = $request->attributes->get('id');
+
+        // dump('', $room);
+        // die();
+        return $this->render('task/index.html.twig',
+        [
+            'room' => $room,
+        ]);
     }
 
     //HAM XEM OVERVIEW CUA THANH VIEN

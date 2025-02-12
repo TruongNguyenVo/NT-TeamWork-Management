@@ -69,7 +69,7 @@
                     <i class="icon-arrow-right"></i>
                   </li>
                   <li class="nav-item">
-                    <a href="#">Đồ Án 1</a>
+                    <a href="#">{{room.name}}</a>
                   </li>
                   <li class="separator">
                     <i class="icon-arrow-right"></i>
@@ -88,7 +88,7 @@
                             <h4 class="card-title">Thông tin công việc</h4>
                             <a
                               class="btn btn-primary btn-round ms-auto"
-                              href="{{ path ('app_task_new') }}"
+                              href="{{ path ('app_task_new', {'id': room.id}) }}"
                             >
                               <i class="fa fa-plus"></i>
                               Thêm công việc mới
