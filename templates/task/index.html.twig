@@ -112,11 +112,11 @@
                             <tbody>
 
                             {% for task in tasks %}
-                            <tr data-task='{"name": "Viết báo cáo", "assignee": "Trường Nguyên", "start_date": "01/01/2022", "end_date": "01/02/2022", "status": "Không hoàn thành"}' onclick="postData(this)">
+                            <tr data-task-id="{{ task.id }}" onclick="postData(this)">
                                 <td>{{task.name}}</td>
                                 <td>{{task.member.fullName ?? ""}}</td>
-                                <td>{{ task.startDate ? task.startDate|date('H:i (d-m-Y) ') : '' }}</td>
-                                <td>{{ task.endDate ? task.endDate|date('H:i d-m-Y') : '' }}</td>
+                                <td>{{ task.startDate ? task.startDate|date('H:i (d/m/Y) ') : '' }}</td>
+                                <td>{{ task.endDate ? task.endDate|date('H:i d/m/Y') : '' }}</td>
                                 <td>
                                     {{ task.getStatusLabel() }}
                                 </td>
@@ -144,57 +144,80 @@
                 </div>
 
                 
-                <!-- khung hien thi chi tiết công việc -->
-                <div class="col-md-12" id="task-infor" style ="display:none;">
-                  <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex align-items-center">
-                            <h4 class="card-title">Chi tiết thông tin công việc - abc</h4>
-                        </div>
+              <!-- khung hien thi chi tiết công việc -->
+              <div class="col-md-12" id="task-infor" style="display:none;">
+                <div class="card">
+                  <div class="card-header">
+                    <div class="d-flex align-items-center">
+                      <h4 class="card-title">Chi tiết thông tin công việc</h4>
                     </div>
-                    <div class="card-body">
-                      <form class ="row" action="" enctype="multipart/form-data">
-                  <div class="mb-3">
-                    <label for="name" class="form-label">Tên công việc</label>
-                    <input disabled type="text" class="form-control" id="name" name="name" placeholder="Nhập tên công việc">
                   </div>
-                  <div class="mb-3">
-                    <label for="name" class="form-label">Ngày bắt đầu:</label>
-                    <input disabled type="datetime-local" class="form-control" name="startDate">
-                  </div>
-                  <div class="mb-3">
-                    <label for="office" class="form-label">Mô tả</label>
-                    <textarea disabled class="form-control" rows="5" name="description" id=""></textarea>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Tệp công việc hiện có:</label><br>
-                  </div>
+                  <div class="card-body">
+                    <form class="row" action="" enctype="multipart/form-data">
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Tên công việc</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Nhập tên công việc">
+                      </div>
+                      <div class="mb-3">
+                        <label for="startDate" class="form-label">Ngày bắt đầu</label>
+                        <input type="datetime-local" class="form-control" id="startDate" name="startDate">
+                      </div>
+                      <div class="mb-3">
+                        <label for="endDate" class="form-label">Ngày kết thúc</label>
+                        <input type="datetime-local" class="form-control" id="endDate" name="endDate">
+                      </div>
+                      <div class="mb-3">
+                        <label for="finishDate" class="form-label">Ngày hoàn thành</label>
+                        <input type="datetime-local" class="form-control" id="finishDate" name="finishDate">
+                      </div>
 
-                  <hr class="my-4">
+                      <div class="mb-3">
+                        <label for="status" class="form-label">Trạng thái</label>
+                        <select class="form-control" id="status" name="status"  onchange="showUpdateButton()">
+                          <option value="pending">Chờ xử lý</option>
+                          <option value="in_progress">Đang thực hiện</option>
+                          <option value="completed">Hoàn thành</option>
+                          <option value="cancelled">Đã hủy</option>
+                        </select>
+                      </div>
 
-                  <!-- Submission Content Section -->
-                  <div class="col-12">
-                    <h5>Nội dung nộp</h5>
-                    <div class="mb-3">
-                      <label for="submissionDescription" class="form-label">Mô tả nội dung công việc đã nộp</label>
-                      <textarea class="form-control" rows="5" name="submissionDescription" id="submissionDescription"></textarea>
-                    </div>
-                    <div class="mb-3">
-                      <label for="submissionFiles" class="form-label">Nộp tệp đính kèm</label>
-                      <input type="file" name="submissionFiles" class="form-control" multiple>
-                    </div>
-                  </div>
-                  <div class="mb-3-md">
-                    <button type="button" class="btn btn-danger" onclick="hideTaskInfo()">Đóng</button>
-                    <button type="submit" class="btn btn-primary">Lưu</button>
-                    <button type="submit" class="btn btn-success">Nộp</button>
-                  </div>
-              </div>
-  
-            </form>
-                    </div>
+                      <div class="mb-3">
+                        <label for="member" class="form-label">Thành viên</label>
+                        <select class="form-control" id="member" name="member" onchange="showUpdateButton()">
+                          <!-- Các tùy chọn sẽ được thêm bằng JavaScript -->
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label for="content" class="form-label">Mô tả</label>
+                        <textarea class="form-control" rows="5" id="content" name="content"></textarea>
+                      </div>
+                      <div class="mb-3">
+                        <label for="pathAttachment" class="form-label">Tệp đính kèm</label>
+                        <a id="pathAttachment" href="#" class="form-control" target="_blank">Không có tệp đính kèm</a>
+                      </div>
+                      <div class="mb-3">
+                        <label for="pathAttachment" class="form-label">Thay tệp mới</label>
+                        <input type="file" name= "newPathAttachment" class="form-control" target="_blank" onchange="showUpdateButton()">
+                      </div>
+                      <div class="mb-3">
+                        <label for="resultContent" class="form-label">Nội dung kết quả</label>
+                        <textarea disabled class="form-control" rows="5" id="resultContent" name="resultContent"></textarea>
+                      </div>
+                      <div class="mb-3">
+                        <label for="resultAttachment" class="form-label">Tệp kết quả đính kèm</label>
+                        {# <input disabled type="text" class="form-control" id="resultAttachment" name="resultAttachment"> #}
+                        <a id="resultAttachment" href="#" class="form-control" target="_blank">Không có tệp đính kèm</a>
+                      </div>
+
+                      <div class="mb-3-md">
+                        <button type="button" class="btn btn-warning" onclick="hideTaskInfo()">Đóng</button>
+                        <button type="button" class="btn btn-danger">Xóa</button>
+                        <button type="submit" class="btn btn-primary" id="updateButton" disabled onchange="showUpdateButton()">Cập nhật</button>
+                      </div>
+                    </form>
                   </div>
                 </div>
+              </div>
                 
 
               </div>
@@ -204,33 +227,98 @@
 
 {% block javascripts %}
   <script>
-  // post api
-    function postData(row) {
-      // const taskData = JSON.parse(row.getAttribute('data-task'));
-      // fetch('/your-api-endpoint', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify(taskData)
-      // })
-      // .then(response => response.json())
-      // .then(data => {
-      //   console.log('Success:', data);
-      // })
-      // .catch((error) => {
-      //   console.error('Error:', error);
-      // });
-      console.log(row);
-
-      //display detail task frame
-      document.getElementById('task-infor').style.display = 'block';
-      // scroll to comment section
-      document.getElementById('task-infor').scrollIntoView();
-    }
     // Ẩn khung chi tiết công việc
       function hideTaskInfo() {
             document.getElementById('task-infor').style.display = 'none';
         }
+  </script>
+    <script>
+    // post api
+    function postData(row) {
+      const taskId = row.getAttribute('data-task-id');
+      const roomId = {{ room.id }};
+  
+      fetch(`/api/room/${roomId}/task/${taskId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error('Error:', data.error);
+          return;
+        }
+  
+        // Hiển thị thông tin chi tiết của Task trong khung chi tiết công việc
+        document.getElementById('name').value = data.name;
+        document.getElementById('startDate').value = data.startDate;
+        document.getElementById('endDate').value = data.endDate;
+        document.getElementById('finishDate').value = data.finishDate;
+        document.getElementById('status').value = data.status;
+
+
+
+        // Cập nhật các tùy chọn cho trường select member
+      const memberSelect = document.getElementById('member');
+      memberSelect.innerHTML = ''; // Xóa các tùy chọn hiện tại
+
+      // Thêm các tùy chọn từ arrMember
+      data.arrMember.forEach(member => {
+        const option = document.createElement('option');
+        option.value = member.id;
+        option.textContent = member.fullName;
+        memberSelect.appendChild(option);
+      });
+
+      // Đặt giá trị mặc định cho trường select
+      memberSelect.value = data.memberId;
+
+
+
+        document.getElementById('content').value = data.content;
+        let attachmentLink = document.getElementById('pathAttachment');
+        let basePath = window.location.origin + "/";
+        if (data.pathAttachment || data.pathAttachment != "null") {
+          attachmentLink.href = basePath +  data.pathAttachment;
+          attachmentLink.textContent = data.pathAttachment.split('/').pop(); // Hiển thị tên file
+        } else {
+            attachmentLink.textContent = "Không có tệp đính kèm";
+            attachmentLink.href = "#"; // Không có file thì không điều hướng
+        }
+        document.getElementById('resultContent').value = data.resultContent;
+
+        let attachmentResultLink = document.getElementById('resultAttachment');
+        if (data.pathAttachment) {
+          attachmentResultLink.href = basePath +  data.resultAttachment;
+        } else {
+            attachmentResultLink.textContent = "Không có tệp kết quả đính kèm";
+            attachmentResultLink.href = "#";
+        }
+        //document.getElementById('resultAttachment').value = data.resultAttachment;
+
+        //HIEN THI JSON DATA
+        console.log(data);
+
+        // Hiển thị khung chi tiết công việc
+        document.getElementById('task-infor').style.display = 'block';
+        // Cuộn đến khung chi tiết công việc
+        document.getElementById('task-infor').scrollIntoView();
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    }
+  
+    // Ẩn khung chi tiết công việc
+    function hideTaskInfo() {
+      document.getElementById('task-infor').style.display = 'none';
+    }
+      // Hiển thị nút "Cập nhật" khi có thay đổi trong các trường dữ liệu
+  function showUpdateButton() {
+    document.getElementById('updateButton').disabled = false;
+    console.log("hello");
+  }
   </script>
 {% endblock %}

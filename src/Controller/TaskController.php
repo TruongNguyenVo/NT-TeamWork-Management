@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\RoomRepository;
 use App\Repository\UserRoomRepository;
 
@@ -24,11 +25,13 @@ final class TaskController extends AbstractController
     private $entityManager;
     private $roomRepository;
     private $roomUserRepository;
-    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository)
+    private $taskRepository;
+    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository, TaskRepository $taskRepository)
     {
         $this->roomUserRepository = $roomUserRepository;
         $this->roomRepository = $roomRepository;
         $this->entityManager = $entityManager;
+        $this->taskRepository = $taskRepository;
     }
     // #[Route(name: 'app_task_index', methods: ['GET'])]
     // public function index(TaskRepository $taskRepository): Response
@@ -75,6 +78,7 @@ final class TaskController extends AbstractController
                     // dump($member);
                     // die();
                     if ($member) {
+                        $task->setStatus("in_progress");
                         $task->setMember($member);
                     }
                     
@@ -83,7 +87,7 @@ final class TaskController extends AbstractController
                 //LUU FILE NEU CO
                 $file = $form->get("pathAttachment")->getData();
                 if(file_exists($file)) {
-                        $newFilename = uniqid().'.'.$file->guessExtension();
+                        $newFilename = "/uploads/" . uniqid().'.'.$file->guessExtension();
                         $file->move(
                             $this->getParameter('uploads_directory'),
                             $newFilename
@@ -135,7 +139,7 @@ final class TaskController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_task_edit', methods: ['GET', 'POST'])]
+    #[Route('/room/{roomId}/task/{id}/edit', name: 'app_task_edit', methods: ['POST'])]
     public function edit(Request $request, Task $task, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(TaskType::class, $task);
@@ -164,4 +168,52 @@ final class TaskController extends AbstractController
         return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
     }
 
+    //HAM API DE TRA VE THONG TIN CUA TASK DUA VAO ID
+    #[Route('/api/room/{roomId}/task/{id}', name:'api_app_task_show', methods: ['GET'])]
+    public function apiShow(int $id, int $roomId): Response
+    {
+        $room = $this->roomRepository->find($roomId);
+        $task = $this->taskRepository->find($id);
+        if(!$task){
+            dump("Loi o apiShow");
+            die();
+        }
+        $memberInRoom = $this->roomRepository->findUserByRoom($room, "member", "joined");
+
+        $arrMember = [];
+        foreach($memberInRoom as $member){
+            $arrMember[] = [
+                "id" => $member->getUser()->getId(),
+                "fullName" => $member->getUser()->getFullName(),
+            ];
+        }
+        // dump($arrMember);
+        // die();
+
+
+
+        $taskData = [
+            "id"=> $task->getId(),
+            "name" => $task->getName(),
+            'content' => $task->getContent(),
+        'startDate' => $task->getStartDate() ? $task->getStartDate()->format('Y-m-d H:i:s') : null,
+        'endDate' => $task->getEndDate() ? $task->getEndDate()->format('Y-m-d H:i:s') : null,
+        'finishDate' => $task->getFinishDate() ? $task->getFinishDate()->format('Y-m-d H:i:s') : null,
+        'status' => $task->getStatus(),
+        // 'leader' => $task->getLeader() ? $task->getLeader()->getFullName() : null,
+        'member' => $task->getMember() ? $task->getMember()->getFullName() : null,
+        'memberId' => $task->getMember() ? $task->getMember()->getId() : null,
+        'room' => $task->getRoom() ? $task->getRoom()->getName() : null,
+        'pathAttachment' => $task->getPathAttachment(),
+        'resultContent' => $task->getResultContent(),
+        'resultAttachment' => $task->getResultAttachment(),
+        'arrMember' => $arrMember,
+    ];
+    
+        // dump($taskData);
+        // die();
+
+    // Trả về JSON response
+    return new JsonResponse($taskData);
+    }
 }
