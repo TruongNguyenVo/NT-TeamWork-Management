@@ -209,4 +209,15 @@ class Task
 
         return $this;
     }
+    public function getStatusLabel(): string
+    {
+        return match ($this->status) {
+            'pending' => 'Đang chờ',
+            'in_progress' => 'Đang tiến hành',
+            'review' => 'Đang xem xét',
+            'done' => 'Hoàn thành',
+            'cancelled' => 'Đã hủy',
+            default => 'Không xác định',
+        };
+    }
 }

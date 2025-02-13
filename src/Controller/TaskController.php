@@ -104,7 +104,9 @@ final class TaskController extends AbstractController
                 dump("Error in app_task_new", $exception->getMessage());
                 die();
             }
-            return $this->redirectToRoute('app_room_task', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_room_task', [
+                'id' => $room->getId(),
+            ], Response::HTTP_SEE_OTHER);
         }
         // else {
         //     $errors = [];

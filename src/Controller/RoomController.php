@@ -10,6 +10,7 @@ use App\Form\RoomType;
 use App\Form\AttendType;
 use App\Repository\RoomRepository;
 use App\Repository\UserRoomRepository;
+use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,11 +25,13 @@ final class RoomController extends AbstractController
     private $entityManager;
     private $roomRepository;
     private $roomUserRepository;
-    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository)
+    private $taskRepository;
+    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository, TaskRepository $taskRepository)
     {
         $this->roomUserRepository = $roomUserRepository;
         $this->roomRepository = $roomRepository;
         $this->entityManager = $entityManager;
+        $this->taskRepository = $taskRepository;
     }
 
     // #[Route(name: 'app_room_index', methods: ['GET'])]
@@ -321,11 +324,17 @@ final class RoomController extends AbstractController
 
         $roomId = $request->attributes->get('id');
 
+        $tasks = $this->taskRepository->findBy(["room" => $room]);
+
+        // dump($tasks);
+        // die();
+
         // dump('', $room);
         // die();
         return $this->render('task/index.html.twig',
         [
             'room' => $room,
+            'tasks' => $tasks,
         ]);
     }
 
