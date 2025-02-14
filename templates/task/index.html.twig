@@ -1,0 +1,324 @@
+{# {% extends 'base.html.twig' %}
+
+{% block title %}Task index{% endblock %}
+
+{% block body %}
+    <h1>Task index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Content</th>
+                <th>PathAttachment</th>
+                <th>ResultContent</th>
+                <th>ResultAttachment</th>
+                <th>StartDate</th>
+                <th>EndDate</th>
+                <th>FinishDate</th>
+                <th>Status</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for task in tasks %}
+            <tr>
+                <td>{{ task.id }}</td>
+                <td>{{ task.name }}</td>
+                <td>{{ task.content }}</td>
+                <td>{{ task.pathAttachment }}</td>
+                <td>{{ task.resultContent }}</td>
+                <td>{{ task.resultAttachment }}</td>
+                <td>{{ task.startDate ? task.startDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ task.endDate ? task.endDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ task.finishDate ? task.finishDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ task.status }}</td>
+                <td>
+                    <a href="{{ path('app_task_show', {'id': task.id}) }}">show</a>
+                    <a href="{{ path('app_task_edit', {'id': task.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="11">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_task_new') }}">Create new</a>
+{% endblock %} #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Quản lý công việc{% endblock %}
+
+{% block body %}
+        <div class="container">
+            <div class="page-inner">
+              <div class="page-header">
+                <h3 class="fw-bold mb-3">NTTeam</h3>
+                <ul class="breadcrumbs mb-3">
+                  <li class="nav-home">
+                    <a href="#">
+                      <i class="icon-home"></i>
+                    </a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">{{room.name}}</a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">Thông tin công việc</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="row">  
+                <div class="col-md-12" id="task-info">
+                  <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <h4 class="card-title">Thông tin công việc</h4>
+                            <a
+                              class="btn btn-primary btn-round ms-auto"
+                              href="{{ path ('app_task_new', {'id': room.id}) }}"
+                            >
+                              <i class="fa fa-plus"></i>
+                              Thêm công việc mới
+                            </a>
+                          </div>
+                    </div>
+                    <div class="card-body">
+                    <div class="table-responsive">
+                      <table
+                        id="add-row"
+                        class="display table table-striped table-hover"
+                      >
+                          <thead>
+                            <tr>
+                              <th>Công việc</th>
+                              <th>Đảm nhận</th>
+                              <th>Bắt đầu</th>
+                              <th>Kết thúc</th>
+                              <th>Trạng thái</th>
+                            </tr>
+                          </thead>
+                            <tbody>
+
+                            {% for task in tasks %}
+                            <tr data-task-id="{{ task.id }}" onclick="postData(this)">
+                                <td>{{task.name}}</td>
+                                <td>{{task.member.fullName ?? ""}}</td>
+                                <td>{{ task.startDate ? task.startDate|date('H:i (d/m/Y) ') : '' }}</td>
+                                <td>{{ task.endDate ? task.endDate|date('H:i d/m/Y') : '' }}</td>
+                                <td>
+                                    {{ task.getStatusLabel() }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                          <tfoot>
+                            <tr>
+                              <th>Tên công việc</th>
+                              <th>Người đảm nhận</th>
+                              <th>Bắt đầu</th>
+                              <th>Kết thúc</th>
+                              <th>Trạng thái</th>
+                            </tr>
+                          </tfoot>
+                        <tbody>
+
+                        </tbody>
+                        </table>
+
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                
+              <!-- khung hien thi chi tiết công việc -->
+              <div class="col-md-12" id="task-infor" style="display:none;">
+                <div class="card">
+                  <div class="card-header">
+                    <div class="d-flex align-items-center">
+                      <h4 class="card-title">Chi tiết thông tin công việc</h4>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <form class="row" action="" enctype="multipart/form-data">
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Tên công việc</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Nhập tên công việc">
+                      </div>
+                      <div class="mb-3">
+                        <label for="startDate" class="form-label">Ngày bắt đầu</label>
+                        <input type="datetime-local" class="form-control" id="startDate" name="startDate">
+                      </div>
+                      <div class="mb-3">
+                        <label for="endDate" class="form-label">Ngày kết thúc</label>
+                        <input type="datetime-local" class="form-control" id="endDate" name="endDate">
+                      </div>
+                      <div class="mb-3">
+                        <label for="finishDate" class="form-label">Ngày hoàn thành</label>
+                        <input type="datetime-local" class="form-control" id="finishDate" name="finishDate">
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="status" class="form-label">Trạng thái</label>
+                        <select class="form-control" id="status" name="status"  onchange="showUpdateButton()">
+                          <option value="pending">Chờ xử lý</option>
+                          <option value="in_progress">Đang thực hiện</option>
+                          <option value="completed">Hoàn thành</option>
+                          <option value="cancelled">Đã hủy</option>
+                        </select>
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="member" class="form-label">Thành viên</label>
+                        <select class="form-control" id="member" name="member" onchange="showUpdateButton()">
+                          <!-- Các tùy chọn sẽ được thêm bằng JavaScript -->
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label for="content" class="form-label">Mô tả</label>
+                        <textarea class="form-control" rows="5" id="content" name="content"></textarea>
+                      </div>
+                      <div class="mb-3">
+                        <label for="pathAttachment" class="form-label">Tệp đính kèm</label>
+                        <a id="pathAttachment" href="#" class="form-control" target="_blank">Không có tệp đính kèm</a>
+                      </div>
+                      <div class="mb-3">
+                        <label for="pathAttachment" class="form-label">Thay tệp mới</label>
+                        <input type="file" name= "newPathAttachment" class="form-control" target="_blank" onchange="showUpdateButton()">
+                      </div>
+                      <div class="mb-3">
+                        <label for="resultContent" class="form-label">Nội dung kết quả</label>
+                        <textarea disabled class="form-control" rows="5" id="resultContent" name="resultContent"></textarea>
+                      </div>
+                      <div class="mb-3">
+                        <label for="resultAttachment" class="form-label">Tệp kết quả đính kèm</label>
+                        {# <input disabled type="text" class="form-control" id="resultAttachment" name="resultAttachment"> #}
+                        <a id="resultAttachment" href="#" class="form-control" target="_blank">Không có tệp đính kèm</a>
+                      </div>
+
+                      <div class="mb-3-md">
+                        <button type="button" class="btn btn-warning" onclick="hideTaskInfo()">Đóng</button>
+                        <button type="button" class="btn btn-danger">Xóa</button>
+                        <button type="submit" class="btn btn-primary" id="updateButton" disabled onchange="showUpdateButton()">Cập nhật</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+                
+
+              </div>
+            </div>
+          </div>
+{% endblock %}
+
+{% block javascripts %}
+  <script>
+    // Ẩn khung chi tiết công việc
+      function hideTaskInfo() {
+            document.getElementById('task-infor').style.display = 'none';
+        }
+  </script>
+    <script>
+    // post api
+    function postData(row) {
+      const taskId = row.getAttribute('data-task-id');
+      const roomId = {{ room.id }};
+  
+      fetch(`/api/room/${roomId}/task/${taskId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error('Error:', data.error);
+          return;
+        }
+  
+        // Hiển thị thông tin chi tiết của Task trong khung chi tiết công việc
+        document.getElementById('name').value = data.name;
+        document.getElementById('startDate').value = data.startDate;
+        document.getElementById('endDate').value = data.endDate;
+        document.getElementById('finishDate').value = data.finishDate;
+        document.getElementById('status').value = data.status;
+
+
+
+        // Cập nhật các tùy chọn cho trường select member
+      const memberSelect = document.getElementById('member');
+      memberSelect.innerHTML = ''; // Xóa các tùy chọn hiện tại
+
+      // Thêm các tùy chọn từ arrMember
+      data.arrMember.forEach(member => {
+        const option = document.createElement('option');
+        option.value = member.id;
+        option.textContent = member.fullName;
+        memberSelect.appendChild(option);
+      });
+
+      // Đặt giá trị mặc định cho trường select
+      memberSelect.value = data.memberId;
+
+
+
+        document.getElementById('content').value = data.content;
+        let attachmentLink = document.getElementById('pathAttachment');
+        let basePath = window.location.origin + "/";
+        if (data.pathAttachment || data.pathAttachment != "null") {
+          attachmentLink.href = basePath +  data.pathAttachment;
+          attachmentLink.textContent = data.pathAttachment.split('/').pop(); // Hiển thị tên file
+        } else {
+            attachmentLink.textContent = "Không có tệp đính kèm";
+            attachmentLink.href = "#"; // Không có file thì không điều hướng
+        }
+        document.getElementById('resultContent').value = data.resultContent;
+
+        let attachmentResultLink = document.getElementById('resultAttachment');
+        if (data.pathAttachment) {
+          attachmentResultLink.href = basePath +  data.resultAttachment;
+        } else {
+            attachmentResultLink.textContent = "Không có tệp kết quả đính kèm";
+            attachmentResultLink.href = "#";
+        }
+        //document.getElementById('resultAttachment').value = data.resultAttachment;
+
+        //HIEN THI JSON DATA
+        console.log(data);
+
+        // Hiển thị khung chi tiết công việc
+        document.getElementById('task-infor').style.display = 'block';
+        // Cuộn đến khung chi tiết công việc
+        document.getElementById('task-infor').scrollIntoView();
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    }
+  
+    // Ẩn khung chi tiết công việc
+    function hideTaskInfo() {
+      document.getElementById('task-infor').style.display = 'none';
+    }
+      // Hiển thị nút "Cập nhật" khi có thay đổi trong các trường dữ liệu
+  function showUpdateButton() {
+    document.getElementById('updateButton').disabled = false;
+    console.log("hello");
+  }
+  </script>
+{% endblock %}

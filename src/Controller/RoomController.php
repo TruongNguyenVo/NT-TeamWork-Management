@@ -10,6 +10,7 @@ use App\Form\RoomType;
 use App\Form\AttendType;
 use App\Repository\RoomRepository;
 use App\Repository\UserRoomRepository;
+use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,11 +25,13 @@ final class RoomController extends AbstractController
     private $entityManager;
     private $roomRepository;
     private $roomUserRepository;
-    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository)
+    private $taskRepository;
+    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository, TaskRepository $taskRepository)
     {
         $this->roomUserRepository = $roomUserRepository;
         $this->roomRepository = $roomRepository;
         $this->entityManager = $entityManager;
+        $this->taskRepository = $taskRepository;
     }
 
     // #[Route(name: 'app_room_index', methods: ['GET'])]
@@ -206,6 +209,9 @@ final class RoomController extends AbstractController
     #[Route(path:'/{id}/overview', name:'app_room_overview', methods: ['GET'])]
     public function overviewRoom(Request $request): Response
     {
+        // dump('');
+        // die('');
+
         $roomId = $request->attributes->get('id');
         if($roomId !== null){
             $room = $this->roomRepository->find($roomId);
@@ -312,8 +318,28 @@ final class RoomController extends AbstractController
         return $this->redirectToRoute('app_home');
     }
 
+    //HAM HIEN THI TRANG THONG TIN TASK
+    #[Route(path:'/{id}/task', name:'app_room_task', methods:['GET'])]
+    public function viewTask(Request $request, Room $room):Response{
+
+        $roomId = $request->attributes->get('id');
+
+        $tasks = $this->taskRepository->findBy(["room" => $room]);
+
+        // dump($tasks);
+        // die();
+
+        // dump('', $room);
+        // die();
+        return $this->render('task/index.html.twig',
+        [
+            'room' => $room,
+            'tasks' => $tasks,
+        ]);
+    }
+
     //HAM XEM OVERVIEW CUA THANH VIEN
-    #[Route(path:'/{id}/overview/member', name:'app_room_overview', methods: ['GET'])]
+    #[Route(path:'/{id}/overview/member', name:'app_room_overview_member', methods: ['GET'])]
     public function overviewMember(Request $request): Response
     {
         $roomId = $request->attributes->get('id');
@@ -331,4 +357,5 @@ final class RoomController extends AbstractController
             return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
     }
+    
 }

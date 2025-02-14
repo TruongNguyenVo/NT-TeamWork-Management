@@ -48,6 +48,12 @@ services:
 ## Case mismatch between loaded and declared class names: "App\Entity\category" vs "App\Entity\Category".
 *. Review and change type in Enity
 # Tip and Trick
+## Create new branch from `dev`'s branch
+```
+git checkout dev       # Chuyển sang nhánh dev (nếu chưa ở đó)
+git pull origin dev    # Cập nhật nhánh dev mới nhất từ remote
+git checkout -b ten-nhanh-moi  # Tạo nhánh mới từ dev và chuyển sang đó
+```
 ## Dont know how to fix? -> delete cache
 ```
 php bin/console cache:clear
@@ -167,6 +173,7 @@ Date Delivery is not greater than date order
 2. Create Seeder: `php bin/console make:command app:seed-users`
 3. Edit Seeder Command in `src/Command/SeedUsersCommand.php`
 4. Run Seeder: `php bin/console app:seed-users`
+4. *Run Command: `php bin/console TEN_FILE` (bỏ chữ Command)
 ## Encode Password:
 `php bin/console security:encode-password`
 ## View All Route

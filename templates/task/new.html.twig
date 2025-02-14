@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tạo công việc mới{% endblock %}
+
+{% block body %}
+    {# <h1>Create new Task</h1>
+
+    {{ include('task/_form.html.twig') }}
+
+    <a href="{{ path('app_task_index') }}">back to list</a>
+{% endblock %} #}
+<div class="container">
+            <div class="page-inner">
+              <div class="page-header">
+                <h3 class="fw-bold mb-3">Tạo công việc mới</h3>
+                <ul class="breadcrumbs mb-3">
+                  <li class="nav-home">
+                    <a href="#">
+                      <i class="icon-home"></i>
+                    </a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">Thông tin công việc</a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">{{room.name}}</a>
+                  </li>
+                </ul>
+              </div>
+            {# {{ include('task/_form.html.twig') }} #}
+                {# <form class ="row" action="{{ path('app_task_new', {'id': room.id}) }}" method = "POST" enctype="multipart/form-data"> #}
+                {{form_start(form)}}
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Tên công việc</label>
+                    {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder':'Nhập tên công việc cần tạo tại đây'}}) }}
+                    {{ form_errors(form.name) }}
+                  </div>
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Ngày bắt đầu:</label>
+                    {{ form_widget(form.startDate, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.startDate) }}
+                  </div>
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Ngày kết thúc:</label>
+                    {{ form_widget(form.endDate, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.endDate) }}
+                  </div>
+                  <div class="mb-3">
+                    <label for="office" class="form-label">Mô tả</label>
+                    {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows':7 ,'placeholder':'Nhập mô tả về công việc trên tại đây'}}) }}
+                    {{ form_errors(form.content) }}
+                  </div>
+                  <div class="mb-3">
+                    <label for="files" class="form-label">Tải tệp yêu cầu lên</label>
+                    {# <input type="file" name="files" class="form-control"  multiple/> #}
+                    {{ form_widget(form.pathAttachment, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.pathAttachment) }}
+                  </div>
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Người đảm nhận</label>
+                    <select class="form-select" name="member" id="">
+                      <option value= "null">--Chưa phân công--</option>
+                    
+                      {% for member in members %}
+                      <option value= "{{member.user.id}}">{{member.user.fullName}}</option>
+                      {% endfor %}
+
+
+                      
+                    </select>
+                  </div>
+                  <div>
+                  <input type="hidden" name="_csrf_token" value="{{ csrf_token('submit') }}"
+                  <div class="mb-3-md">
+                    <a href="{{ path('app_room_task', {'id':room.id}) }}" class="btn btn-secondary">Đóng</a>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                  </div>
+              </div>
+            {{form_end(form)}}
+
+        </div>
+
+{% endblock %}
