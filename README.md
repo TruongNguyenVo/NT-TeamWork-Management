@@ -48,6 +48,10 @@ services:
 ## Case mismatch between loaded and declared class names: "App\Entity\category" vs "App\Entity\Category".
 *. Review and change type in Enity
 # Tip and Trick
+## How to run Symfony With API
+```
+double click file `run.bat`
+```
 ## Create new branch from `dev`'s branch
 ```
 git checkout dev       # Chuyển sang nhánh dev (nếu chưa ở đó)
