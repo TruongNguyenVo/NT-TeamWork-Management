@@ -53,6 +53,7 @@ services:
 git checkout dev       # Chuyển sang nhánh dev (nếu chưa ở đó)
 git pull origin dev    # Cập nhật nhánh dev mới nhất từ remote
 git checkout -b ten-nhanh-moi  # Tạo nhánh mới từ dev và chuyển sang đó
+git push origin ten-nhanh-moi  
 ```
 ## Dont know how to fix? -> delete cache
 ```
