@@ -280,7 +280,7 @@
         document.getElementById('content').value = data.content;
         let attachmentLink = document.getElementById('pathAttachment');
         let basePath = window.location.origin + "/";
-        if (data.pathAttachment || data.pathAttachment != "null") {
+        if (data.pathAttachment && data.pathAttachment !== "null") {
           attachmentLink.href = basePath +  data.pathAttachment;
           attachmentLink.textContent = data.pathAttachment.split('/').pop(); // Hiển thị tên file
         } else {
@@ -290,8 +290,9 @@
         document.getElementById('resultContent').value = data.resultContent;
 
         let attachmentResultLink = document.getElementById('resultAttachment');
-        if (data.pathAttachment) {
-          attachmentResultLink.href = basePath +  data.resultAttachment;
+        if (data.resultAttachment && data.resultAttachment !== "null") {
+            attachmentResultLink.href = basePath +  data.resultAttachment;
+            attachmentResultLink.textContent = data.resultAttachment.split('/').pop(); // Hiển thị tên file
         } else {
             attachmentResultLink.textContent = "Không có tệp kết quả đính kèm";
             attachmentResultLink.href = "#";

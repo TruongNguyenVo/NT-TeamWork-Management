@@ -139,22 +139,36 @@ final class TaskController extends AbstractController
         ]);
     }
 
+    // #[Route('/room/{roomId}/task/{id}/edit', name: 'app_task_edit', methods: ['POST'])]
+    // public function edit(Request $request, Task $task, EntityManagerInterface $entityManager): Response
+    // {
+    //     $form = $this->createForm(TaskType::class, $task);
+    //     $form->handleRequest($request);
+
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         $entityManager->flush();
+
+    //         return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
+    //     }
+
+    //     return $this->render('task/edit.html.twig', [
+    //         'task' => $task,
+    //         'form' => $form,
+    //     ]);
+    // }
+
     #[Route('/room/{roomId}/task/{id}/edit', name: 'app_task_edit', methods: ['POST'])]
-    public function edit(Request $request, Task $task, EntityManagerInterface $entityManager): Response
+    public function edit(int $roomId, int $id): Response
     {
-        $form = $this->createForm(TaskType::class, $task);
-        $form->handleRequest($request);
+        dump('', $roomId, $id);
+        die();
+        $result = [
+            "message" => "done",
+            "roomId" => $roomId,
+            "id" => $id,
+        ];
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('task/edit.html.twig', [
-            'task' => $task,
-            'form' => $form,
-        ]);
+        return new JsonResponse($result);
     }
 
     #[Route('/{id}', name: 'app_task_delete', methods: ['POST'])]
