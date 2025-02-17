@@ -38,28 +38,36 @@
                     </div>
                     
                     <div class="card-body">
-                      <form id="groupInfoForm">
+                      {{ form_start(form, {'action': path('app_room_overview', {'id': room.id}), 'method': 'POST', 'attr': {'class': 'd-inline', 'id' : 'groupInfoForm',}}) }}
                         <div class="mb-3">
-                          <label for="groupName" class="form-label">Tên nhóm</label>
-                          <input type="text" class="form-control" id="groupName" value="{{room.name}}" readonly>
+                          <label for="name" class="form-label">Tên nhóm</label>
+                          {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                          {{ form_errors(form.name) }}
                         </div>
                         <div class="mb-3">
-                          <label for="groupDescription" class="form-label">Mô tả nhóm</label>
-                          <textarea class="form-control" id="groupDescription" rows="3" readonly>{{room.description}}</textarea>
+                            <label for="office" class="form-label">Mật khẩu</label>
+                            {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.password) }}
                         </div>
-<div class="mb-3">
-  <label for="groupLeader" class="form-label">Trưởng nhóm</label>
-  <select class="form-control" id="groupLeader" disabled>
-    <option value="truongnguyen" selected>Trường Nguyên</option>
-    <option value="nguyentruong">Nguyễn Trường</option>
-    <option value="lethanh">Lê Thành</option>
-    <!-- Add more options as needed -->
-  </select>
-</div>
-                        <button type="button" class="btn btn-primary" onclick="enableEditing()">Chỉnh sửa</button>
+                        <div class="mb-3">
+                          <label for="office" class="form-label">Mô tả</label>
+                          {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows':'5'}}) }}
+                          {{ form_errors(form.description) }}
+                        </div>
+                        <div class="mb-3">
+                          <label for="groupLeader" class="form-label">Trưởng nhóm</label>
+                          <select class="form-control" id="groupLeader" disabled name="groupLeader">
+                          <option value="{{ admin.id }}">{{admin.fullname}}</option>
+                          {% for member in members %}
+                            <option value="{{member.user.id}}">{{member.user.fullname}}</option>
+                            <!-- Add more options as needed -->
+                          {% endfor %}
+                          </select>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="enableEditing()" id="editButton">Chỉnh sửa</button>
                         <button type="submit" class="btn btn-success d-none" id="saveButton">Lưu</button>
                         <button type="button" class="btn btn-danger d-none" id="cancelButton" onclick="cancelEditing()">Hủy</button>
-                      </form>
+                      {{form_end(form)}}
                     </div>
                   </div>
                 </div>
@@ -69,14 +77,13 @@
                     <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Thông tin công việc</h4>
-                            <button
+                            <a
                               class="btn btn-primary btn-round ms-auto"
-                              data-bs-toggle="modal"
-                              data-bs-target="#addRowModal"
+                              href = {{path('app_task_new', {'id': room.id})}}
                             >
                               <i class="fa fa-plus"></i>
                               Thêm công việc mới
-                            </button>
+                            </a>
                             <button
                               class="btn btn-primary btn-round ms-auto"
                             >
@@ -383,8 +390,8 @@
                                     <i class="fa fa-plus"></i>
                                   </button>
                                   </div>
-                                </td> 
-                              </tr>                     
+                                </td>
+                              </tr>
                           </tbody>
                           <tfoot>
                             <tr>
@@ -409,16 +416,20 @@
 {% block javascripts %}
 <script>
   function enableEditing() {
-    document.getElementById('groupName').readOnly = false;
-    document.getElementById('groupDescription').readOnly = false;
+    document.getElementById('editButton').style.display = "none";
+    document.getElementById('room_name').readOnly = false;
+    document.getElementById('room_description').readOnly = false;
+    document.getElementById('room_password').readOnly = false;
     document.getElementById('groupLeader').disabled = false; // Change readOnly to disabled
     document.getElementById('saveButton').classList.remove('d-none');
     document.getElementById('cancelButton').classList.remove('d-none');
   }
 
   function cancelEditing() {
-    document.getElementById('groupName').readOnly = true;
-    document.getElementById('groupDescription').readOnly = true;
+    document.getElementById('editButton').style.display = "block";
+    document.getElementById('room_name').readOnly = true;
+    document.getElementById('room_password').readOnly = true;
+    document.getElementById('room_description').readOnly = true;
     document.getElementById('groupLeader').disabled = true; // Change readOnly to disabled
     document.getElementById('saveButton').classList.add('d-none');
     document.getElementById('cancelButton').classList.add('d-none');

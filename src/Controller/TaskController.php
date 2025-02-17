@@ -245,9 +245,9 @@ final class TaskController extends AbstractController
 
 
         $taskData = [
-            "id"=> $task->getId(),
-            "name" => $task->getName(),
-            'content' => $task->getContent(),
+        "id"=> $task->getId(),
+        "name" => $task->getName(),
+        'content' => $task->getContent(),
         'startDate' => $task->getStartDate() ? $task->getStartDate()->format('Y-m-d H:i:s') : null,
         'endDate' => $task->getEndDate() ? $task->getEndDate()->format('Y-m-d H:i:s') : null,
         'reviewDate' => $task->getReviewDate() ? $task->getReviewDate()->format('Y-m-d H:i:s') : null,

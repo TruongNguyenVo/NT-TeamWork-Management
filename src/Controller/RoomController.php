@@ -8,6 +8,7 @@ use App\Form\ChangeStatusUserRoomType;
 use App\Form\User;
 use App\Form\RoomType;
 use App\Form\AttendType;
+use App\Repository\UserRepository;
 use App\Repository\RoomRepository;
 use App\Repository\UserRoomRepository;
 use App\Repository\TaskRepository;
@@ -26,12 +27,14 @@ final class RoomController extends AbstractController
     private $roomRepository;
     private $roomUserRepository;
     private $taskRepository;
-    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository, TaskRepository $taskRepository)
+    private $userRepository;
+    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository, TaskRepository $taskRepository, UserRepository $userRepository)
     {
         $this->roomUserRepository = $roomUserRepository;
         $this->roomRepository = $roomRepository;
         $this->entityManager = $entityManager;
         $this->taskRepository = $taskRepository;
+        $this->userRepository = $userRepository;
     }
 
     // #[Route(name: 'app_room_index', methods: ['GET'])]
@@ -141,9 +144,10 @@ final class RoomController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+            return $this->redirect($request->headers->get('referer', $this->generateUrl('app_home')));
         }
 
         return $this->render('room/edit.html.twig', [
@@ -202,16 +206,60 @@ final class RoomController extends AbstractController
         return $this->render('room/delete.html.twig', [
             'room' => $room,
             'form' => $form,
-        ]);    
+        ]);
     }
 
     //hien thi trang XEM TONG QUAN
-    #[Route(path:'/{id}/overview', name:'app_room_overview', methods: ['GET'])]
-    public function overviewRoom(Request $request): Response
+    #[Route(path:'/{id}/overview', name:'app_room_overview', methods: ['GET', 'POST'])]
+    public function overviewRoom(Request $request, Room $room, EntityManagerInterface $entityManager): Response
     {
         // dump('');
         // die('');
+        $membersInRoom = $this->roomRepository->findUserByRoom($room,"member", "joined");
+        $adminInRoom = $this->roomRepository->findUserByRoom($room,"admin","joined")[0]->getUser();
 
+        $form = $this->createForm(RoomType::class, $room);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            try{
+                $entityManager->beginTransaction();
+                if($request->get('groupLeader') !== $adminInRoom->getId()){
+
+                    // gan role member cho adminInRoom->getId -> gan role admin cho id request->get(groupLeader)
+                    $adminToMember = $this->roomUserRepository->findOneBy(['room' => $room, 'user' =>$adminInRoom]);
+
+                    $user = $this->userRepository->find($request->get('groupLeader'));
+                    $memberToAdmin = $this->roomUserRepository->findOneBy(['room'=> $room,'user' =>$user]);
+
+                    // dump($adminToMember, $memberToAdmin, $user, $request->get('groupLeader'));
+                    // die();
+
+                    if($memberToAdmin !== null && $adminToMember !==null){
+                        // dump("vao if roi");
+                        // die();
+                        $memberToAdmin->setRole('admin');
+                        $adminToMember->setRole("member");
+                        $entityManager->persist($memberToAdmin);
+                        $entityManager->persist($adminToMember);
+                    }
+                }
+                $entityManager->persist($room);
+                $entityManager->flush();
+
+                $entityManager->commit();
+            }
+            catch(\Exception $e){
+                $entityManager->rollback();
+                dump($e->getMessage());
+                die();
+            }
+            dump("toi commit roi");
+            die();
+            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+
+            
+        }
         $roomId = $request->attributes->get('id');
         if($roomId !== null){
             $room = $this->roomRepository->find($roomId);
@@ -220,8 +268,16 @@ final class RoomController extends AbstractController
                 // die();
                 $isAdmin = $this->roomRepository->isRole($this->getUser(), $room->getId(), "admin");
                 if($isAdmin === true){
+
+                    // dump($membersInRoom, $adminInRoom);
+                    // die();
                     return $this->render('room/overview.html.twig',
-                ['room'=> $room]);
+                [
+                    'room'=> $room,
+                    'members' => $membersInRoom,
+                    'admin' => $adminInRoom,
+                    'form' => $form,
+                ]);
                     // dump($isAdmin, $request);
                     // die();
                 }
