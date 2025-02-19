@@ -100,4 +100,15 @@ class UserRoom
         $this->joinDate = new \DateTime();
         return $this;
     }
+    // joined|pending|left|removed
+    public function getStatusLabel(): string
+    {
+        return match ($this->status) {
+            'joined' => 'Đã tham gia',
+            'pending' => 'Đang chờ được duyệt',
+            'left' => 'Đã rời nhóm',
+            'removed' => 'Đã xóa khỏi nhóm',
+            default => 'Không xác định',
+        };
+    }
 }

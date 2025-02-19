@@ -90,12 +90,21 @@ final class RoomController extends AbstractController
                 $password = $form->get('password')->getData();
                 $id = $form->get('id')->getData();
 
+                // dump($id, $password);
+                // die();
                 $findRoom =  $this->roomRepository->findOneBy(['id' => $id]);
                 $existUserInRoom = $this->roomRepository->existsUserInRoom($this->getUser(), $findRoom);
 
+                // dump($findRoom, $existUserInRoom);
+                // die();
                 // dump($existUserInRoom);
                 // die();
 
+                if($existUserInRoom == true){
+                    return $this->redirectToRoute('app_room_show', [
+                        'id'=> $findRoom->getId(),
+                    ], Response::HTTP_SEE_OTHER);
+                }
                 if($password == $findRoom->getPassword() && $existUserInRoom == false){
                     $userGroup = new UserRoom();
                     $userGroup->setUser($this->getUser());
@@ -219,10 +228,31 @@ final class RoomController extends AbstractController
         $adminInRoom = $this->roomRepository->findUserByRoom($room,"admin","joined")[0]->getUser();
 
         $tasks = $this->taskRepository->findBy(["room" => $room]);
-        $memberWithTask = $this->roomRepository->findUserByRoom($room, "member", "joined");
 
-        dump($tasks, $memberWithTask);
-        die();
+        $memberWithTasks =[];
+        //gan tat ca cac thanh vien voi nhiem vu = 0
+        // Khởi tạo tất cả member với số task = 0
+        foreach ($membersInRoom as $member) {
+            $memberWithTasks[$member->getUser()->getId()] = [
+                'member' => $member, // Lưu luôn đối tượng Member
+                'taskCount' => 0
+            ];
+        }
+        // dump($memberWithTasks);
+        // die();
+        
+        // Đếm số lượng task theo member
+        foreach ($tasks as $task) {
+            $member = $task->getMember();
+            if ($member) {
+                $memberWithTasks[$member->getId()]['taskCount']++;
+                // dump($member);
+
+            }
+        }
+
+        // dump($tasks, $memberWithTasks, $membersInRoom);
+        // die();
 
         $form = $this->createForm(RoomType::class, $room);
         $form->handleRequest($request);
@@ -292,7 +322,7 @@ final class RoomController extends AbstractController
                     'admin' => $adminInRoom,
                     'form' => $form,
                     'tasks' => $tasks,
-                    'memberWithTask' =>$memberWithTask,
+                    'memberWithTasks' =>$memberWithTasks, // nay se tra ve ten cua thanh vien va so luong nhiem vu
                 ]);
                     // dump($isAdmin, $request);
                     // die();
@@ -315,7 +345,7 @@ final class RoomController extends AbstractController
     }
 
     //thi thi trang THONG TIN THANH VIEN
-    #[Route(path:'/{id}/member', name:'app_room_member', methods: ['GET'])]
+    #[Route(path:'/{id}/member', name:'app_room_member', methods: ['GET', 'POST'])]
     public function viewMember(Request $request): Response
     {
         // dump($request);
@@ -330,7 +360,7 @@ final class RoomController extends AbstractController
                 $isAdmin = $this->roomRepository->isRole($this->getUser(), $room->getId(), "admin");
                 if($isAdmin === true){
                     $memberInRoom = $this->roomRepository->findUserByRoom($room->getId(),);
-                    // dump($memberInRoom);
+                    // dump($memberInRoom[2]->getUser()->getMember());
                     // die();
 
                     return $this->render('room/member.html.twig', [

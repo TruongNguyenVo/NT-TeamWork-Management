@@ -77,19 +77,20 @@
                     <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Thông tin công việc</h4>
-                            <a
+                            {# <a
                               class="btn btn-primary btn-round ms-auto"
                               href = {{path('app_task_new', {'id': room.id})}}
                             >
                               <i class="fa fa-plus"></i>
                               Thêm công việc mới
-                            </a>
-                            <button
+                            </a> #}
+                            <a
                               class="btn btn-primary btn-round ms-auto"
+                              href = {{path('app_room_task', {'id': room.id})}}
                             >
                               <i class="fa fa-eye"></i>
                               Xem thông tin công việc
-                            </button>
+                            </a>
                             
                           </div>
                     </div>
@@ -107,7 +108,7 @@
                               <th>Bắt đầu</th>
                               <th>Kết thúc</th>
                               <th>Trạng thái</th>
-                              <th>Thao tác</th>
+                              {# <th>Thao tác</th> #}
                             </tr>
                           </thead>
                             <tbody>
@@ -120,7 +121,7 @@
                                 <td>
                                     {{task.statusLabel}}
                                 </td>
-                                <td>
+                                {# <td>
                                     <div class="form-button-action">
                                         <button type="button" data-bs-toggle="tooltip" title="Chỉnh sửa thông tin" class="btn btn-link btn-primary" data-original-title="Edit Task">
                                           <i class="fa fa-edit"></i>
@@ -132,7 +133,7 @@
                                           <i class="fa fa-times"></i>
                                           </button>
                                     </div>
-                                </td>
+                                </td> #}
                             </tr>
                             {% endfor %}
 
@@ -143,7 +144,7 @@
                               <th>Bắt đầu</th>
                               <th>Kết thúc</th>
                               <th>Trạng thái</th>
-                              <th>Thao tác</th>
+                              {# <th>Thao tác</th> #}
                             </tr>
                           </tfoot>
                         <tbody>
@@ -160,12 +161,13 @@
                     <div class="card-header">
                       <div class="d-flex align-items-center">
                         <h4 class="card-title">Thông tin thành viên</h4>
-                        <button
+                        <a
                               class="btn btn-primary btn-round ms-auto"
+                              href= {{path('app_room_member', {'id': room.id})}}
                             >
                               <i class="fa fa-eye"></i>
                               Xem thông tin thành viên
-                            </button>
+                            </a>
                       </div>
                     </div>
                     <div class="card-body">
@@ -180,20 +182,19 @@
                             <tr>
                               <th>Tên thành viên</th>
                               <th>Ngày tham gia</th>
-                              <th>Trạng thái</th>
-                              <th style="width: 10%">Thao tác</th>
+                              <th>Số công việc đang tiếp nhận</th>
+                              {# <th style="width: 10%">Thao tác</th> #}
                             </tr>
                           </thead>
                           <tbody>
-                          {% for member in memberWithTask %}
+                          {% for memberData in memberWithTasks %}
+                            
                             <tr>
-                              <td>{{member.user.fullName|default('')}}</td>
-                              <td>{{member.joinDate|date('d-m-Y H:i:s')}}</td>
-                              <td>
-                                Đang nhận công việc
-                              </td>
+                              <td>{{memberData.member.user.getFullName()}}</td>
+                              <td>{{memberData.member.joinDate|date('d-m-Y H:i:s')}}</td>
+                              <td>{{memberData.taskCount}}</td>
                               
-                              <td>
+                              {# <td>
                                 <div class="form-button-action">
                                   <button
                                     type="button"
@@ -213,17 +214,18 @@
                                     <i class="fa fa-times"></i>
                                   </button>
                                 </div>
-                              </td>  
+                              </td> #}
                               
                             </tr>
+                            
                           {% endfor %}
                           </tbody>
                           <tfoot>
                             <tr>
                               <th>Tên thành viên</th>
                               <th>Ngày tham gia</th>
-                              <th>Trạng thái</th>
-                              <th>Thao tác</th>
+                              <th>Số công việc đang tiếp nhận</th>
+                              {# <th>Thao tác</th> #}
                             </tr>
                           </tfoot>
                           <tbody>

@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\CreateTaskType;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,12 +27,14 @@ final class TaskController extends AbstractController
     private $roomRepository;
     private $roomUserRepository;
     private $taskRepository;
-    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository, TaskRepository $taskRepository)
+    private $userRepository;
+    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository, TaskRepository $taskRepository, UserRepository $userRepository)
     {
         $this->roomUserRepository = $roomUserRepository;
         $this->roomRepository = $roomRepository;
         $this->entityManager = $entityManager;
         $this->taskRepository = $taskRepository;
+        $this->userRepository = $userRepository;
     }
     // #[Route(name: 'app_task_index', methods: ['GET'])]
     // public function index(TaskRepository $taskRepository): Response
@@ -83,7 +86,7 @@ final class TaskController extends AbstractController
                     }
                     
                 }
-
+ 
                 //LUU FILE NEU CO
                 $file = $form->get("pathAttachment")->getData();
                 if(file_exists($file)) {
@@ -268,5 +271,27 @@ final class TaskController extends AbstractController
 
     // Trả về JSON response
     return new JsonResponse($taskData);
+    }
+
+    //HAM API DE TRA VE THONG TIN CUA TAT CA CAC TASK CUA 1 USER O 1 PHONG DUA VAO ID
+    #[Route(path:'/api/room/{roomId}/member/{id}/tasks', name:'api_app_task_by_member', methods: ['POST'])]
+    public function apiShowAllTaskByUserIdInRoom(int $roomId, int $id)
+    {
+        $room = $this->roomRepository->find($roomId);
+        $user = $this->userRepository->find($id);
+        $tasks = $this->taskRepository->findBy(['room' => $room, 'member' => $user]);
+
+        $dataRespond =[];
+
+        foreach ($tasks as $task) {
+            $dataRespond[] = [
+                'name' => $task->getName(),
+                'startDate' => $task->getStartDate()->format('Y-m-d H:i:s'),
+                'endDate' => $task->getEndDate()? $task->getEndDate()->format('Y-m-d H:i:s') : "",
+                'finishDate' => $task->getFinishDate() ? $task->getFinishDate()->format('Y-m-d H:i:s') : "",
+                'status' => $task->getStatusLabel(),
+            ];
+        }
+        return new JsonResponse($dataRespond);
     }
 }

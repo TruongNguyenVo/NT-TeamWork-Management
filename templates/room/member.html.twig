@@ -55,11 +55,13 @@
                           </thead>
                           <tbody>
                         {% for member in members %}
-                            <tr data-task='{"name": "Viết báo cáo", "assignee": "Trường Nguyên", "start_date": "01/01/2022", "end_date": "01/02/2022", "status": "Không hoàn thành"}' onclick="postData(this)">
+                            <tr data-member-id="{{ member.user.id }}" onclick="postData(this)">
                               <td>{{member.user.lastname}} {{member.user.firstname}}</td>
-                              <td>{{ member.joinDate ? member.joinDate|date('Y-m-d') : 'Chưa được duyệt' }}</td>
                               <td>
-                                Đang nhận công việc
+                                    {{ member.joinDate ? member.joinDate|date('d-m-Y') : 'Chưa được duyệt' }} 
+                              </td>
+                              <td>
+                                {{member.statusLabel}}
                               </td>
                               <td>
                                 <div class="form-button-action">
@@ -72,13 +74,13 @@
                                     <i class="fa fa-eye"></i>
                                   </button>
                                   {% if member.status == 'pending' %}
-              <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
-              <input type="hidden" name="userId" value="{{ member.user.id }}">
-              <input type="hidden" name="status" value="joined">
-              <button type="submit" data-bs-toggle="tooltip" title="Duyệt thành viên" class="btn btn-link btn-success">
-              <i class="fa fa-check"></i>
-            </button>
-            </form>
+                                  <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
+                                  <input type="hidden" name="userId" value="{{ member.user.id }}">
+                                  <input type="hidden" name="status" value="joined">
+                                  <button type="submit" data-bs-toggle="tooltip" title="Duyệt thành viên" class="btn btn-link btn-success">
+                                  <i class="fa fa-check"></i>
+                                </button>
+                                </form>
                                   {% endif %}
                                   {% if member.status == 'joined' %}
                                   <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
@@ -130,7 +132,7 @@
                 </div>
 
                 <!-- khung hien thi thanh vien -->
-                <div class="col-md-12" id="member-detail">
+                <div class="col-md-12" id="member-detail" style="display:none">
                   <div class="card">
                     <div class="card-header">                        
                         <div class="member-info mb-4">
@@ -155,10 +157,11 @@
                             <tr>
                               
                               <th>Tên công việc</th>
-                              <th>Ngày nhận</th>
+                              <th>Ngày tiếp nhận</th>
+                              <th>Ngày kết thúc</th>
+                              <th>Ngày hoàn thành</th>
                               <th>Trạng thái</th>
-                              <th>Thao tác</th>
-                             
+                            
                             </tr>
                           </thead>
                             <tbody>
@@ -174,9 +177,10 @@
                             <tr>
                               
                               <th>Tên công việc</th>
-                              <th>Ngày nhận</th>
+                              <th>Ngày tiếp nhận</th>
+                              <th>Ngày kết thúc</th>
+                              <th>Ngày hoàn thành</th>
                               <th>Trạng thái</th>
-                              <th>Thao tác</th>
 
                             </tr>
                           </tfoot>
@@ -197,23 +201,25 @@
 {% block javascripts %}
 <script>
   // post api
-   function postData(row) {
-    // const taskData = JSON.parse(row.getAttribute('data-task'));
-    // fetch('/your-api-endpoint', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify(taskData)
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //   console.log('Success:', data);
-    // })
-    // .catch((error) => {
-    //   console.error('Error:', error);
-    // });
-    console.log(row);
+  function postData(row) {
+    const memberId = row.getAttribute('data-member-id');
+    const roomId = {{ room.id }};
+    
+    fetch(`/api/room/${roomId}/member/${memberId}/tasks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error('Error:', data.error);
+          return;
+        }
+        console.log(data);
+        })
+    
     // scroll to comment section
     document.getElementById('member-detail').scrollIntoView();
   }
