@@ -7,7 +7,8 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 1. Install Scoop: `Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression`
 2. Install Symfony: `scoop install symfony-cli`
-3. Setting Database in .env file with database type is `mysql` and database's name is `trainingproject`
+3. Create Symfony Project: `symfony new --webapp my_project`
+4. Setting Database in .env file with database type is `mysql` and database's name is `trainingproject`
 ```
 DATABASE_URL="mysql://root:@127.0.0.1:3306/trainingproject?serverVersion=mariadb-10.4.11&charset=utf8mb4"
 ```
