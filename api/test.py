@@ -10,7 +10,7 @@ headers = {
 data = {
     "contents": [{
     "parts":[
-        {"text": "List 5 popular cookie recipes"}
+        {"text": "List 5 day holidays in VietNam"}
         ]
     }],
     "generationConfig": {
@@ -20,7 +20,8 @@ data = {
         "items": {
             "type": "OBJECT",
             "properties": {
-            "recipe_name": {"type":"STRING"},
+            "holiday_name": {"type":"STRING"},
+            "holiday_date": {"type": "STRING", 'format': "date-time"}
             }
         }
         }
