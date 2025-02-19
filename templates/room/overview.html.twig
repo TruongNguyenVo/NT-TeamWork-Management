@@ -111,13 +111,14 @@
                             </tr>
                           </thead>
                             <tbody>
+                            {% for task in tasks %}
                               <tr>
-                                <td>Viết báo cáo</td>
-                                <td>Trường Nguyên</td>
-                                <td>01/01/2022</td>
-                                <td>01/02/2022</td>
+                                <td>{{task.name}}</td>
+                                <td>{{task.member.fullName|default('')}}</td>
+                                <td>{{ task.startDate|date('d-m-Y H:i:s') }}</td>
+                                <td>{{ task.endDate|date('d-m-Y H:i:s') }}</td>
                                 <td>
-                                    Không hoàn thành
+                                    {{task.statusLabel}}
                                 </td>
                                 <td>
                                     <div class="form-button-action">
@@ -133,121 +134,7 @@
                                     </div>
                                 </td>
                             </tr>
-                              <tr>
-                                <td>Viết báo cáo</td>
-                                <td>Trường Nguyên</td>
-                                <td>01/01/2022</td>
-                                <td>01/02/2022</td>
-                                <td>
-                                    Hoàn thành
-                                </td>
-                                <td>
-                                    <div class="form-button-action">
-                                        <button
-                                        type="button"
-                                        data-bs-toggle="tooltip"
-                                        title="Xem chi tiết"
-                                        class="btn btn-link btn-primary">
-                                            <i class="fa fa-eye"></i>
-                                        </button>
-                                        <button type="button" data-bs-toggle="tooltip" title="Hoàn tác thành đang xử lý" class="btn btn-link btn-warning">
-                                        <i class="fa fa-undo"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Viết báo cáo</td>
-                                <td>Trường Nguyên</td>
-                                <td>01/01/2022</td>
-                                <td>01/02/2022</td>
-                                <td>
-                                    Đang xử lý
-                                </td>
-                                <td>
-                                    <div class="form-button-action">
-                                        <button
-                                        type="button"
-                                        data-bs-toggle="tooltip"
-                                        title="Xem chi tiết"
-                                        class="btn btn-link btn-primary">
-                                            <i class="fa fa-eye"></i>
-                                        </button>
-                                        
-                                        <button type="button" data-bs-toggle="tooltip" title="Chỉnh sửa thông tin" class="btn btn-link btn-primary" data-original-title="Edit Task">
-                                        <i class="fa fa-edit"></i>
-                                        </button>
-
-                                        <button type="button" data-bs-toggle="tooltip" title="Xóa công việc" class="btn btn-link btn-danger" data-original-title="Remove">
-                                        <i class="fa fa-times"></i>
-                                        </button>
-                                    </div>
-
-                            </tr>
-                            <tr>
-                              <td>Viết báo cáo</td>
-                              <td>Trường Nguyên</td>
-                              <td>01/01/2022</td>
-                              <td>01/02/2022</td>
-                              <td>
-                                  Đang nhận xét
-                              </td>
-                              <td>
-                                  <div class="form-button-action">
-                                      <button
-                                      type="button"
-                                      data-bs-toggle="tooltip"
-                                      title="Xem chi tiết"
-                                      class="btn btn-link btn-primary">
-                                          <i class="fa fa-eye"></i>
-                                      </button>
-
-                                      <button type="button" data-bs-toggle="tooltip" title="Chỉnh sửa thông tin" class="btn btn-link btn-primary" data-original-title="Edit Task">
-                                      <i class="fa fa-edit"></i>
-                                      </button>
-
-                                      <button
-                                      type="button"
-                                      data-bs-toggle="tooltip"
-                                      title="Duyệt công việc"
-                                      class="btn btn-link btn-success">
-                                          <i class="fa fa-check"></i>
-                                      </button>
-
-                                  </div>
-
-                          </tr>
-
-                          <tr>
-                            <td>Viết báo cáo</td>
-                            <td>Trường Nguyên</td>
-                            <td>01/01/2022</td>
-                            <td>01/02/2022</td>
-                            <td>
-                                Chưa giao
-                            </td>
-                            <td>
-                                <div class="form-button-action">
-                                    
-                                    <button type="button" data-bs-toggle="tooltip" title="Chỉnh sửa thông tin" class="btn btn-link btn-primary" data-original-title="Edit Task">
-                                    <i class="fa fa-edit"></i>
-                                    </button>
-
-                                    <button type="button" data-bs-toggle="tooltip" title="Thêm người tiếp nhận" class="btn btn-link btn-primary" data-original-title="Edit Task">
-                                      <i class="fa fa-user-plus"></i>
-                                      </button>
-                                    
-                                    <button
-                                    type="button"
-                                    data-bs-toggle="tooltip"
-                                    title="Xóa công việc"
-                                    class="btn btn-link btn-danger">
-                                        <i class="fa fa-times"></i>
-                                    </button>
-
-                                </div>
-
-                        </tr>
+                            {% endfor %}
 
                           <tfoot>
                             <tr>
@@ -298,12 +185,14 @@
                             </tr>
                           </thead>
                           <tbody>
+                          {% for member in memberWithTask %}
                             <tr>
-                              <td>Trường Nguyên</td>
-                              <td>01/01/2022</td>
+                              <td>{{member.user.fullName|default('')}}</td>
+                              <td>{{member.joinDate|date('d-m-Y H:i:s')}}</td>
                               <td>
                                 Đang nhận công việc
                               </td>
+                              
                               <td>
                                 <div class="form-button-action">
                                   <button
@@ -326,72 +215,8 @@
                                 </div>
                               </td>  
                               
-                              </tr>
-                              <tr>
-                                <td>Trường Nguyên</td>
-                                <td></td>
-                                <td>
-                                  Đang chờ duyệt
-                                </td>
-                                <td>
-                                  <div class="form-button-action">
-
-                                    <button
-                                      type="button"
-                                      data-bs-toggle="tooltip"
-                                      title="Xem chi tiết thành viên"
-                                      class="btn btn-link btn-primary"
-                                    >
-                                      <i class="fa fa-eye"></i>
-                                    </button>
-                                    <button
-                                    type="button"
-                                    data-bs-toggle="tooltip"
-                                    title="Duyệt thành viên"
-                                    class="btn btn-link btn-success"
-                                  >
-                                    <i class="fa fa-check"></i>
-                                  </button>
-                                    <button
-                                      type="button"
-                                      data-bs-toggle="tooltip"
-                                      title="Không duyệt"
-                                      class="btn btn-link btn-warning"
-                                      data-original-title="Remove"
-                                    >
-                                      <i class="fa fa-ban"></i>
-                                    </button>
-                                  </div>
-                                </td> 
-                              </tr> 
-                              <tr>
-                                <td>Trường Nguyên</td>
-                                <td>01/01/2025</td>
-                                <td>
-                                  Chưa có việc
-                                </td>
-                                <td>
-                                  <div class="form-button-action">
-
-                                    <button
-                                      type="button"
-                                      data-bs-toggle="tooltip"
-                                      title="Xem chi tiết thành viên"
-                                      class="btn btn-link btn-primary"
-                                    >
-                                      <i class="fa fa-eye"></i>
-                                    </button>
-                                    <button
-                                    type="button"
-                                    data-bs-toggle="tooltip"
-                                    title="Thêm công việc cho thành viên"
-                                    class="btn btn-link btn-secondary"
-                                  >
-                                    <i class="fa fa-plus"></i>
-                                  </button>
-                                  </div>
-                                </td>
-                              </tr>
+                            </tr>
+                          {% endfor %}
                           </tbody>
                           <tfoot>
                             <tr>

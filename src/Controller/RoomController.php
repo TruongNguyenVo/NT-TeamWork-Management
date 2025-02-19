@@ -218,13 +218,24 @@ final class RoomController extends AbstractController
         $membersInRoom = $this->roomRepository->findUserByRoom($room,"member", "joined");
         $adminInRoom = $this->roomRepository->findUserByRoom($room,"admin","joined")[0]->getUser();
 
+        $tasks = $this->taskRepository->findBy(["room" => $room]);
+        $memberWithTask = $this->roomRepository->findUserByRoom($room, "member", "joined");
+
+        dump($tasks, $memberWithTask);
+        die();
+
         $form = $this->createForm(RoomType::class, $room);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             
             try{
                 $entityManager->beginTransaction();
-                if($request->get('groupLeader') !== $adminInRoom->getId()){
+                    // dump($request->get('groupLeader'), $adminInRoom->getId());
+                    // die();
+
+                if((int)$request->get('groupLeader') !== $adminInRoom->getId()){
+                    // dump("vao if roi");
+                    // die();
 
                     // gan role member cho adminInRoom->getId -> gan role admin cho id request->get(groupLeader)
                     $adminToMember = $this->roomUserRepository->findOneBy(['room' => $room, 'user' =>$adminInRoom]);
@@ -244,6 +255,9 @@ final class RoomController extends AbstractController
                         $entityManager->persist($adminToMember);
                     }
                 }
+                else{
+                    return $this->redirect($request->headers->get('referer', $this->generateUrl('app_home')));
+                }
                 $entityManager->persist($room);
                 $entityManager->flush();
 
@@ -254,8 +268,8 @@ final class RoomController extends AbstractController
                 dump($e->getMessage());
                 die();
             }
-            dump("toi commit roi");
-            die();
+            // dump("toi commit roi");
+            // die();
             return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
 
             
@@ -277,6 +291,8 @@ final class RoomController extends AbstractController
                     'members' => $membersInRoom,
                     'admin' => $adminInRoom,
                     'form' => $form,
+                    'tasks' => $tasks,
+                    'memberWithTask' =>$memberWithTask,
                 ]);
                     // dump($isAdmin, $request);
                     // die();
