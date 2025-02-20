@@ -292,6 +292,14 @@ final class TaskController extends AbstractController
                 'status' => $task->getStatusLabel(),
             ];
         }
-        return new JsonResponse($dataRespond);
+        $userData = [
+            'fullName' => $user->getFullName(),
+        ];
+
+        $response = [
+            'user' => $userData,
+            'tasks' => $dataRespond
+        ];
+        return new JsonResponse($response);
     }
 }

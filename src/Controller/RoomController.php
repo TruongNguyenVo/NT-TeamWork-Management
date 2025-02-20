@@ -50,6 +50,11 @@ final class RoomController extends AbstractController
     {
         
         $room = new Room();
+
+        $user = $this->getUser();
+
+        
+
         $form = $this->createForm(AttendType::class, $room);
         $form->handleRequest($request);
 
@@ -59,13 +64,15 @@ final class RoomController extends AbstractController
             
 
             // neu tao phong thanh cong thi chuyen ve trang danh sach phong
-            if($this->roomRepository->createRoom($room, $this->getUser())){
-                return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
-            }
-            else{
-                //neu tao phong that bai thi chuyen ve trang tao phong
-                return $this->redirectToRoute('app_room_new',[],  Response::HTTP_SEE_OTHER);
-            }
+            // if(
+            $this->roomRepository->createRoom($room, $this->getUser());
+                // )){
+                // return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+            // }
+            // else{
+            //     //neu tao phong that bai thi chuyen ve trang tao phong
+            //     return $this->redirectToRoute('app_room_new',[],  Response::HTTP_SEE_OTHER);
+            // }
             
             
         }
@@ -73,6 +80,7 @@ final class RoomController extends AbstractController
         return $this->render('room/new.html.twig', [
             'room' => $room,
             'form' => $form,
+            
         ]);
     }
     #[Route('/attend', name: 'app_room_attend', methods: ['GET', 'POST'])]
@@ -82,6 +90,16 @@ final class RoomController extends AbstractController
         // dump($request->request->all());
         // die();
         $room = new Room();
+
+        $user = $this->getUser();
+        $pendingRoom = $this->roomRepository->findAllByRole('member',$user,'pending');
+        // dump($pendingRoom);
+        // foreach($pendingRoom as $room){
+        //     dump($room[0]);
+        // }
+        // die();
+
+
         $form = $this->createForm(AttendType::class, $room);
         if($request->getMethod() == 'POST'){
         $form->handleRequest($request);
@@ -93,19 +111,27 @@ final class RoomController extends AbstractController
                 // dump($id, $password);
                 // die();
                 $findRoom =  $this->roomRepository->findOneBy(['id' => $id]);
-                $existUserInRoom = $this->roomRepository->existsUserInRoom($this->getUser(), $findRoom);
+                if(!$findRoom){
+                    $this->addFlash('error','ID phòng không đúng. Vui lòng kiểm tra lại.');
+                    return $this->redirectToRoute('app_room_attend');
+                }
+                $existUserInRoomWithJoined = $this->roomRepository->existsUserInRoom($this->getUser(), $findRoom, "joined");
 
                 // dump($findRoom, $existUserInRoom);
                 // die();
                 // dump($existUserInRoom);
                 // die();
 
-                if($existUserInRoom == true){
+                if($existUserInRoomWithJoined == true){
                     return $this->redirectToRoute('app_room_show', [
                         'id'=> $findRoom->getId(),
                     ], Response::HTTP_SEE_OTHER);
                 }
-                if($password == $findRoom->getPassword() && $existUserInRoom == false){
+
+                $existUserInRoomWithPending =$this->roomRepository->existsUserInRoom($this->getUser(), $findRoom, "pending");
+                
+
+                if($password == $findRoom->getPassword() && $existUserInRoomWithJoined == false){
                     $userGroup = new UserRoom();
                     $userGroup->setUser($this->getUser());
                     $userGroup->setRoom($findRoom);
@@ -116,9 +142,19 @@ final class RoomController extends AbstractController
 
                     // dump("toi post attend roi", $request, $password, $findRoom);
                     // die();
-                    return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+                    $this->addFlash('success', 'Bạn đã yêu cầu tham gia nhóm, hãy đợi trưởng nhóm duyệt.');
+
+                    return $this->redirectToRoute('app_room_attend');
+                }
+                if($existUserInRoomWithPending == true){
+                    
+                    $this->addFlash('error', 'Bạn đã yêu cầu tham gia nhóm rồi, hãy đợi trưởng nhóm duyệt.');
+
+                    return $this->redirectToRoute('app_room_attend');
                 }
                 else{
+                    $this->addFlash('error', 'Mật khẩu không chính xác. Vui lòng kiểm tra lại.');
+
                     return $this->redirectToRoute('app_room_attend', [], Response::HTTP_SEE_OTHER);
                 }
                 
@@ -129,6 +165,7 @@ final class RoomController extends AbstractController
         return $this->render('room/attend.html.twig', [
             'room' => $room,
             'form' => $form,
+            'pendingRoom' => $pendingRoom,
         ]);
     }
 
@@ -222,10 +259,21 @@ final class RoomController extends AbstractController
     #[Route(path:'/{id}/overview', name:'app_room_overview', methods: ['GET', 'POST'])]
     public function overviewRoom(Request $request, Room $room, EntityManagerInterface $entityManager): Response
     {
-        // dump('');
+        // dump($room);
         // die('');
+        if($room == null){
+            $room = $this->roomRepository->find($request->attributes->get('id'));
+            // dump($room);
+            // die();
+        }
         $membersInRoom = $this->roomRepository->findUserByRoom($room,"member", "joined");
-        $adminInRoom = $this->roomRepository->findUserByRoom($room,"admin","joined")[0]->getUser();
+        $temp = $this->roomRepository->findUserByRoom($room, "admin","joined");
+        
+        // dump($temp, );
+        // die();
+
+        $adminInRoom = $temp[0]->getUser();
+        
 
         $tasks = $this->taskRepository->findBy(["room" => $room]);
 
@@ -396,10 +444,15 @@ final class RoomController extends AbstractController
             'user' => $userId,
             'room' => $roomId,
         ]);
+        // dump($roomUser);
+        // die();
+
         if ($roomUser) {
             // Cập nhật trạng thái
             if( $status === 'deny')
             {
+                // dump();
+                // die();
                 $this->entityManager->remove($roomUser);
             }
             else{
