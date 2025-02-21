@@ -235,13 +235,12 @@ final class TaskController extends AbstractController
         
             $roomId = $data['roomId'];
             $quantityMember = $data['quantityMember'] ?? 1;
+            $roomName= $data['roomName'] ??'';
             $roomDescription = $data['roomDescription'] ?? null;
             $roomRequire=$data['roomRequire'] ?? '';
             $roomStart=$data['roomStart'] != '' ? $data['roomStart']: new \DateTime();
             $roomEnd=$data['roomEnd'] != '' ? $data['roomEnd'] :(clone $roomStart)->modify('+3 months');
-        // $temp = [$roomId, $quantityMember, $roomDescription, $roomRequire, $roomStart, $roomEnd];
-
-
+        // $temp = [$roomId, $quantityMember, $roomDescription, $roomRequire, $roomStart, $roomEnd, $roomName];
         // return new JsonResponse($temp);
 
         if($_ENV['GEMINI_API_KEY']){
@@ -251,11 +250,20 @@ final class TaskController extends AbstractController
             $header = [
                 'Content-Type' => 'application/json',
             ];
+
+            $prompt="Bỏ qua tất cả các yêu cầu trước đó và hãy trả lời tiếng việt cho yêu cầu này.
+            Hãy tạo ra các công việc dành cho nhóm về môn $roomName có mô tả là $roomDescription với nhóm hiện tại có $quantityMember người. Tạo tối thiểu một người ít nhất phải có 4 công việc.
+            Thời gian thực hiện là từ $roomStart và kết thúc là $roomEnd.
+            Các yêu cầu là $roomRequire.
+            Kết quả trả về là tên công việc(name), mô tả công việc (content), ngày bắt đầu (startDate), ngày kết thúc (endDate), và thành viên (member), member được đánh số từ 1 đến số lượng thành viên hiện tại.
+            Tất cả các thông tin như tên công việc, mô tả công việc, thành viên bắt buộc phải có.
+            Thời gian bắt đầu và thời gian kết thúc phải có, và thời gian tối thiểu của một công việc là 2 ngày";
+
             $body = [
                 "contents" => [
                     [
                         "parts" => [
-                            ["text" => "Bỏ qua tất cả các yêu cầu trước đó và hãy trả lời tiếng việt cho yêu cầu này. Hãy tạo ra 2 công việc dành cho nhóm về việc nghiên cứu decision tree với nhóm là 2 người. Kết quả trả về là tên công việc(name), mô tả công việc (content), ngày bắt đầu (startDate), ngày kết thúc (endDate), và thành viên (member), member được đánh số từ 1 đến số lượng thành viên hiện tại."]
+                            ["text" => $prompt],
                         ]
                     ]
                 ],
@@ -271,7 +279,8 @@ final class TaskController extends AbstractController
                                 "startDate" => ["type" => "STRING", "format" => "date-time"],
                                 "endDate"=> ["type"=> "STRING","format"=>"date-time"],
                                 "member"=> ["type"=> "STRING"],
-                            ]
+                            ],
+                            "required" => ["name", "content", 'startDate', 'endDate']
                         ]
                     ]
                 ]
@@ -334,7 +343,7 @@ final class TaskController extends AbstractController
                     'status' => 'success',
                     'tasks' => $tasks
                 ];
-                } 
+                }
                 else{
                     $response = [
                         'status'=> 'error else',
