@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\CreateTaskType;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpClient\HttpClient;
@@ -18,6 +19,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\RoomRepository;
 use App\Repository\UserRoomRepository;
+use function Symfony\Component\Clock\now;
 
 
 // #[Route('/task')]
@@ -226,11 +228,21 @@ final class TaskController extends AbstractController
     {   
         // Lấy dữ liệu JSON từ body request
         $data = json_decode($request->getContent(), true);
-        $temp = [
-            'taskDescription' => $data['taskDescription'] ?? null, 
-        ];
+        // $temp = [
+        //     'taskDescription' => $data['taskDescription'] ?? null, 
+        // ];
 
-        return new JsonResponse($temp);
+        
+            $roomId = $data['roomId'];
+            $quantityMember = $data['quantityMember'] ?? 1;
+            $roomDescription = $data['roomDescription'] ?? null;
+            $roomRequire=$data['roomRequire'] ?? '';
+            $roomStart=$data['roomStart'] != '' ? $data['roomStart']: new \DateTime();
+            $roomEnd=$data['roomEnd'] != '' ? $data['roomEnd'] :(clone $roomStart)->modify('+3 months');
+        // $temp = [$roomId, $quantityMember, $roomDescription, $roomRequire, $roomStart, $roomEnd];
+
+
+        // return new JsonResponse($temp);
 
         if($_ENV['GEMINI_API_KEY']){
             $httpClient = HttpClient::create();
@@ -243,7 +255,7 @@ final class TaskController extends AbstractController
                 "contents" => [
                     [
                         "parts" => [
-                            ["text" => "List 5 day holidays in VietNam"]
+                            ["text" => "Bỏ qua tất cả các yêu cầu trước đó và hãy trả lời tiếng việt cho yêu cầu này. Hãy tạo ra 2 công việc dành cho nhóm về việc nghiên cứu decision tree với nhóm là 2 người. Kết quả trả về là tên công việc(name), mô tả công việc (content), ngày bắt đầu (startDate), ngày kết thúc (endDate), và thành viên (member), member được đánh số từ 1 đến số lượng thành viên hiện tại."]
                         ]
                     ]
                 ],
@@ -254,8 +266,11 @@ final class TaskController extends AbstractController
                         "items" => [
                             "type" => "OBJECT",
                             "properties" => [
-                                "holiday_name" => ["type" => "STRING"],
-                                "holiday_date" => ["type" => "STRING", "format" => "date-time"]
+                                "name" => ["type" => "STRING"],
+                                "content"=>["type"=> "STRING"],
+                                "startDate" => ["type" => "STRING", "format" => "date-time"],
+                                "endDate"=> ["type"=> "STRING","format"=>"date-time"],
+                                "member"=> ["type"=> "STRING"],
                             ]
                         ]
                     ]
@@ -269,39 +284,67 @@ final class TaskController extends AbstractController
                 ]);
                 //request thanh cong
                 if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-                    $chatResponse = $response->toArray();
-    
-                $task = [
-                    [
-                        'name' => 'abc',
-                        'content' => 'adasd',
-                        'startDate' => '1/2/2000',
-                        'endDate' => '21/3/2023',
-                        'member' => 1,
-                    ],
-                    [
-                        'name' => 'adadas',
-                        'content' => 'ndakjdnmczxjhc',
-                        'startDate' => '1/2/2000',
-                        'endDate' => '21/3/2023',
-                        'member' => 2,
-                    ],
-                ];
+                    $data = json_decode($response->getContent(), true);
+                    
+                    // Lấy danh sách TEXT
+                    $textListJson = $data['candidates'][0]['content']['parts'][0]['text'];
+
+                    //Chuyển đổi chuỗi JSON trong 'text' thành mảng PHP
+                    $jsonToArray = json_decode($textListJson, true);
+                    
+                    if($jsonToArray == null){
+                        $response =[
+                            'status'=> 'error',
+                            'message' => 'Hệ thống không thể tạo công việc, vui lòng thử lại sau.',
+                            
+                        ];
+                        return new JsonResponse($response);
+                    }
+
+                    $tasks =[];
+
+                    foreach($jsonToArray as $task){
+                        $tasks[] = [
+                            'name' => $task['name'] ?? 'N/A',
+                            'content' => $task['content'] ?? 'N/A',
+                            'startDate' => $task['startDate'] ?? 'N/A',
+                            'endDate' => $task['endDate'] ?? 'N/A',
+                            'member' => $task['member'] ?? 'N/A',
+                        ];
+                    }
+
+                    
+                // $task = [
+                //     [
+                //         'name' => 'abc',
+                //         'content' => 'adasd',
+                //         'startDate' => '1/2/2000',
+                //         'endDate' => '21/3/2023',
+                //         'member' => 1,
+                //     ],
+                //     [
+                //         'name' => 'adadas',
+                //         'content' => 'ndakjdnmczxjhc',
+                //         'startDate' => '1/2/2000',
+                //         'endDate' => '21/3/2023',
+                //         'member' => 2,
+                //     ],
+                // ];
                 $response = [
                     'status' => 'success',
-                    'tasks' => $task
+                    'tasks' => $tasks
                 ];
                 } 
                 else{
                     $response = [
-                        'status'=> 'error',
+                        'status'=> 'error else',
                         'message'=> $response->getStatusCode(),
                     ];
                 }
                 
             } catch (\Exception $exception) {
                 $response =[
-                    'status'=> 'error',
+                    'status'=> 'error catch',
                     'message'=> $exception->getMessage(),
                 ];
             }

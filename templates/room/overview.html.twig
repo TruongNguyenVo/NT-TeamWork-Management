@@ -474,10 +474,10 @@
 <script>
     function sendToChatBot() {
         // Collect form data
-        const taskName = document.getElementById('taskName').value;
-        const taskDescription = document.getElementById('taskDescription').value;
+        const roomName = document.getElementById('taskName').value;
+        const roomDescription = document.getElementById('taskDescription').value;
         const quantityMember = document.getElementById('quantityMember').value;
-        const taskRequire = document.getElementById('taskRequire').value;
+        const roomRequire = document.getElementById('taskRequire').value;
         const roomStart = document.getElementById('roomStart').value;
         const roomEnd = document.getElementById('roomEnd').value;
         const roomId = {{room.id}};
@@ -489,12 +489,13 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                taskName,
-                taskDescription,
+                roomName,
+                roomDescription,
                 quantityMember,
-                taskRequire,
+                roomRequire,
                 roomStart,
-                roomEnd
+                roomEnd,
+                roomId
             })
         })
         .then(response => response.json())
