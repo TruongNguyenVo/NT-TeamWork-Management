@@ -69,20 +69,67 @@
                     <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Thông tin công việc</h4>
-                            <button
-                              class="btn btn-primary btn-round ms-auto"
-                              data-bs-toggle="modal"
-                              data-bs-target="#addRowModal"
-                            >
-                              <i class="fa fa-plus"></i>
-                              Thêm công việc mới
+
+
+
+                            {# tu dong tao task #}
+                                <!-- Button kích hoạt modal -->
+                            <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#chatbotModal">
+                                <i class="fa fa-comments"></i>
+                                  Gợi ý công việc tự động với NTBot
                             </button>
+                            <!-- Modal -->
+                              <div class="modal fade" id="chatbotModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+                                  <div class="modal-dialog modal-xl">
+                                      <div class="modal-content">
+                                          <div class="modal-header">
+                                              <h5 class="modal-title" id="modalTitle">Gơi ý công việc tự động với NTBot</h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                              <!-- Form nhập thông tin công việc -->
+                                              <form id="taskForm">
+                                                  <div class="mb-3">
+                                                      <label for="taskName" class="form-label">Tên công việc</label>
+                                                      <input type="text" class="form-control" id="taskName" value="{{room.name}}" disabled>
+                                                  </div>
+                                                  <div class="mb-3">
+                                                      <label for="taskDescription" class="form-label">Mô tả</label>
+                                                      <textarea class="form-control" id="taskDescription" rows="3" disabled>{{room.description}}</textarea>
+                                                  </div>
+                                                  <div class="mb-3">
+                                                      <label for="taskDescription" class="form-label">Số lượng thành viên dự kiến</label>
+                                                      <input type="number" id="quantityMember" min="1" value="1"  class="form-control">
+                                                  </div>
+                                                  <div class="mb-3">
+                                                      <label for="taskDescription" class="form-label">Yêu cầu</label>
+                                                      <textarea class="form-control" id="taskRequire" rows="3"></textarea>
+                                                  </div>
+                                                  <div class="mb-3">
+                                                      <label for="taskDeadline" class="form-label">Thời gian bắt đầu</label>
+                                                      <input type="date" class="form-control" id="roomStart">
+                                                  </div>
+                                                  <div class="mb-3">
+                                                      <label for="taskDeadline" class="form-label">Hạn chót</label>
+                                                      <input type="date" class="form-control" id="roomEnd">
+                                                  </div>
+                                                  <button type="button" class="btn btn-primary" onclick="sendToChatBot()">Tham khảo</button>
+                                              </form>
+                                              <div id="taskDataTable" class="mt-4"></div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+
+
+
                             <button
                               class="btn btn-primary btn-round ms-auto"
                             >
                               <i class="fa fa-eye"></i>
                               Xem thông tin công việc
                             </button>
+                            
                             
                           </div>
                     </div>
@@ -423,5 +470,99 @@
     document.getElementById('saveButton').classList.add('d-none');
     document.getElementById('cancelButton').classList.add('d-none');
   }
+</script>
+<script>
+    function sendToChatBot() {
+        // Collect form data
+        const taskName = document.getElementById('taskName').value;
+        const taskDescription = document.getElementById('taskDescription').value;
+        const quantityMember = document.getElementById('quantityMember').value;
+        const taskRequire = document.getElementById('taskRequire').value;
+        const roomStart = document.getElementById('roomStart').value;
+        const roomEnd = document.getElementById('roomEnd').value;
+        const roomId = {{room.id}};
+
+        // Example of fetching data from the backend
+        fetch(`/api/room/${roomId}/consult`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                taskName,
+                taskDescription,
+                quantityMember,
+                taskRequire,
+                roomStart,
+                roomEnd
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+            console.error('Error:', data.error);
+            return;
+          }
+
+            if(data['tasks'].length != 0){
+              // Create a table with the fetched data
+            const table = document.createElement('table');
+            table.classList.add('table', 'table-bordered');
+
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            const headers = ['Tên công việc', 'Mô tả', 'Thời gian bắt đầu', 'Hạn chót', 'Thành viên thực hiện'];
+            headers.forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            const tbody = document.createElement('tbody');
+
+              data['tasks'].forEach(task =>{
+                let taskName = task['name'];
+                let taskContent = task['content'];
+                let taskStartDate = task['startDate'];
+                let taskEndDate=task['endDate'];
+                let taskMember=task['member'];
+                
+                const tr = document.createElement('tr');
+                const tdName = document.createElement('td');
+                tdName.textContent = taskName;
+                const tdContent = document.createElement('td');
+                tdContent.textContent = taskContent;
+                const tdStartDate = document.createElement('td');
+                tdStartDate.textContent = taskStartDate;
+                const tdEndDate = document.createElement('td');
+                tdEndDate.textContent = taskEndDate;
+                const tdMember = document.createElement('td');
+                tdMember.textContent = taskMember;
+
+                tr.appendChild(tdName);
+                tr.appendChild(tdContent);
+                tr.appendChild(tdStartDate);
+                tr.appendChild(tdEndDate);
+                tr.appendChild(tdMember);
+                tbody.appendChild(tr);
+                //console.log(`${taskName} - ${taskContent} - ${taskStartDate} - ${taskEndDate} - ${taskMember}`);
+              });
+              table.appendChild(tbody);
+
+              // Insert the table into the taskDataTable div
+              const taskDataTable = document.getElementById('taskDataTable');
+              taskDataTable.innerHTML = ''; // Clear any existing content
+              taskDataTable.appendChild(table);
+
+              // Cuộn đến khung chi tiết công việc
+              document.getElementById('taskDataTable').scrollIntoView();
+            }
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error fetching tasks:', error);
+        });
+    }
 </script>
 {% endblock javascripts %}

@@ -33,11 +33,15 @@ class SideBarSubscriber implements EventSubscriberInterface
                 return;
             }
 
+            $adminRoom =[];
+            $memberRoom =[];
+
             $user = $this->security->getUser();
 
-            $adminRoom = $this->roomRepository->findAllByRole("admin", $user, 'joined');
-            $memberRoom = $this->roomRepository->findAllByRole("member", $user, 'joined');
-
+            if($user){
+                $adminRoom = $this->roomRepository->findAllByRole("admin", $user, 'joined');
+                $memberRoom = $this->roomRepository->findAllByRole("member", $user, 'joined');
+            }
             // dump($adminRoom, $memberRoom, $user);
             // die();
 

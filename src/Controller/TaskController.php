@@ -10,6 +10,7 @@ use App\Form\TaskType;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -215,5 +216,103 @@ final class TaskController extends AbstractController
 
     // Trả về JSON response
     return new JsonResponse($taskData);
+    }
+
+    
+
+    //HAM API DE TRA VE THONG TIN CUA TAT CA CAC TASK CUA 1 USER O 1 PHONG DUA VAO ID
+    #[Route(path:'/api/room/{roomId}/consult', name:'api_app_consult_with_chatbot', methods: ['GET','POST'])]
+    public function apiConsultWithChatBot(Request $request, int $roomId)
+    {   
+        // Lấy dữ liệu JSON từ body request
+        $data = json_decode($request->getContent(), true);
+        if($_ENV['GEMINI_API_KEY']){
+            $httpClient = HttpClient::create();
+            $method = 'POST';
+            $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' .$_ENV['GEMINI_API_KEY'];
+            $header = [
+                'Content-Type' => 'application/json',
+            ];
+            $body = [
+                "contents" => [
+                    [
+                        "parts" => [
+                            ["text" => "List 5 day holidays in VietNam"]
+                        ]
+                    ]
+                ],
+                "generationConfig" => [
+                    "response_mime_type" => "application/json",
+                    "response_schema" => [
+                        "type" => "ARRAY",
+                        "items" => [
+                            "type" => "OBJECT",
+                            "properties" => [
+                                "holiday_name" => ["type" => "STRING"],
+                                "holiday_date" => ["type" => "STRING", "format" => "date-time"]
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+            
+            try {
+                $response = $httpClient->request($method, $url, [
+                    'headers' => $header,
+                    'json' => $body
+                ]);
+                //request thanh cong
+                if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+                    $chatResponse = $response->toArray();
+    
+                $task = [
+                    [
+                        'name' => 'abc',
+                        'content' => 'adasd',
+                        'startDate' => '1/2/2000',
+                        'endDate' => '21/3/2023',
+                        'member' => 1,
+                    ],
+                    [
+                        'name' => 'adadas',
+                        'content' => 'ndakjdnmczxjhc',
+                        'startDate' => '1/2/2000',
+                        'endDate' => '21/3/2023',
+                        'member' => 2,
+                    ],
+                ];
+                $response = [
+                    'status' => 'success',
+                    'tasks' => $task
+                ];
+                } 
+                else{
+                    $response = [
+                        'status'=> 'error',
+                        'message'=> $response->getStatusCode(),
+                    ];
+                }
+                
+            } catch (\Exception $exception) {
+                $response =[
+                    'status'=> 'error',
+                    'message'=> $exception->getMessage(),
+                ];
+            }
+            
+            
+    
+            
+            
+        }
+        else{
+            $response =[
+                'status'=> 'error',
+                'message' => 'Hệ thống hiện không hoạt động, vui lòng thử lại sau.',
+            ];
+        }
+        
+        
+        return new JsonResponse($response);
     }
 }
