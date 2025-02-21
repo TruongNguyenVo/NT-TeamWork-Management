@@ -221,11 +221,17 @@ final class TaskController extends AbstractController
     
 
     //HAM API DE TRA VE THONG TIN CUA TAT CA CAC TASK CUA 1 USER O 1 PHONG DUA VAO ID
-    #[Route(path:'/api/room/{roomId}/consult', name:'api_app_consult_with_chatbot', methods: ['GET','POST'])]
+    #[Route(path:'/api/room/{roomId}/consult', name:'api_app_consult_with_chatbot', methods: ['POST'])]
     public function apiConsultWithChatBot(Request $request, int $roomId)
     {   
         // Lấy dữ liệu JSON từ body request
         $data = json_decode($request->getContent(), true);
+        $temp = [
+            'taskDescription' => $data['taskDescription'] ?? null, 
+        ];
+
+        return new JsonResponse($temp);
+
         if($_ENV['GEMINI_API_KEY']){
             $httpClient = HttpClient::create();
             $method = 'POST';
@@ -308,7 +314,7 @@ final class TaskController extends AbstractController
         else{
             $response =[
                 'status'=> 'error',
-                'message' => 'Hệ thống hiện không hoạt động, vui lòng thử lại sau.',
+                'message' => 'Hệ thống hiện không hoạt động do không có API_KEY, vui lòng thử lại sau.',
             ];
         }
         
