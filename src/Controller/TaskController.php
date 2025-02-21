@@ -240,9 +240,46 @@ final class TaskController extends AbstractController
             $roomRequire=$data['roomRequire'] ?? '';
             $roomStart=$data['roomStart'] != '' ? $data['roomStart']: new \DateTime();
             $roomEnd=$data['roomEnd'] != '' ? $data['roomEnd'] :(clone $roomStart)->modify('+3 months');
-        // $temp = [$roomId, $quantityMember, $roomDescription, $roomRequire, $roomStart, $roomEnd, $roomName];
-        // return new JsonResponse($temp);
 
+
+            // ////////////////////////////////////TEST/////////////////////////////////////////////////////
+            // $tasks =[];
+            
+            //     $tasks[] =[
+            //         'name' => 'abc',
+            //         'content' => 'adasd',
+            //         'startDate' => '2025-02-14T00:00:00.000Z',
+            //         'endDate' => '2025-02-14T00:00:00.000Z',
+            //         'member' => 1,
+            //         'recommend' => 'recommend'
+            //     ];
+            //     $tasks[] =[
+            //         'name' => 'adadas',
+            //         'content' => 'ndakjdnmczxjhc',
+            //         'startDate' => '2025-02-14T00:00:00.000Z',
+            //         'endDate' => '2025-02-14T00:00:00.000Z',
+            //         'member' => 2,
+            //         'recommend' => 'recommend1'
+            //     ];
+
+            // // $temp = [$roomId, $quantityMember, $roomDescription, $roomRequire, $roomStart, $roomEnd, $roomName];
+            // // return new JsonResponse($temp);
+            // $response = [
+            //     'status' => 'success',
+            //     'tasks' => $tasks
+            // ];
+            // return new JsonResponse($response);
+            // ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+        $env = $_ENV['GEMINI_API_KEY'] ?? null;
+        if($env == null) {
+            $response =[
+                'status'=> 'error',
+                'message' => 'Hệ thống hiện không hoạt động do không có API_KEY, vui lòng thử lại sau.',
+            ];
+            return new JsonResponse($response);
+        }
+        
         if($_ENV['GEMINI_API_KEY']){
             $httpClient = HttpClient::create();
             $method = 'POST';
@@ -252,10 +289,10 @@ final class TaskController extends AbstractController
             ];
 
             $prompt="Bỏ qua tất cả các yêu cầu trước đó và hãy trả lời tiếng việt cho yêu cầu này.
-            Hãy tạo ra các công việc dành cho nhóm về môn $roomName có mô tả là $roomDescription với nhóm hiện tại có $quantityMember người. Tạo tối thiểu một người ít nhất phải có 4 công việc.
+            Hãy tạo ra các công việc dành cho nhóm về môn $roomName có mô tả là $roomDescription với nhóm hiện tại có $quantityMember người. Tạo tối thiểu một thành viên có ít nhất phải có 4 công việc.
             Thời gian thực hiện là từ $roomStart và kết thúc là $roomEnd.
             Các yêu cầu là $roomRequire.
-            Kết quả trả về là tên công việc(name), mô tả công việc (content), ngày bắt đầu (startDate), ngày kết thúc (endDate), và thành viên (member), member được đánh số từ 1 đến số lượng thành viên hiện tại.
+            Kết quả trả về là tên công việc(name), mô tả công việc (content), ngày bắt đầu (startDate), ngày kết thúc (endDate), gợi ý dành cho trưởng nhóm khi phân công công việc đó (recommend) và thành viên (member), member được đánh số từ 1 đến số lượng thành viên hiện tại.
             Tất cả các thông tin như tên công việc, mô tả công việc, thành viên bắt buộc phải có.
             Thời gian bắt đầu và thời gian kết thúc phải có, và thời gian tối thiểu của một công việc là 2 ngày";
 
@@ -279,6 +316,7 @@ final class TaskController extends AbstractController
                                 "startDate" => ["type" => "STRING", "format" => "date-time"],
                                 "endDate"=> ["type"=> "STRING","format"=>"date-time"],
                                 "member"=> ["type"=> "STRING"],
+                                "recommend"=>["type"=> "STRING"],
                             ],
                             "required" => ["name", "content", 'startDate', 'endDate']
                         ]
@@ -314,11 +352,12 @@ final class TaskController extends AbstractController
 
                     foreach($jsonToArray as $task){
                         $tasks[] = [
-                            'name' => $task['name'] ?? 'N/A',
-                            'content' => $task['content'] ?? 'N/A',
-                            'startDate' => $task['startDate'] ?? 'N/A',
-                            'endDate' => $task['endDate'] ?? 'N/A',
-                            'member' => $task['member'] ?? 'N/A',
+                            'name' => $task['name'] ? $task['name'] : 'N/A',
+                            'content' => $task['content'] ? $task['content']: 'N/A',
+                            'startDate' => $task['startDate'] ? $task['startDate']: 'N/A',
+                            'endDate' => $task['endDate'] ? $task['endDate']: 'N/A',
+                            'member' => $task['member'] ? $task['member'] : 'N/A',
+                            'recommend'=>$task['recommend'] ? $task['recommend'] : 'N/A',
                         ];
                     }
 
@@ -346,30 +385,20 @@ final class TaskController extends AbstractController
                 }
                 else{
                     $response = [
-                        'status'=> 'error else',
+                        'status'=> 'error',
                         'message'=> $response->getStatusCode(),
                     ];
+                    return new JsonResponse($response);
                 }
                 
             } catch (\Exception $exception) {
                 $response =[
-                    'status'=> 'error catch',
+                    'status'=> 'error',
                     'message'=> $exception->getMessage(),
                 ];
+                return new JsonResponse($response);
             }
-            
-            
-    
-            
-            
         }
-        else{
-            $response =[
-                'status'=> 'error',
-                'message' => 'Hệ thống hiện không hoạt động do không có API_KEY, vui lòng thử lại sau.',
-            ];
-        }
-        
         
         return new JsonResponse($response);
     }

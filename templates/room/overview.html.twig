@@ -75,7 +75,7 @@
                             {# tu dong tao task #}
                                 <!-- Button kích hoạt modal -->
                             <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#chatbotModal">
-                                <i class="fa fa-comments"></i>
+                                <i class="fa fa-robot"></i>
                                   Gợi ý công việc tự động với NTBot
                             </button>
                             <!-- Modal -->
@@ -87,10 +87,12 @@
                                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                           </div>
                                           <div class="modal-body">
+                                              <!-- Error message placeholder -->
+                                              <div id="errorMessage" class="alert alert-danger d-none"></div>
                                               <!-- Form nhập thông tin công việc -->
                                               <form id="taskForm">
                                                   <div class="mb-3">
-                                                      <label for="taskName" class="form-label">Tên công việc</label>
+                                                      <label for="taskName" class="form-label">Tên nhóm</label>
                                                       <input type="text" class="form-control" id="taskName" value="{{room.name}}" disabled>
                                                   </div>
                                                   <div class="mb-3">
@@ -113,7 +115,7 @@
                                                       <label for="taskDeadline" class="form-label">Hạn chót</label>
                                                       <input type="date" class="form-control" id="roomEnd">
                                                   </div>
-                                                  <button type="button" class="btn btn-primary" onclick="sendToChatBot()">Tham khảo</button>
+                                                  <button type="button" class="btn btn-primary" onclick="sendToChatBot()" id="btnRecommendByChatBot">Tham khảo</button>
                                               </form>
                                               <div id="taskDataTable" class="mt-4"></div>
                                           </div>
@@ -472,7 +474,14 @@
   }
 </script>
 <script>
+
+    function formatDate(isoString) {
+        return new Date(isoString).toLocaleDateString('en-GB'); // 'en-GB' gives dd/mm/yyyy
+    }
+
     function sendToChatBot() {
+
+      
         // Collect form data
         const roomName = document.getElementById('taskName').value;
         const roomDescription = document.getElementById('taskDescription').value;
@@ -501,11 +510,17 @@
         .then(response => response.json())
         .then(data => {
             if (data.error) {
-            console.error('Error:', data.error);
+              console.error('Error:', data.error);
             return;
           }
-            console.log(data);
-            return;
+            if(data['status'] == 'error'){
+              console.log(data['message']);
+              document.getElementById('errorMessage').textContent = data.message;
+              document.getElementById('errorMessage').classList.remove('d-none');
+              // Cuộn đến khung chi tiết công việc
+              document.getElementById('errorMessage').scrollIntoView();
+              return;
+            }
 
             if(data['tasks'].length != 0){
               // Create a table with the fetched data
@@ -514,7 +529,7 @@
 
             const thead = document.createElement('thead');
             const headerRow = document.createElement('tr');
-            const headers = ['Tên công việc', 'Mô tả', 'Thời gian bắt đầu', 'Hạn chót', 'Thành viên thực hiện'];
+            const headers = ['Tên công việc', 'Mô tả', 'Bắt đầu', 'Hạn chót', 'Thành viên', 'Gợi ý dành cho chủ nhóm'];
             headers.forEach(headerText => {
                 const th = document.createElement('th');
                 th.textContent = headerText;
@@ -524,12 +539,14 @@
             table.appendChild(thead);
             const tbody = document.createElement('tbody');
 
-              data['tasks'].forEach(task =>{
+            data['tasks'].forEach(task =>{
                 let taskName = task['name'];
                 let taskContent = task['content'];
                 let taskStartDate = task['startDate'];
                 let taskEndDate=task['endDate'];
                 let taskMember=task['member'];
+                //let taskRecommend="done";
+                let taskRecommend=task['recommend'];
                 
                 const tr = document.createElement('tr');
                 const tdName = document.createElement('td');
@@ -537,19 +554,23 @@
                 const tdContent = document.createElement('td');
                 tdContent.textContent = taskContent;
                 const tdStartDate = document.createElement('td');
-                tdStartDate.textContent = taskStartDate;
+                tdStartDate.textContent = formatDate(taskStartDate);
                 const tdEndDate = document.createElement('td');
-                tdEndDate.textContent = taskEndDate;
+                tdEndDate.textContent = formatDate(taskEndDate);
                 const tdMember = document.createElement('td');
                 tdMember.textContent = taskMember;
+                const tdRecommend=document.createElement('td');
+                tdRecommend.textContent=taskRecommend;
+                
 
                 tr.appendChild(tdName);
                 tr.appendChild(tdContent);
                 tr.appendChild(tdStartDate);
                 tr.appendChild(tdEndDate);
                 tr.appendChild(tdMember);
+                tr.appendChild(tdRecommend);
                 tbody.appendChild(tr);
-                //console.log(`${taskName} - ${taskContent} - ${taskStartDate} - ${taskEndDate} - ${taskMember}`);
+                console.log(`${taskName} - ${taskContent} - ${taskStartDate} - ${taskEndDate} - ${taskMember}`);
               });
               table.appendChild(tbody);
 
@@ -561,6 +582,8 @@
               // Cuộn đến khung chi tiết công việc
               document.getElementById('taskDataTable').scrollIntoView();
             }
+            //thay doi text cua button
+            document.getElementById('btnRecommendByChatBot').textContent="Tham khảo lại";
             console.log(data);
         })
         .catch(error => {
