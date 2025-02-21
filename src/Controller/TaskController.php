@@ -134,11 +134,10 @@ final class TaskController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_task_show', methods: ['GET'])]
-    public function show(Task $task): Response
+    #[Route('/room/{roomId}/overview/member/task/{id}', name: 'app_task_show_member', methods: ['GET'])]
+    public function show($roomId, $id): Response
     {
-        return $this->render('task/show.html.twig', [
-            'task' => $task,
+        return $this->render('task/showMember.html.twig', [
         ]);
     }
 
@@ -233,7 +232,7 @@ final class TaskController extends AbstractController
             dump("Loi o apiShow");
             die();
         }
-        $memberInRoom = $this->roomRepository->findUserByRoom($room, "member", "joined");
+        $memberInRoom = $this->roomRepository->findUserByRoom($room, null, "joined");
 
         $arrMember = [];
         foreach($memberInRoom as $member){

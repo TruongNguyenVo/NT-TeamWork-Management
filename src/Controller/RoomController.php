@@ -50,14 +50,11 @@ final class RoomController extends AbstractController
     {
         
         $room = new Room();
-
         $user = $this->getUser();
-
-        
-
         $form = $this->createForm(AttendType::class, $room);
         $form->handleRequest($request);
-
+        // dump($form);
+        // die();
         if ($form->isSubmitted() && $form->isValid()) {
             // dump("toi day roi",$request->request->all());
             // die();
@@ -67,7 +64,7 @@ final class RoomController extends AbstractController
             // if(
             $this->roomRepository->createRoom($room, $this->getUser());
                 // )){
-                // return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
             // }
             // else{
             //     //neu tao phong that bai thi chuyen ve trang tao phong
@@ -497,12 +494,24 @@ final class RoomController extends AbstractController
     #[Route(path:'/{id}/overview/member', name:'app_room_overview_member', methods: ['GET'])]
     public function overviewMember(Request $request): Response
     {
+        
         $roomId = $request->attributes->get('id');
+
+
         if($roomId !== null){
             $room = $this->roomRepository->find($roomId);
             if($room !== null){
+                $user = $this->getUser();
+                $tasksOfUser = $this->taskRepository->findBy(['room'=> $room, 'member'=>$user]);
+                $tasksDone =$this->taskRepository->findBy(['room'=>$room,'status'=>'done']);
+                // dump($tasksOfUser, $user, $tasksDone);
+                // die();
                     return $this->render('room/overviewMember.html.twig',
-                ['room'=> $room]);
+                [
+                    'room'=> $room,
+                    'tasksOfUser' => $tasksOfUser,
+                    'tasksDone' =>$tasksDone,
+                ]);
             }
             else{
                 return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
