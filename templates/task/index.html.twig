@@ -153,43 +153,50 @@
                     </div>
                   </div>
                   <div class="card-body">
-                    <form class="row" action="" enctype="multipart/form-data">
+                    <form class="row" action="" enctype="multipart/form-data" id="formUpdateAndDelete" method="POST">
+                        
                       <div class="mb-3">
                         <label for="name" class="form-label">Tên công việc</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Nhập tên công việc">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Nhập tên công việc" onkeyup="showUpdateButton()">
                       </div>
                       <div class="mb-3">
                         <label for="startDate" class="form-label">Ngày bắt đầu</label>
-                        <input type="datetime-local" class="form-control" id="startDate" name="startDate">
+                        <input type="datetime-local" class="form-control" id="startDate" name="startDate" onchange="showUpdateButton()">
                       </div>
                       <div class="mb-3">
                         <label for="endDate" class="form-label">Ngày kết thúc</label>
-                        <input type="datetime-local" class="form-control" id="endDate" name="endDate">
+                        <input type="datetime-local" class="form-control" id="endDate" name="endDate" onchange="showUpdateButton()">
                       </div>
                       <div class="mb-3">
                         <label for="finishDate" class="form-label">Ngày hoàn thành</label>
-                        <input type="datetime-local" class="form-control" id="finishDate" name="finishDate">
+                        <input disabled type="datetime-local" class="form-control" id="finishDate" name="finishDate">
+                      </div>
+                      <div class="mb-3">
+                        <label for="reviewDate" class="form-label">Ngày chờ nhận xét</label>
+                        <input disabled type="datetime-local" class="form-control" id="reviewDate" name="reviewDate">
                       </div>
 
                       <div class="mb-3">
                         <label for="status" class="form-label">Trạng thái</label>
                         <select class="form-control" id="status" name="status"  onchange="showUpdateButton()">
                           <option value="pending">Chờ xử lý</option>
-                          <option value="in_progress">Đang thực hiện</option>
-                          <option value="completed">Hoàn thành</option>
+                          <option value="review" disabled>Chờ nhận xét</option>
+                          <option value="in_progress" disabled>Đang thực hiện</option>
+                          <option value="done">Hoàn thành</option>
                           <option value="cancelled">Đã hủy</option>
                         </select>
                       </div>
-
+            
                       <div class="mb-3">
                         <label for="member" class="form-label">Thành viên</label>
                         <select class="form-control" id="member" name="member" onchange="showUpdateButton()">
                           <!-- Các tùy chọn sẽ được thêm bằng JavaScript -->
                         </select>
                       </div>
+
                       <div class="mb-3">
                         <label for="content" class="form-label">Mô tả</label>
-                        <textarea class="form-control" rows="5" id="content" name="content"></textarea>
+                        <textarea class="form-control" rows="5" id="content" name="content" onkeyup="showUpdateButton()"></textarea>
                       </div>
                       <div class="mb-3">
                         <label for="pathAttachment" class="form-label">Tệp đính kèm</label>
@@ -197,7 +204,7 @@
                       </div>
                       <div class="mb-3">
                         <label for="pathAttachment" class="form-label">Thay tệp mới</label>
-                        <input type="file" name= "newPathAttachment" class="form-control" target="_blank" onchange="showUpdateButton()">
+                        <input type="file" name="newPathAttachment" class="form-control" target="_blank" onchange="showUpdateButton()">
                       </div>
                       <div class="mb-3">
                         <label for="resultContent" class="form-label">Nội dung kết quả</label>
@@ -210,9 +217,22 @@
                       </div>
 
                       <div class="mb-3-md">
+                        <input type ="hidden" id="idTaskShow" name="idTaskShow">
+                            
+                        <input type="hidden" name="_csrf_token" id="csrf_token" value="{{ csrf_token('task_edit') }}">
                         <button type="button" class="btn btn-warning" onclick="hideTaskInfo()">Đóng</button>
-                        <button type="button" class="btn btn-danger">Xóa</button>
-                        <button type="submit" class="btn btn-primary" id="updateButton" disabled onchange="showUpdateButton()">Cập nhật</button>
+                        <!-- Nút Xóa -->
+                        <button type="button" class="btn btn-danger" 
+                            onclick="submitForm('{{ path('app_task_delete', {'roomId': room.id, 'id': 'TASK_ID'}) }}', 'delete')">
+                            Xóa
+                        </button>
+
+                        <!-- Nút Cập nhật -->
+                        <button type="button" class="btn btn-primary" id="updateButton" disabled 
+                            onclick="submitForm('{{ path('app_task_edit', {'roomId': room.id, 'id': 'TASK_ID'}) }}', 'edit')" onchange="showUpdateButton()">
+                            Cập nhật
+                        </button>
+
                       </div>
                     </form>
                   </div>
@@ -252,6 +272,7 @@
         }
   
         // Hiển thị thông tin chi tiết của Task trong khung chi tiết công việc
+        document.getElementById('idTaskShow').value = data.id
         document.getElementById('name').value = data.name;
         document.getElementById('startDate').value = data.startDate;
         document.getElementById('endDate').value = data.endDate;
@@ -280,7 +301,7 @@
         document.getElementById('content').value = data.content;
         let attachmentLink = document.getElementById('pathAttachment');
         let basePath = window.location.origin + "/";
-        if (data.pathAttachment || data.pathAttachment != "null") {
+        if (data.pathAttachment && data.pathAttachment !== "null") {
           attachmentLink.href = basePath +  data.pathAttachment;
           attachmentLink.textContent = data.pathAttachment.split('/').pop(); // Hiển thị tên file
         } else {
@@ -290,8 +311,9 @@
         document.getElementById('resultContent').value = data.resultContent;
 
         let attachmentResultLink = document.getElementById('resultAttachment');
-        if (data.pathAttachment) {
-          attachmentResultLink.href = basePath +  data.resultAttachment;
+        if (data.resultAttachment && data.resultAttachment !== "null") {
+            attachmentResultLink.href = basePath +  data.resultAttachment;
+            attachmentResultLink.textContent = data.resultAttachment.split('/').pop(); // Hiển thị tên file
         } else {
             attachmentResultLink.textContent = "Không có tệp kết quả đính kèm";
             attachmentResultLink.href = "#";
@@ -320,5 +342,27 @@
     document.getElementById('updateButton').disabled = false;
     console.log("hello");
   }
+
+function submitForm(actionPath, actionType) {
+    var form = document.getElementById("formUpdateAndDelete");
+    var idTaskShow = document.getElementById("idTaskShow").value;
+    
+    // Lấy input chứa CSRF token
+    var csrfInput = document.getElementById("csrf_token");
+
+    // Thay đổi CSRF token theo hành động (chỉnh sửa hoặc xóa)
+    if (actionType === 'delete') {
+        csrfInput.value = "{{ csrf_token('task_delete') }}";  // Token cho xóa
+    } else {
+        csrfInput.value = "{{ csrf_token('task_edit') }}";  // Token cho cập nhật
+    }
+
+    // Cập nhật URL với ID công việc
+    var actionUrl = actionPath.replace("TASK_ID", idTaskShow);
+    
+    form.setAttribute("action", actionUrl);
+    form.submit();
+}
+
   </script>
 {% endblock %}

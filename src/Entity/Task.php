@@ -51,6 +51,9 @@ class Task
     private ?\DateTimeInterface $endDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $reviewDate = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $finishDate = null;
 
     #[Assert\Regex(
@@ -186,6 +189,17 @@ class Task
         return $this;
     }
 
+    public function getReviewDate(): ?\DateTimeInterface
+    {
+        return $this->finishDate;
+    }
+
+    public function setReviewDate(?\DateTimeInterface $finishDate): static
+    {
+        $this->finishDate = $finishDate;
+
+        return $this;
+    }
     public function getFinishDate(): ?\DateTimeInterface
     {
         return $this->finishDate;
@@ -205,6 +219,12 @@ class Task
 
     public function setStatus(?string $status): static
     {
+        if($status == 'review'){
+            $this->reviewDate = new \DateTime();
+        }
+        if($status == 'done'){
+            $this->finishDate = new \DateTime();
+        }
         $this->status = $status;
 
         return $this;

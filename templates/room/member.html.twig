@@ -55,30 +55,32 @@
                           </thead>
                           <tbody>
                         {% for member in members %}
-                            <tr data-task='{"name": "Viết báo cáo", "assignee": "Trường Nguyên", "start_date": "01/01/2022", "end_date": "01/02/2022", "status": "Không hoàn thành"}' onclick="postData(this)">
+                            <tr data-member-id="{{ member.user.id }}" onclick="postData(this)">
                               <td>{{member.user.lastname}} {{member.user.firstname}}</td>
-                              <td>{{ member.joinDate ? member.joinDate|date('Y-m-d') : 'Chưa được duyệt' }}</td>
                               <td>
-                                Đang nhận công việc
+                                    {{ member.joinDate ? member.joinDate|date('d-m-Y') : 'Chưa được duyệt' }} 
+                              </td>
+                              <td>
+                                {{member.statusLabel}}
                               </td>
                               <td>
                                 <div class="form-button-action">
-                                  <button
+                                  {# <button
                                     type="button"
                                     data-bs-toggle="tooltip"
                                     title="Xem chi tiết thành viên"
                                     class="btn btn-link btn-primary"
                                   >
                                     <i class="fa fa-eye"></i>
-                                  </button>
+                                  </button> #}
                                   {% if member.status == 'pending' %}
-              <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
-              <input type="hidden" name="userId" value="{{ member.user.id }}">
-              <input type="hidden" name="status" value="joined">
-              <button type="submit" data-bs-toggle="tooltip" title="Duyệt thành viên" class="btn btn-link btn-success">
-              <i class="fa fa-check"></i>
-            </button>
-            </form>
+                                  <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
+                                  <input type="hidden" name="userId" value="{{ member.user.id }}">
+                                  <input type="hidden" name="status" value="joined">
+                                  <button type="submit" data-bs-toggle="tooltip" title="Duyệt thành viên" class="btn btn-link btn-success">
+                                  <i class="fa fa-check"></i>
+                                </button>
+                                </form>
                                   {% endif %}
                                   {% if member.status == 'joined' %}
                                   <form action="{{ path('app_room_member_status', {id: room.id}) }}" method="post">
@@ -129,60 +131,50 @@
                   </div>
                 </div>
 
+
                 <!-- khung hien thi thanh vien -->
-                <div class="col-md-12" id="member-detail">
+                <div class="col-md-12" id="member-detail" style="display:none">
                   <div class="card">
-                    <div class="card-header">                        
+                    <div class="card-header">
                         <div class="member-info mb-4">
-                          <h4>Thông tin chung của thành viên</h4>
+                          <h4>Thông tin chung</h4>
                           <p><strong>Tên:</strong> <span id="memberName">Trường Nguyên</span></p>
                           <p><strong>Số nhóm đã tham gia:</strong> <span id="manyGroup">10</span></p>
                           <p><strong>Tỷ lệ hoàn thành công việc đúng hạn:</strong> <span>100%</span></p>
 
                         </div>
-
-                        <div class="d-flex align-items-center">
-                          <h4 class="card-title">Chi tiết công việc:</h4>
-                      </div>
-                    </div>
-                    <div class="card-body">
+                    <div class="card-body" id="table-infor-task" style="display:none">
+                      <h4 class="card-title">Chi tiết công việc:</h4>
                       <div class="table-responsive">
                         <table
-                          id="basic-datatables"
+                          id="add-row"
                           class="display table table-striped table-hover"
                         >
                           <thead>
                             <tr>
                               
                               <th>Tên công việc</th>
-                              <th>Ngày nhận</th>
+                              <th>Ngày tiếp nhận</th>
+                              <th>Ngày kết thúc</th>
+                              <th>Ngày hoàn thành</th>
                               <th>Trạng thái</th>
-                              <th>Thao tác</th>
-                             
+                            
                             </tr>
                           </thead>
-                            <tbody>
-                            <tr>
-                              <td>Viết báo cáo</td>
-                              <td>01/01/2022</td>
-                              <td>
-                                Đang nhận công việc
-                              </td>
-                            </tr>
-
+                          <tbody id="tasksTableBody">
+                            
+                          </tbody>
                           <tfoot>
                             <tr>
                               
                               <th>Tên công việc</th>
-                              <th>Ngày nhận</th>
+                              <th>Ngày tiếp nhận</th>
+                              <th>Ngày kết thúc</th>
+                              <th>Ngày hoàn thành</th>
                               <th>Trạng thái</th>
-                              <th>Thao tác</th>
 
                             </tr>
                           </tfoot>
-                        <tbody>
-
-                        </tbody>
                         </table>
 
                         
@@ -190,6 +182,8 @@
                     </div>
                   </div>
                 </div>
+
+
               </div>
             </div>
           </div>
@@ -197,25 +191,57 @@
 {% block javascripts %}
 <script>
   // post api
-   function postData(row) {
-    // const taskData = JSON.parse(row.getAttribute('data-task'));
-    // fetch('/your-api-endpoint', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify(taskData)
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //   console.log('Success:', data);
-    // })
-    // .catch((error) => {
-    //   console.error('Error:', error);
-    // });
-    console.log(row);
-    // scroll to comment section
-    document.getElementById('member-detail').scrollIntoView();
+  function postData(row) {
+    const memberId = row.getAttribute('data-member-id');
+    const roomId = {{ room.id }};
+    
+    fetch(`/api/room/${roomId}/member/${memberId}/tasks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error('Error:', data.error);
+          return;
+        }
+        //neu call api thanh cong thi hien thi table
+        document.getElementById('member-detail').style.display = 'block';
+        // scroll to comment section
+        document.getElementById('member-detail').scrollIntoView();
+
+        document.getElementById('memberName').innerText = data['user'].fullName;
+
+        if(data['tasks'].length == 0){
+          document.getElementById('table-infor-task').style.display = 'none'
+        }
+        if(data['tasks'].length != 0){
+          
+          
+          document.getElementById('table-infor-task').style.display = 'block';
+          const tableBody = document.getElementById('tasksTableBody'); //table body
+
+          //xoa du lieu hien co
+          tableBody.replaceChildren();
+          //duyet task
+          data['tasks'].forEach(task =>{
+            const row = document.createElement('tr');
+            row.innerHTML=`<td>${task.name}</td>
+              <td>${task.startDate}</td>
+              <td>${task.endDate}</td>
+              <td>${task.finishDate}</td>
+              <td>${task.status}</td>`;
+            tableBody.appendChild(row);
+          });
+          
+          console.log(data['tasks'].length);
+        }
+        
+        });
+    
+    
   }
 </script>
 {% endblock %}
