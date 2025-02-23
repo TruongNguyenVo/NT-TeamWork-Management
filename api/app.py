@@ -4,6 +4,10 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def predict():
+    # ket noi database
+    # lay cac record cua member (lay id cua member di cho nhanh)
+    # de vao model (da luong cho nhanh)
+    # hien thi du lieu ve symfony
     data = {
         "status": 404,
         "message": "not found"
