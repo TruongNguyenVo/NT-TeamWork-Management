@@ -130,13 +130,15 @@ class RoomRepository extends ServiceEntityRepository
     //TIM TAT CA CAC THANH VIEN DUA VAO ROOM
     public function findUserByRoom($room, $role = null, $status = null)
     {
+        // dump($room, $role, $status);
+        // die();
         $dql = 'SELECT ur FROM App\Entity\UserRoom ur WHERE  ur.room = :room';
         
         if ($status !== null) {
             $dql .= ' AND ur.status = :status';
         }
         if( $role !== null) {
-            $dql .= 'AND ur.role = :role';
+            $dql .= ' AND ur.role = :role';
         }
     
         $query = $this->getEntityManager()->createQuery($dql)
