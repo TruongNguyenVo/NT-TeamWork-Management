@@ -77,20 +77,22 @@
                     <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Thông tin công việc</h4>
-                            {# <a
+                            <button
                               class="btn btn-primary btn-round ms-auto"
-                              href = {{path('app_task_new', {'id': room.id})}}
+                              data-bs-toggle="modal"
+                              data-bs-target="#addRowModal"
                             >
                               <i class="fa fa-plus"></i>
                               Thêm công việc mới
-                            </a> #}
-                            <a
+                            </button>
+                            <button
                               class="btn btn-primary btn-round ms-auto"
                               href = {{path('app_room_task', {'id': room.id})}}
                             >
                               <i class="fa fa-eye"></i>
                               Xem thông tin công việc
                             </a>
+                            
                             
                           </div>
                     </div>
@@ -261,5 +263,123 @@
     document.getElementById('saveButton').classList.add('d-none');
     document.getElementById('cancelButton').classList.add('d-none');
   }
+</script>
+<script>
+
+    function formatDate(isoString) {
+        return new Date(isoString).toLocaleDateString('en-GB'); // 'en-GB' gives dd/mm/yyyy
+    }
+
+    function sendToChatBot() {
+
+      
+        // Collect form data
+        const roomName = document.getElementById('taskName').value;
+        const roomDescription = document.getElementById('taskDescription').value;
+        const quantityMember = document.getElementById('quantityMember').value;
+        const roomRequire = document.getElementById('taskRequire').value;
+        const roomStart = document.getElementById('roomStart').value;
+        const roomEnd = document.getElementById('roomEnd').value;
+        const roomId = {{room.id}};
+
+        // Example of fetching data from the backend
+        fetch(`/api/room/${roomId}/consult`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                roomName,
+                roomDescription,
+                quantityMember,
+                roomRequire,
+                roomStart,
+                roomEnd,
+                roomId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+              console.error('Error:', data.error);
+            return;
+          }
+            if(data['status'] == 'error'){
+              console.log(data['message']);
+              document.getElementById('errorMessage').textContent = data.message;
+              document.getElementById('errorMessage').classList.remove('d-none');
+              // Cuộn đến khung chi tiết công việc
+              document.getElementById('errorMessage').scrollIntoView();
+              return;
+            }
+
+            if(data['tasks'].length != 0){
+              // Create a table with the fetched data
+            const table = document.createElement('table');
+            table.classList.add('table', 'table-bordered');
+
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            const headers = ['Tên công việc', 'Mô tả', 'Bắt đầu', 'Hạn chót', 'Thành viên', 'Gợi ý dành cho chủ nhóm'];
+            headers.forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            const tbody = document.createElement('tbody');
+
+            data['tasks'].forEach(task =>{
+                let taskName = task['name'];
+                let taskContent = task['content'];
+                let taskStartDate = task['startDate'];
+                let taskEndDate=task['endDate'];
+                let taskMember=task['member'];
+                //let taskRecommend="done";
+                let taskRecommend=task['recommend'];
+                
+                const tr = document.createElement('tr');
+                const tdName = document.createElement('td');
+                tdName.textContent = taskName;
+                const tdContent = document.createElement('td');
+                tdContent.textContent = taskContent;
+                const tdStartDate = document.createElement('td');
+                tdStartDate.textContent = formatDate(taskStartDate);
+                const tdEndDate = document.createElement('td');
+                tdEndDate.textContent = formatDate(taskEndDate);
+                const tdMember = document.createElement('td');
+                tdMember.textContent = taskMember;
+                const tdRecommend=document.createElement('td');
+                tdRecommend.textContent=taskRecommend;
+                
+
+                tr.appendChild(tdName);
+                tr.appendChild(tdContent);
+                tr.appendChild(tdStartDate);
+                tr.appendChild(tdEndDate);
+                tr.appendChild(tdMember);
+                tr.appendChild(tdRecommend);
+                tbody.appendChild(tr);
+                console.log(`${taskName} - ${taskContent} - ${taskStartDate} - ${taskEndDate} - ${taskMember}`);
+              });
+              table.appendChild(tbody);
+
+              // Insert the table into the taskDataTable div
+              const taskDataTable = document.getElementById('taskDataTable');
+              taskDataTable.innerHTML = ''; // Clear any existing content
+              taskDataTable.appendChild(table);
+
+              // Cuộn đến khung chi tiết công việc
+              document.getElementById('taskDataTable').scrollIntoView();
+            }
+            //thay doi text cua button
+            document.getElementById('btnRecommendByChatBot').textContent="Tham khảo lại";
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error fetching tasks:', error);
+        });
+    }
 </script>
 {% endblock javascripts %}

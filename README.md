@@ -48,11 +48,16 @@ services:
 ## Case mismatch between loaded and declared class names: "App\Entity\category" vs "App\Entity\Category".
 *. Review and change type in Enity
 # Tip and Trick
+## How to run Symfony With API
+```
+double click file `run.bat`
+```
 ## Create new branch from `dev`'s branch
 ```
 git checkout dev       # Chuyển sang nhánh dev (nếu chưa ở đó)
 git pull origin dev    # Cập nhật nhánh dev mới nhất từ remote
 git checkout -b ten-nhanh-moi  # Tạo nhánh mới từ dev và chuyển sang đó
+git push origin ten-nhanh-moi  
 ```
 ## Dont know how to fix? -> delete cache
 ```
@@ -263,3 +268,18 @@ class ContactController extends AbstractController
     {{ form_row(form.save) }}
 {{ form_end(form) }}
 ```
+# Idea
+## Predict percent done 1 task for entire of member in room 
+- Attribute: 
+    - Quantity of task done
+    - Quantity of task undone
+    - Quantity of task
+    - Time to done in one task
+    - time done/ time deadline
+    - Percent of task done in 5 task lastest
+- Tech: 
+    - Logistic Regression: Skilearn for model
+    - FlaskAPI: connect form symfony to model
+- Others:
+    - Create database view in symfony
+    - Multithread
