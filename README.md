@@ -277,3 +277,9 @@ class ContactController extends AbstractController
     - Time to done in one task
     - time done/ time deadline
     - Percent of task done in 5 task lastest
+- Tech: 
+    - Logistic Regression: Skilearn for model
+    - FlaskAPI: connect form symfony to model
+- Others:
+    - Create view in data
+    - Multithread
