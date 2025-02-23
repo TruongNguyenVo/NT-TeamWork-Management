@@ -268,3 +268,12 @@ class ContactController extends AbstractController
     {{ form_row(form.save) }}
 {{ form_end(form) }}
 ```
+# Idea
+## Predict percent done 1 task for entire of member in room 
+- Attribute: 
+    - Quantity of task done
+    - Quantity of task undone
+    - Quantity of task
+    - Time to done in one task
+    - time done/ time deadline
+    - Percent of task done in 5 task lastest
