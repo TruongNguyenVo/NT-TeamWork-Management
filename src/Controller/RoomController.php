@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 final class RoomController extends AbstractController
 {
     private $entityManager;
+    
     private $roomRepository;
     private $roomUserRepository;
     private $taskRepository;
