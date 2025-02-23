@@ -87,18 +87,28 @@ class RoomRepository extends ServiceEntityRepository
     }
 
     //HAM KIEM TRA USER CO TRONG ROOM HAY KHONG
-    public function existsUserInRoom($user, $room): bool
-{
-    $count = $this->getEntityManager()->createQuery(
-        'SELECT COUNT(ur) FROM App\Entity\UserRoom ur 
-        WHERE ur.user = :user AND ur.room = :room'
-    )
-    ->setParameter('user', $user)
-    ->setParameter('room', $room)
-    ->getSingleScalarResult();
-
-    return $count >= 1 ? true: false;
-}
+    public function existsUserInRoom($user, $room, $status = null): bool
+    {
+        $query = 'SELECT COUNT(ur) FROM App\Entity\UserRoom ur 
+                WHERE ur.user = :user AND ur.room = :room';
+        
+        if ($status !== null) {
+            $query .= ' AND ur.status = :status';
+        }
+    
+        $qb = $this->getEntityManager()->createQuery($query)
+            ->setParameter('user', $user)
+            ->setParameter('room', $room);
+    
+        if ($status !== null) {
+            $qb->setParameter('status', $status);
+        }
+    
+        $count = $qb->getSingleScalarResult();
+    
+        return $count >= 1;
+    }
+    
 
     //HAM KIEM TRA NGUOI DUNG TRONG ROOM CO VAI TRO DO HAY KHONG
     public function isRole($user, $room, $role){
@@ -118,20 +128,25 @@ class RoomRepository extends ServiceEntityRepository
 
 
     //TIM TAT CA CAC THANH VIEN DUA VAO ROOM
-    public function findUserByRoom($room, $role = 'member', $status = null)
+    public function findUserByRoom($room, $role = null, $status = null)
     {
-        $dql = 'SELECT ur FROM App\Entity\UserRoom ur WHERE ur.role = :role AND ur.room = :room';
+        $dql = 'SELECT ur FROM App\Entity\UserRoom ur WHERE  ur.room = :room';
         
         if ($status !== null) {
             $dql .= ' AND ur.status = :status';
         }
+        if( $role !== null) {
+            $dql .= 'AND ur.role = :role';
+        }
     
         $query = $this->getEntityManager()->createQuery($dql)
-            ->setParameter('room', $room)
-            ->setParameter('role', $role);
+            ->setParameter('room', $room);
     
         if ($status !== null) {
             $query->setParameter('status', $status);
+        }
+        if( $role !== null) {
+            $query->setParameter('role', $role);
         }
 
         // dump( $query->getResult());

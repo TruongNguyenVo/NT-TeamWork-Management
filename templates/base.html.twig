@@ -42,6 +42,8 @@
     <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}">
   </head>
   <body>
+
+
     <div class="wrapper">
       <!-- Sidebar -->
       <div class="sidebar" data-background-color="dark">
@@ -103,7 +105,7 @@
                     {% for room in sidebar.room.admin%}
                     <li>
                       <a data-bs-toggle="collapse" href="#subnav{{ count }}">
-                        <span class="sub-item">{{room.0.name}}</span>
+                        <span id="roomNameSpan" class="sub-item" title="{{ room.0.name }}">{{room.0.name}}</span>
                         <span class="caret"></span>
                       </a>
                       <div class="collapse" id="subnav{{ count }}">
@@ -338,4 +340,6 @@
   </body>
 </html>
 {% block javascripts %}
+<script>
+</script>
 {% endblock %}

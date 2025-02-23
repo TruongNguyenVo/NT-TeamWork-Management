@@ -9,6 +9,7 @@ use App\Form\CreateTaskType;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
 use DateTime;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpClient\HttpClient;
@@ -29,12 +30,14 @@ final class TaskController extends AbstractController
     private $roomRepository;
     private $roomUserRepository;
     private $taskRepository;
-    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository, TaskRepository $taskRepository)
+    private $userRepository;
+    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository, TaskRepository $taskRepository, UserRepository $userRepository)
     {
         $this->roomUserRepository = $roomUserRepository;
         $this->roomRepository = $roomRepository;
         $this->entityManager = $entityManager;
         $this->taskRepository = $taskRepository;
+        $this->userRepository = $userRepository;
     }
     // #[Route(name: 'app_task_index', methods: ['GET'])]
     // public function index(TaskRepository $taskRepository): Response
@@ -86,7 +89,7 @@ final class TaskController extends AbstractController
                     }
                     
                 }
-
+ 
                 //LUU FILE NEU CO
                 $file = $form->get("pathAttachment")->getData();
                 if(file_exists($file)) {
@@ -134,10 +137,55 @@ final class TaskController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_task_show', methods: ['GET'])]
-    public function show(Task $task): Response
-    {
-        return $this->render('task/show.html.twig', [
+    #[Route('/room/{roomId}/overview/member/task/{id}', name: 'app_task_show_member', methods: ['GET','POST'])]
+    public function show(Request $request, $roomId, $id): Response
+    {   
+        $room = $this->roomRepository->find($roomId);
+        $task = $this->taskRepository->find($id);
+        // dump($task);
+        // die();
+        
+
+        if ($request->isMethod('POST')) {
+            $action = $request->get('action');
+            // dump($action);
+            // die();
+
+            $resultContent = $request->get('resultContent');
+            $resultFile = $request->files->get('newResultAttachment');
+            
+            if($resultFile){
+                $newFilename = "/uploads/" . uniqid().'.'.$resultFile->guessExtension();
+                $resultFile->move(
+                    $this->getParameter('uploads_directory'),
+                    $newFilename
+                );
+                $task->setResultAttachment($newFilename);
+                // dump($newFilename);
+            }
+            if($resultContent){
+                $task->setResultContent($resultContent);
+            }
+            if($action == 'submit'){
+                $task->setStatus('review');
+                $task->setFinishDate = new \DateTime();
+            }
+            if($action == 'unreview'){
+                $task->setStatus('in_progress');
+            }
+            // dump($resultContent);
+            // die();
+
+            
+            $this->entityManager->persist($task);
+            $this->entityManager->flush();
+            
+
+            // dump($resultContent);
+            // die();
+        }
+        return $this->render('task/showMember.html.twig', [
+            'room' => $room,
             'task' => $task,
         ]);
     }
@@ -145,30 +193,82 @@ final class TaskController extends AbstractController
     #[Route('/room/{roomId}/task/{id}/edit', name: 'app_task_edit', methods: ['POST'])]
     public function edit(Request $request, Task $task, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(TaskType::class, $task);
-        $form->handleRequest($request);
+        // $taskId = $request->get('idTaskShow');
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+        // dump($request, $task);
+        // die();
+        
 
-            return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
+        $task->setName($request->request->get('name'));
+        $task->setContent($request->get("content"));
+        $task->setStartDate(new \DateTime($request->request->get("startDate")) ?? null);
+        $task->setEndDate(new \DateTime($request->request->get("endDate")) ?? null);
+        $task->setStatus($request->request->get("status"));
+        if($request->get("member")){
+            $task->setMember($entityManager->getRepository(User::class)->find($request->get("member")) ?? null);
+        }
+        if($request->files->get("newPathAttachment")){
+            //LUU FILE NEU CO
+            $file = $request->files->get("newPathAttachment");
+            if(file_exists($file)) {
+                    $newFilename = "/uploads/" . uniqid().'.'.$file->guessExtension();
+                    $file->move(
+                        $this->getParameter('uploads_directory'),
+                        $newFilename
+                );
+                
+                $task->setPathAttachment($newFilename);
+            }
         }
 
-        return $this->render('task/edit.html.twig', [
-            'task' => $task,
-            'form' => $form,
-        ]);
+        $entityManager->persist($task);
+        $entityManager->flush();
+
+
+        $roomId = $request->attributes->get('roomId');
+        return $this->redirectToRoute('app_room_task', [
+            'id' => $roomId,
+        ], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/{id}', name: 'app_task_delete', methods: ['POST'])]
+    // #[Route('/room/{roomId}/task/{id}/edit', name: 'app_task_edit', methods: ['POST'])]
+    // public function edit(int $roomId, int $id): Response
+    // {
+    //     // dump('', $roomId, $id);
+    //     // die();
+
+
+    //     $result = [
+    //         "message" => "done",
+    //         "roomId" => $roomId,
+    //         "id" => $id,
+    //     ];
+
+    //     return new JsonResponse($result);
+    // }
+
+    #[Route('/room/{roomId}/task/{id}/delete', name: 'app_task_delete', methods: ['POST'])]
     public function delete(Request $request, Task $task, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$task->getId(), $request->getPayload()->getString('_token'))) {
+        // if ($this->isCsrfTokenValid('delete'.$task->getId(), $request->getPayload()->getString('_token'))) {
+        //     $entityManager->remove($task);
+        //     $entityManager->flush();
+        // }
+        // else{
+        //     dump('loi delete roi');
+        //     die();
+        // }
+
+        if($task){
             $entityManager->remove($task);
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
+        $roomId = $request->attributes->get('roomId');
+        return $this->redirectToRoute('app_room_task', [
+            'id' => $roomId,
+            
+        ], Response::HTTP_SEE_OTHER);
     }
 
     //HAM API DE TRA VE THONG TIN CUA TASK DUA VAO ID
@@ -181,7 +281,7 @@ final class TaskController extends AbstractController
             dump("Loi o apiShow");
             die();
         }
-        $memberInRoom = $this->roomRepository->findUserByRoom($room, "member", "joined");
+        $memberInRoom = $this->roomRepository->findUserByRoom($room, null, "joined");
 
         $arrMember = [];
         foreach($memberInRoom as $member){
@@ -196,11 +296,12 @@ final class TaskController extends AbstractController
 
 
         $taskData = [
-            "id"=> $task->getId(),
-            "name" => $task->getName(),
-            'content' => $task->getContent(),
+        "id"=> $task->getId(),
+        "name" => $task->getName(),
+        'content' => $task->getContent(),
         'startDate' => $task->getStartDate() ? $task->getStartDate()->format('Y-m-d H:i:s') : null,
         'endDate' => $task->getEndDate() ? $task->getEndDate()->format('Y-m-d H:i:s') : null,
+        'reviewDate' => $task->getReviewDate() ? $task->getReviewDate()->format('Y-m-d H:i:s') : null,
         'finishDate' => $task->getFinishDate() ? $task->getFinishDate()->format('Y-m-d H:i:s') : null,
         'status' => $task->getStatus(),
         // 'leader' => $task->getLeader() ? $task->getLeader()->getFullName() : null,
@@ -219,7 +320,6 @@ final class TaskController extends AbstractController
     // Trả về JSON response
     return new JsonResponse($taskData);
     }
-
     
 
     //HAM API DE TRA VE THONG TIN CUA TAT CA CAC TASK CUA 1 USER O 1 PHONG DUA VAO ID
@@ -400,6 +500,35 @@ final class TaskController extends AbstractController
             }
         }
         
+
+ 
+    //HAM API DE TRA VE THONG TIN CUA TAT CA CAC TASK CUA 1 USER O 1 PHONG DUA VAO ID
+    #[Route(path:'/api/room/{roomId}/member/{id}/tasks', name:'api_app_task_by_member', methods: ['POST'])]
+    public function apiShowAllTaskByUserIdInRoom(int $roomId, int $id)
+    {
+        $room = $this->roomRepository->find($roomId);
+        $user = $this->userRepository->find($id);
+        $tasks = $this->taskRepository->findBy(['room' => $room, 'member' => $user]);
+
+        $dataRespond =[];
+
+        foreach ($tasks as $task) {
+            $dataRespond[] = [
+                'name' => $task->getName(),
+                'startDate' => $task->getStartDate()->format('Y-m-d H:i:s'),
+                'endDate' => $task->getEndDate()? $task->getEndDate()->format('Y-m-d H:i:s') : "",
+                'finishDate' => $task->getFinishDate() ? $task->getFinishDate()->format('Y-m-d H:i:s') : "",
+                'status' => $task->getStatusLabel(),
+            ];
+        }
+        $userData = [
+            'fullName' => $user->getFullName(),
+        ];
+
+        $response = [
+            'user' => $userData,
+            'tasks' => $dataRespond
+        ];
         return new JsonResponse($response);
     }
 }

@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Xem công việc{% endblock %}
+ 
+{% block body %}
+<div class="container">
+            <div class="page-inner">
+            <div class="page-header">
+                <h3 class="fw-bold mb-3">NTTeam</h3>
+                <ul class="breadcrumbs mb-3">
+                <li class="nav-home">
+                    <a href="#">
+                    <i class="icon-home"></i>
+                    </a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-home">
+                    <a href="#">
+                <li class="nav-item">
+                    <a href="#">Các nhóm tham gia</a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">{{room.name}}</a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">{{task.name}}</a>
+                </li>
+                
+                </ul>
+            </div>
+                <form class ="row" action="{{path('app_task_show_member', {'roomId': room.id, 'id':task.id})}}" enctype="multipart/form-data" method="POST">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Tên công việc</label>
+                    <input disabled type="text" class="form-control" value="{{task.name}}" name="name">
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Trạng thái:</label>
+                    <input disabled type="text" class="form-control" name="status" value="{{task.statusLabel}}">
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Ngày bắt đầu:</label>
+                    <input disabled type="datetime" class="form-control" name="startDate" value="{{task.startDate|date('d/m/Y H:i:s')}}">
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Ngày kết thúc:</label>
+                    <input disabled type="datetime" class="form-control" name="endDate" value="{{task.endDate|date('d/m/Y H:i:s')}}">
+                </div>
+                {% if task.status == 'review'%}
+                <div class="mb-3">
+                    <label for="name" class="form-label">Ngày hoàn thành:</label>
+                    <input disabled type="datetime" class="form-control" name="finishDate" value="{{task.finishDate|date('d/m/Y H:i:s')}}">
+                </div>
+                {% endif %}
+                <div class="mb-3">
+                    <label for="office" class="form-label">Mô tả</label>
+                    <textarea disabled class="form-control" rows="5" name="content" id="">{{task.content}}</textarea>
+                </div>
+                <div class="mb-3">
+                        <label for="pathAttachment" class="form-label">Tệp đính kèm</label>
+                        <a id="pathAttachment" href="{{task.pathAttachment}}" class="form-control" target="_blank">File đính kèm của nhiệm vụ: {{task.name}}</a>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Submission Content Section -->
+                
+                <div class="col-12">
+                    <h5>Nội dung nộp</h5>
+                    <div class="mb-3">
+                        <label for="submissionDescription" class="form-label">Mô tả nội dung công việc đã nộp</label>
+                        <textarea {{task.status == 'review' ? "disabled":''}} class="form-control" rows="5" name="resultContent" id="resultContent">{{task.resultContent}}</textarea>
+                    </div>
+
+                    {% if task.resultAttachment %}
+                    <div class="mb-3">
+                        <label for="pathAttachment" class="form-label">Tệp đính kèm</label>
+                        <a id="resultAttachment" href="{{task.resultAttachment}}" class="form-control" target="_blank">Tệp kết quả của công việc: {{task.name}}</a>
+                    </div>
+                    {% endif %}
+                    {% if task.status != 'review'%}
+                    <div class="mb-3">
+                    <label for="submissionFiles" class="form-label">{{task.resultAttachment ? "Thay thế tệp hiện tại" : "Nộp tệp đính kèm"}}</label>
+                        <input type="file" {{task.status == 'review' ? "disable":''}} name="newResultAttachment" class="form-control" multiple>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="mb-3-md">
+                    <a type="button" class="btn btn-danger" href={{path('app_room_overview_member',{'id':room.id})}}>Đóng</a>
+                    {% if task.status == 'review' %}
+                        <button type="submit" name="action" value="unreview" class="btn btn-primary">Hoàn tác thành chưa hoàn thành</button>
+                    {% elseif task.status != 'done' and task.status != 'cancelled' %}
+                        <button type="submit" name="action" value="save" class="btn btn-primary">Lưu</button>
+                        <button type="submit" name="action" value="submit" class="btn btn-success">Nộp</button>
+                    {% endif %}
+                </div>
+            </div>
+            </form>
+        </div>
+{% endblock %}
