@@ -134,10 +134,56 @@ final class TaskController extends AbstractController
         ]);
     }
 
-    #[Route('/room/{roomId}/overview/member/task/{id}', name: 'app_task_show_member', methods: ['GET'])]
-    public function show($roomId, $id): Response
-    {
+    #[Route('/room/{roomId}/overview/member/task/{id}', name: 'app_task_show_member', methods: ['GET','POST'])]
+    public function show(Request $request, $roomId, $id): Response
+    {   
+        $room = $this->roomRepository->find($roomId);
+        $task = $this->taskRepository->find($id);
+        // dump($task);
+        // die();
+        
+
+        if ($request->isMethod('POST')) {
+            $action = $request->get('action');
+            // dump($action);
+            // die();
+
+            $resultContent = $request->get('resultContent');
+            $resultFile = $request->files->get('newResultAttachment');
+            
+            if($resultFile){
+                $newFilename = "/uploads/" . uniqid().'.'.$resultFile->guessExtension();
+                $resultFile->move(
+                    $this->getParameter('uploads_directory'),
+                    $newFilename
+                );
+                $task->setResultAttachment($newFilename);
+                // dump($newFilename);
+            }
+            if($resultContent){
+                $task->setResultContent($resultContent);
+            }
+            if($action == 'submit'){
+                $task->setStatus('review');
+                $task->setFinishDate = new \DateTime();
+            }
+            if($action == 'unreview'){
+                $task->setStatus('in_progress');
+            }
+            // dump($resultContent);
+            // die();
+
+            
+            $this->entityManager->persist($task);
+            $this->entityManager->flush();
+            
+
+            // dump($resultContent);
+            // die();
+        }
         return $this->render('task/showMember.html.twig', [
+            'room' => $room,
+            'task' => $task,
         ]);
     }
 
@@ -271,7 +317,7 @@ final class TaskController extends AbstractController
     // Trả về JSON response
     return new JsonResponse($taskData);
     }
-
+ 
     //HAM API DE TRA VE THONG TIN CUA TAT CA CAC TASK CUA 1 USER O 1 PHONG DUA VAO ID
     #[Route(path:'/api/room/{roomId}/member/{id}/tasks', name:'api_app_task_by_member', methods: ['POST'])]
     public function apiShowAllTaskByUserIdInRoom(int $roomId, int $id)
