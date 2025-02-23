@@ -281,5 +281,5 @@ class ContactController extends AbstractController
     - Logistic Regression: Skilearn for model
     - FlaskAPI: connect form symfony to model
 - Others:
-    - Create view in data
+    - Create database view in symfony
     - Multithread
