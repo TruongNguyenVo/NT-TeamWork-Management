@@ -12,7 +12,6 @@ use DateTime;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -20,7 +19,6 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\RoomRepository;
 use App\Repository\UserRoomRepository;
-use function Symfony\Component\Clock\now;
 
 
 // #[Route('/task')]
@@ -320,185 +318,26 @@ final class TaskController extends AbstractController
     // Trả về JSON response
     return new JsonResponse($taskData);
     }
-    
-
     //HAM API DE TRA VE THONG TIN CUA TAT CA CAC TASK CUA 1 USER O 1 PHONG DUA VAO ID
-    #[Route(path:'/api/room/{roomId}/consult', name:'api_app_consult_with_chatbot', methods: ['POST'])]
-    public function apiConsultWithChatBot(Request $request, int $roomId)
-    {   
-        // Lấy dữ liệu JSON từ body request
-        $data = json_decode($request->getContent(), true);
-        // $temp = [
-        //     'taskDescription' => $data['taskDescription'] ?? null, 
-        // ];
+    #[Route(path:'/api/room/{roomId}/member/{id}/tasks', name:'api_app_task_by_member', methods: ['POST'])]
+    public function apiShowAllTaskByUserIdInRoom(int $roomId, int $id)
+    {
+        $room = $this->roomRepository->find($roomId);
+        $user = $this->userRepository->find($id);
+        $tasks = $this->taskRepository->findBy(['room' => $room, 'member' => $user]);
 
-        
-            $roomId = $data['roomId'];
-            $quantityMember = $data['quantityMember'] ?? 1;
-            $roomName= $data['roomName'] ??'';
-            $roomDescription = $data['roomDescription'] ?? null;
-            $roomRequire=$data['roomRequire'] ?? '';
-            $roomStart=$data['roomStart'] != '' ? $data['roomStart']: new \DateTime();
-            $roomEnd=$data['roomEnd'] != '' ? $data['roomEnd'] :(clone $roomStart)->modify('+3 months');
+        $dataRespond =[];
 
-
-            // ////////////////////////////////////TEST/////////////////////////////////////////////////////
-            // $tasks =[];
-            
-            //     $tasks[] =[
-            //         'name' => 'abc',
-            //         'content' => 'adasd',
-            //         'startDate' => '2025-02-14T00:00:00.000Z',
-            //         'endDate' => '2025-02-14T00:00:00.000Z',
-            //         'member' => 1,
-            //         'recommend' => 'recommend'
-            //     ];
-            //     $tasks[] =[
-            //         'name' => 'adadas',
-            //         'content' => 'ndakjdnmczxjhc',
-            //         'startDate' => '2025-02-14T00:00:00.000Z',
-            //         'endDate' => '2025-02-14T00:00:00.000Z',
-            //         'member' => 2,
-            //         'recommend' => 'recommend1'
-            //     ];
-
-            // // $temp = [$roomId, $quantityMember, $roomDescription, $roomRequire, $roomStart, $roomEnd, $roomName];
-            // // return new JsonResponse($temp);
-            // $response = [
-            //     'status' => 'success',
-            //     'tasks' => $tasks
-            // ];
-            // return new JsonResponse($response);
-            // ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-        $env = $_ENV['GEMINI_API_KEY'] ?? null;
-        if($env == null) {
-            $response =[
-                'status'=> 'error',
-                'message' => 'Hệ thống hiện không hoạt động do không có API_KEY, vui lòng thử lại sau.',
+        foreach ($tasks as $task) {
+            $dataRespond[] = [
+                'name' => $task->getName(),
+                'startDate' => $task->getStartDate()->format('Y-m-d H:i:s'),
+                'endDate' => $task->getEndDate()? $task->getEndDate()->format('Y-m-d H:i:s') : "",
+                'finishDate' => $task->getFinishDate() ? $task->getFinishDate()->format('Y-m-d H:i:s') : "",
+                'status' => $task->getStatusLabel(),
             ];
-            return new JsonResponse($response);
         }
-        
-        if($_ENV['GEMINI_API_KEY']){
-            $httpClient = HttpClient::create();
-            $method = 'POST';
-            $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' .$_ENV['GEMINI_API_KEY'];
-            $header = [
-                'Content-Type' => 'application/json',
-            ];
 
-            $prompt="Bỏ qua tất cả các yêu cầu trước đó và hãy trả lời tiếng việt cho yêu cầu này.
-            Hãy tạo ra các công việc dành cho nhóm về môn $roomName có mô tả là $roomDescription với nhóm hiện tại có $quantityMember người. Tạo tối thiểu một thành viên có ít nhất phải có 4 công việc.
-            Thời gian thực hiện là từ $roomStart và kết thúc là $roomEnd.
-            Các yêu cầu là $roomRequire.
-            Kết quả trả về là tên công việc(name), mô tả công việc (content), ngày bắt đầu (startDate), ngày kết thúc (endDate), gợi ý dành cho trưởng nhóm khi phân công công việc đó (recommend) và thành viên (member), member được đánh số từ 1 đến số lượng thành viên hiện tại.
-            Tất cả các thông tin như tên công việc, mô tả công việc, thành viên bắt buộc phải có.
-            Thời gian bắt đầu và thời gian kết thúc phải có, và thời gian tối thiểu của một công việc là 2 ngày";
-
-            $body = [
-                "contents" => [
-                    [
-                        "parts" => [
-                            ["text" => $prompt],
-                        ]
-                    ]
-                ],
-                "generationConfig" => [
-                    "response_mime_type" => "application/json",
-                    "response_schema" => [
-                        "type" => "ARRAY",
-                        "items" => [
-                            "type" => "OBJECT",
-                            "properties" => [
-                                "name" => ["type" => "STRING"],
-                                "content"=>["type"=> "STRING"],
-                                "startDate" => ["type" => "STRING", "format" => "date-time"],
-                                "endDate"=> ["type"=> "STRING","format"=>"date-time"],
-                                "member"=> ["type"=> "STRING"],
-                                "recommend"=>["type"=> "STRING"],
-                            ],
-                            "required" => ["name", "content", 'startDate', 'endDate']
-                        ]
-                    ]
-                ]
-            ];
-            
-            try {
-                $response = $httpClient->request($method, $url, [
-                    'headers' => $header,
-                    'json' => $body
-                ]);
-                //request thanh cong
-                if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-                    $data = json_decode($response->getContent(), true);
-                    
-                    // Lấy danh sách TEXT
-                    $textListJson = $data['candidates'][0]['content']['parts'][0]['text'];
-
-                    //Chuyển đổi chuỗi JSON trong 'text' thành mảng PHP
-                    $jsonToArray = json_decode($textListJson, true);
-                    
-                    if($jsonToArray == null){
-                        $response =[
-                            'status'=> 'error',
-                            'message' => 'Hệ thống không thể tạo công việc, vui lòng thử lại sau.',
-                            
-                        ];
-                        return new JsonResponse($response);
-                    }
-
-                    $tasks =[];
-
-                    foreach($jsonToArray as $task){
-                        $tasks[] = [
-                            'name' => $task['name'] ? $task['name'] : 'N/A',
-                            'content' => $task['content'] ? $task['content']: 'N/A',
-                            'startDate' => $task['startDate'] ? $task['startDate']: 'N/A',
-                            'endDate' => $task['endDate'] ? $task['endDate']: 'N/A',
-                            'member' => $task['member'] ? $task['member'] : 'N/A',
-                            'recommend'=>$task['recommend'] ? $task['recommend'] : 'N/A',
-                        ];
-                    }
-
-                    
-                // $task = [
-                //     [
-                //         'name' => 'abc',
-                //         'content' => 'adasd',
-                //         'startDate' => '1/2/2000',
-                //         'endDate' => '21/3/2023',
-                //         'member' => 1,
-                //     ],
-                //     [
-                //         'name' => 'adadas',
-                //         'content' => 'ndakjdnmczxjhc',
-                //         'startDate' => '1/2/2000',
-                //         'endDate' => '21/3/2023',
-                //         'member' => 2,
-                //     ],
-                // ];
-                $response = [
-                    'status' => 'success',
-                    'tasks' => $tasks
-                ];
-                }
-                else{
-                    $response = [
-                        'status'=> 'error',
-                        'message'=> $response->getStatusCode(),
-                    ];
-                    return new JsonResponse($response);
-                }
-                
-            } catch (\Exception $exception) {
-                $response =[
-                    'status'=> 'error',
-                    'message'=> $exception->getMessage(),
-                ];
-                return new JsonResponse($response);
-            }
-        }
         
 
  
@@ -521,6 +360,7 @@ final class TaskController extends AbstractController
                 'status' => $task->getStatusLabel(),
             ];
         }
+
         $userData = [
             'fullName' => $user->getFullName(),
         ];

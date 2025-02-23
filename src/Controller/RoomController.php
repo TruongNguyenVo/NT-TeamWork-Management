@@ -264,9 +264,14 @@ final class RoomController extends AbstractController
             // dump($room);
             // die();
         }
+        // dump($room);
+        // die();
+
         $membersInRoom = $this->roomRepository->findUserByRoom($room,"member", "joined");
         $temp = $this->roomRepository->findUserByRoom($room, "admin","joined");
         
+        // dump($membersInRoom, $temp);
+        // die();
         // dump($temp, );
         // die();
 
@@ -291,7 +296,9 @@ final class RoomController extends AbstractController
         foreach ($tasks as $task) {
             $member = $task->getMember();
             if ($member) {
-                $memberWithTasks[$member->getId()]['taskCount']++;
+                if (isset($memberWithTasks[$member->getId()])) {
+                    $memberWithTasks[$member->getId()]['taskCount']++;
+                }
                 // dump($member);
 
             }

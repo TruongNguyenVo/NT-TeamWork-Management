@@ -77,62 +77,14 @@
                     <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Thông tin công việc</h4>
-
-
-
-                            {# tu dong tao task #}
-                                <!-- Button kích hoạt modal -->
-                            <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#chatbotModal">
-                                <i class="fa fa-robot"></i>
-                                  Gợi ý công việc tự động với NTBot
+                            <button
+                              class="btn btn-primary btn-round ms-auto"
+                              data-bs-toggle="modal"
+                              data-bs-target="#addRowModal"
+                            >
+                              <i class="fa fa-plus"></i>
+                              Thêm công việc mới
                             </button>
-                            <!-- Modal -->
-                              <div class="modal fade" id="chatbotModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-                                  <div class="modal-dialog modal-xl">
-                                      <div class="modal-content">
-                                          <div class="modal-header">
-                                              <h5 class="modal-title" id="modalTitle">Gơi ý công việc tự động với NTBot</h5>
-                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                          </div>
-                                          <div class="modal-body">
-                                              <!-- Error message placeholder -->
-                                              <div id="errorMessage" class="alert alert-danger d-none"></div>
-                                              <!-- Form nhập thông tin công việc -->
-                                              <form id="taskForm">
-                                                  <div class="mb-3">
-                                                      <label for="taskName" class="form-label">Tên nhóm</label>
-                                                      <input type="text" class="form-control" id="taskName" value="{{room.name}}" disabled>
-                                                  </div>
-                                                  <div class="mb-3">
-                                                      <label for="taskDescription" class="form-label">Mô tả</label>
-                                                      <textarea class="form-control" id="taskDescription" rows="3" disabled>{{room.description}}</textarea>
-                                                  </div>
-                                                  <div class="mb-3">
-                                                      <label for="taskDescription" class="form-label">Số lượng thành viên dự kiến</label>
-                                                      <input type="number" id="quantityMember" min="1" value="1"  class="form-control">
-                                                  </div>
-                                                  <div class="mb-3">
-                                                      <label for="taskDescription" class="form-label">Yêu cầu</label>
-                                                      <textarea class="form-control" id="taskRequire" rows="3"></textarea>
-                                                  </div>
-                                                  <div class="mb-3">
-                                                      <label for="taskDeadline" class="form-label">Thời gian bắt đầu</label>
-                                                      <input type="date" class="form-control" id="roomStart">
-                                                  </div>
-                                                  <div class="mb-3">
-                                                      <label for="taskDeadline" class="form-label">Hạn chót</label>
-                                                      <input type="date" class="form-control" id="roomEnd">
-                                                  </div>
-                                                  <button type="button" class="btn btn-primary" onclick="sendToChatBot()" id="btnRecommendByChatBot">Tham khảo</button>
-                                              </form>
-                                              <div id="taskDataTable" class="mt-4"></div>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-
-
-
                             <button
                             {# <a
                               class="btn btn-primary btn-round ms-auto"
