@@ -8,9 +8,9 @@ use App\Entity\User;
 use App\Form\CreateTaskType;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\RoomRepository;
 use App\Repository\UserRoomRepository;
+use function Symfony\Component\Clock\now;
 
 
 // #[Route('/task')]
@@ -316,35 +317,5 @@ final class TaskController extends AbstractController
 
     // Trả về JSON response
     return new JsonResponse($taskData);
-    }
- 
-    //HAM API DE TRA VE THONG TIN CUA TAT CA CAC TASK CUA 1 USER O 1 PHONG DUA VAO ID
-    #[Route(path:'/api/room/{roomId}/member/{id}/tasks', name:'api_app_task_by_member', methods: ['POST'])]
-    public function apiShowAllTaskByUserIdInRoom(int $roomId, int $id)
-    {
-        $room = $this->roomRepository->find($roomId);
-        $user = $this->userRepository->find($id);
-        $tasks = $this->taskRepository->findBy(['room' => $room, 'member' => $user]);
-
-        $dataRespond =[];
-
-        foreach ($tasks as $task) {
-            $dataRespond[] = [
-                'name' => $task->getName(),
-                'startDate' => $task->getStartDate()->format('Y-m-d H:i:s'),
-                'endDate' => $task->getEndDate()? $task->getEndDate()->format('Y-m-d H:i:s') : "",
-                'finishDate' => $task->getFinishDate() ? $task->getFinishDate()->format('Y-m-d H:i:s') : "",
-                'status' => $task->getStatusLabel(),
-            ];
-        }
-        $userData = [
-            'fullName' => $user->getFullName(),
-        ];
-
-        $response = [
-            'user' => $userData,
-            'tasks' => $dataRespond
-        ];
-        return new JsonResponse($response);
     }
 }
