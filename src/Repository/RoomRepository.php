@@ -71,16 +71,19 @@ class RoomRepository extends ServiceEntityRepository
             ->select('r, COUNT(ur.id) AS memberCount')
             ->innerJoin('r.userRooms', 'ur')
             ->andWhere('ur.user = :user')
-            ->andWhere('ur.role = :role')
             ->setParameter('user', $user)
-            ->setParameter('role', $role)
             ->groupBy('r.id');
-        if($status !== null){
+        if ($role !== null) {
+            $result->andWhere('ur.role = :role')
+            ->setParameter('role', $role);
+        }
+        if ($status !== null) {
             $result->andWhere('ur.status = :status')
-           ->setParameter('status', $status);
+            ->setParameter('status', $status);
         }
 
-        // dump($result);
+        // dump($result->getQuery()
+        // ->getResult());
         // die();
         return $result->getQuery()
                     ->getResult();
@@ -136,7 +139,7 @@ class RoomRepository extends ServiceEntityRepository
             $dql .= ' AND ur.status = :status';
         }
         if( $role !== null) {
-            $dql .= 'AND ur.role = :role';
+            $dql .= ' AND ur.role = :role';
         }
     
         $query = $this->getEntityManager()->createQuery($dql)

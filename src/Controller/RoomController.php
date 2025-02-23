@@ -291,9 +291,11 @@ final class RoomController extends AbstractController
         foreach ($tasks as $task) {
             $member = $task->getMember();
             if ($member) {
-                $memberWithTasks[$member->getId()]['taskCount']++;
+                $memberId = $member->getId();
+                if (isset($memberWithTasks[$memberId])) {
+                    $memberWithTasks[$memberId]['taskCount']++;
+                }
                 // dump($member);
-
             }
         }
 
@@ -330,14 +332,23 @@ final class RoomController extends AbstractController
                         $entityManager->persist($memberToAdmin);
                         $entityManager->persist($adminToMember);
                     }
+                    $entityManager->persist($room);
+                    $entityManager->flush();
+                    $entityManager->commit();
                 }
                 else{
+                    $entityManager->persist($room);
+                    $entityManager->flush();
+
+                    // dump('toi commit roi');
+                    // die();
+                    $entityManager->commit();
                     return $this->redirect($request->headers->get('referer', $this->generateUrl('app_home')));
                 }
-                $entityManager->persist($room);
-                $entityManager->flush();
 
-                $entityManager->commit();
+                // dump($room);
+                // die();
+                
             }
             catch(\Exception $e){
                 $entityManager->rollback();
@@ -350,6 +361,7 @@ final class RoomController extends AbstractController
 
             
         }
+
         $roomId = $request->attributes->get('id');
         if($roomId !== null){
             $room = $this->roomRepository->find($roomId);
