@@ -52,7 +52,7 @@ final class RoomController extends AbstractController
         
         $room = new Room();
         $user = $this->getUser();
-        $form = $this->createForm(AttendType::class, $room);
+        $form = $this->createForm(RoomType::class, $room);
         $form->handleRequest($request);
         // dump($form);
         // die();

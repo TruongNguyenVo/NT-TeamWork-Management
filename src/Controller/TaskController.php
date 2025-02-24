@@ -531,4 +531,59 @@ final class TaskController extends AbstractController
         
         return new JsonResponse($response);
     }
+
+    // API DUNG DE PREDICT PERCENTAGE CUA TASK
+    #[Route(path:'/api/room/{roomId}/task/{id}/predict', name:'api_app_task_predict', methods: ['POST'])]
+    public function apiPredictPercent(Request $request, string $id, string $roomId): JsonResponse
+    {
+        // lay danh sach cac id cua thanh vien trong room
+        //gọi api của flask (truyen id cua cac thanh vien trong room)
+        $httpCLient_predict = HttpClient::create();
+        $method = 'POST';
+        $url = '';
+        $header = [
+            'Content-Type' => 'application/json',
+        ];
+        $body = [];
+
+        try {
+            $response = $httpCLient_predict->request($method, $url, [
+                'headers' => $header,
+                'json' => $body
+            ]);
+             //request thanh cong
+            if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+                $data =[
+                    "vo nguyen" => "90%",
+                    "nguyen van a" => "80%",
+                    "nguyen van b" => "70%",
+                    "nguyen van c" => "60%",
+                ];
+            }
+            else{
+                $response = [
+                    'status'=> 'error',
+                    'message'=> $response->getStatusCode(),
+                ];
+                return new JsonResponse($response);
+            }
+        } catch (\Exception $exception) {
+            $response = [
+                'status'=> 'error',
+                'message'=> $exception->getMessage(),
+            ];
+
+            return new JsonResponse($response);
+        }
+
+        
+        $response = [
+            "status" => "success",
+            "data" => $data,
+            // "test" => "test",
+            
+        ];
+
+        return new JsonResponse($response);
+    }
 }
