@@ -95,7 +95,7 @@
                 <div class="collapse show" id="submenu">
                   <ul class="nav nav-collapse">
                     <li class="active">
-                      <a href="../tables/tables.html">
+                      <a href="{{path('app_home')}}">
                         <span class="sub-item">Xem tất cả nhóm</span>
                       </a>
                     </li>
@@ -111,17 +111,17 @@
                       <div class="collapse" id="subnav{{ count }}">
                         <ul class="nav nav-collapse subnav">
                           <li>
-                            <a href="#">
+                            <a href="{{path('app_room_overview', {'id': room.0.id})}}">
                               <span class="sub-item">Tổng quan nhóm</span>
                             </a>
                           </li>
                           <li>
-                            <a href="#">
+                            <a href="{{path('app_room_member', {'id': room.0.id})}}">
                               <span class="sub-item">Thông tin công việc</span>
                             </a>
                           </li>
                           <li>
-                            <a href="#">
+                            <a href="{{path('app_room_task', {'id': room.0.id})}}">
                               <span class="sub-item">Thông tin thành viên</span>
                             </a>
                           </li>
@@ -143,14 +143,14 @@
                 <div class="collapse" id="tables">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="../tables/tables.html">
+                      <a href="{{path('app_room_attend')}}">
                         <span class="sub-item">Tham gia nhóm mới</span>
                       </a>
                     </li>
 
                     {% for room in sidebar.room.member%}
                       <li>
-                        <a href="../tables/tables.html">
+                        <a href="{{path('app_room_overview_member', {'id': room.0.id})}}">
                           <span class="sub-item">{{ room.0.name }}</span>
                         </a>
                       </li>

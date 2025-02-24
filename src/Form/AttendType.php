@@ -13,10 +13,10 @@ class AttendType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // ->add('id')
+            ->add('id')
             ->add('password')
-            ->add('name')
-            ->add('description', TextareaType::class)
+            // ->add('name')
+            // ->add('description', TextareaType::class)
         ;
     }
 

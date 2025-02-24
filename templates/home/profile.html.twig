@@ -30,7 +30,7 @@
                     {{form_errors(profileForm.email)}}
                     </div>
                     <div class="mb-3">
-                      <label for="password" class="form-label">Mật khẩu</label>
+                      <label for="password" class="form-label">Mật khẩu mới</label>
                       <div class="input-group">
                         {{form_widget(profileForm.password, {'attr': {'class': 'form-control', 'readonly' : 'true'}, 'value': ''})}}
                         <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility()">
@@ -38,7 +38,7 @@
                         </button>
                       </div>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="enableEditing()">Chỉnh sửa</button>
+                    <button type="button" class="btn btn-primary" onclick="enableEditing()" id="editButton">Chỉnh sửa</button>
                     <button type="submit" class="btn btn-success d-none" id="saveButton">Lưu</button>
                     <button type="button" class="btn btn-danger d-none" id="cancelButton" onclick="cancelEditing()">Hủy</button>
                   {{form_end(profileForm)}}
@@ -79,6 +79,9 @@
                 const cancelButton = document.getElementById('cancelButton');
                 saveButton.classList.remove('d-none');
                 cancelButton.classList.remove('d-none');
+
+                const editButton = document.getElementById('editButton');
+                editButton.classList.add('d-none');
             }
     
             function cancelEditing() {
@@ -96,6 +99,8 @@
                 const cancelButton = document.getElementById('cancelButton');
                 saveButton.classList.add('d-none');
                 cancelButton.classList.add('d-none');
+                const editButton = document.getElementById('editButton');
+                editButton.classList.remove('d-none');
             }
         </script>
         {% endblock %}
