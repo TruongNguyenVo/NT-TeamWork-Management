@@ -1761,7 +1761,7 @@ class SeedTasksCommand extends Command
         //task ve lap trinh ung dung di dong
         $tasks_mobile_app_development = [
             'room_id'=> 8,
-            'data' => [
+            'data' => 
                 [
                     [
                         'name' => 'Phân tích yêu cầu ứng dụng',
@@ -2016,7 +2016,7 @@ class SeedTasksCommand extends Command
                         'status' => 'done'
                     ]
                 ]
-            ]
+            
         ];
         //task ve do an tot nghiep
         $tasks_final_project = [
@@ -2555,7 +2555,7 @@ class SeedTasksCommand extends Command
             // lay danh sach tat ca thanh vien cua nhom room_1
             $members_data = $this->entityManager->getRepository(UserRoom::class)->findBy(['room' => $room,'status' =>'joined', 'role' => 'member']);
             $admin = $this->entityManager->getRepository(UserRoom::class)->findOneBy(['room'=> $room,'role'=> 'admin','status'=> 'joined']);
-            foreach($tasks_manage_project['data'] as $task){
+            foreach($taskAndRoom['data'] as $task){
                 $new_task = new Task();
                 $new_task->setName($task['name']);
                 $new_task->setContent($task['content']);
