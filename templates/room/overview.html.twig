@@ -78,11 +78,13 @@
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Thông tin công việc</h4>
                             {# tu dong tao task #}
-                                <!-- Button kích hoạt modal -->
-                            <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#chatbotModal">
-                                <i class="fa fa-robot"></i>
-                                  Gợi ý công việc tự động với NTBot
-                            </button>
+                            {% if tasks == null%}
+                            <!-- Button kích hoạt modal -->
+                              <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#chatbotModal">
+                                  <i class="fa fa-robot"></i>
+                                    Gợi ý công việc tự động với NTBot
+                              </button>
+                            {% endif %}
                             <!-- Modal -->
                               <div class="modal fade" id="chatbotModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
                                   <div class="modal-dialog modal-xl">

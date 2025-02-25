@@ -540,11 +540,13 @@ final class TaskController extends AbstractController
         //gọi api của flask (truyen id cua cac thanh vien trong room)
         $httpCLient_predict = HttpClient::create();
         $method = 'POST';
-        $url = '';
+        $url = 'http://127.0.0.1:5000/predict';
         $header = [
             'Content-Type' => 'application/json',
         ];
-        $body = [];
+        $body = [
+            $input = []
+        ];
 
         try {
             $response = $httpCLient_predict->request($method, $url, [

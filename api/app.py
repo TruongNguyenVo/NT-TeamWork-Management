@@ -7,7 +7,7 @@ app = Flask(__name__)
 with open('models\\decision_tree_model.pkl', 'rb') as f:
     model = joblib.load(f)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/predict', methods=['GET', 'POST'])
 def predict():
     # ket noi database
 
@@ -16,7 +16,7 @@ def predict():
     # de vao model (da luong cho nhanh)
     # hien thi du lieu ve symfony
     # Dữ liệu test đầu vào
-
+ 
     data = {}
     # # Dự đoán kết quả
     for key,value in dataset.items():

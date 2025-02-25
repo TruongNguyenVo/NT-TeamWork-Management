@@ -36,7 +36,7 @@ class SeedRoomsCommand extends Command
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
-    {
+    { 
         $rooms = [
             ['name' => 'Quản lý dự án', 'description' => 'Nhóm thảo luận về phương pháp quản lý dự án nhóm.'],
             ['name' => 'Lập trình phần mềm', 'description' => 'Nhóm sinh viên phát triển phần mềm thực tế.'],
