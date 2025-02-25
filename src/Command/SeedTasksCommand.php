@@ -2573,12 +2573,11 @@ class SeedTasksCommand extends Command
                 $new_task->setMember($random_member->getUser());
                 $new_task->setRoom($room);
                 $this->entityManager->persist($new_task);
-    
+                $this->entityManager->flush();
                 $output->writeln('Da tao task voi:'. $new_task->getId() .'Ten cong viec:'.$new_task->getName());
             }
         }
         
-        $this->entityManager->flush();
         $output->writeln("'Seeding complete!'");
         return Command::SUCCESS;
 
