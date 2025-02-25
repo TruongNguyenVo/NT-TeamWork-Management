@@ -537,15 +537,42 @@ final class TaskController extends AbstractController
     public function apiPredictPercent(Request $request, string $id, string $roomId): JsonResponse
     {
         // lay danh sach cac id cua thanh vien trong room
-        $idsMember = [];
+        $bodyData = [];
         $room = $this->roomRepository->find($roomId);
         $members = $this->roomRepository->findUserByRoom($room, "member", "joined");
 
         if(count($members) > 0){
+            $conn = $this->entityManager->getConnection();
             foreach($members as $member){
-                $idsMember[] = $member->getUser()->getId();
+                $memberId = $member->getUser()->getId();
+                $sql = "SELECT * FROM v_for_predict WHERE member_id = :memberId;";
+                $stmt = $conn->prepare($sql);
+                $result = $stmt->executeQuery(['memberId' => $memberId])->fetchAllAssociative(); // lay ra cac gia tri cua id
+                if($result){
+                    $bodyData[$member->getUser()->getFullName()] = [
+                        [
+                            
+                            $result[0]['tong_so_task'],
+                            $result[0]['so_task_done'],
+                            $result[0]['so_task_undone'],
+                            (double)$result[0]['phan_tram_thoi_gian_hoan_thanh_tren_thoi_gian_duoc_giao'],
+                            (double)$result[0]['phan_tram_hoan_thanh_tren_duoc_giao_5_task_gan_nhat'],
+                            ]
+                    ];
+                    // $bodyData[$member->getUser()->getFullName()] = $result;
+                }
+                // return new JsonResponse($bodyData);
             }
         }
+        
+        else{
+            $response = [
+                'status'=> 'error',
+                'message'=> "chưa có thành viên trong room",
+            ];
+            // return new JsonResponse($response);
+        }
+        // return new JsonResponse($bodyData);
         //gọi api của flask (truyen id cua cac thanh vien trong room)
         $httpCLient_predict = HttpClient::create();
         $method = 'POST';
@@ -555,12 +582,7 @@ final class TaskController extends AbstractController
         ];
 
         //body sẽ đưa các thông tin đã được lọc sẳn rồi
-        $body = [
-                "Vo Truong Nguyen" => [[8, 4, 2, 0.7, 0.6]],
-                "Truong Nguyen " => [[7, 3, 1, 0.6, 0.5]],
-                "Vo Nguyen" => [[23,3,1,108.96,75.79]],
-                "Vo Nguyen Truong" => [[23,3,1,108.96,75.79]],
-        ];
+        $body = $bodyData;
 
         try {
             $response = $httpCLient_predict->request($method, $url, [
@@ -569,12 +591,7 @@ final class TaskController extends AbstractController
             ]);
              //request thanh cong
             if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-                $data =[
-                    "vo nguyen" => "90%",
-                    "nguyen van a" => "80%",
-                    "nguyen van b" => "70%",
-                    "nguyen van c" => "60%",
-                ];
+                $data = $response->toArray(true);
             }
             else{
                 $response = [

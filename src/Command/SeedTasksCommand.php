@@ -2537,8 +2537,8 @@ class SeedTasksCommand extends Command
         ];
 
         $tasksAndRoom = [
-            $tasks_manage_project, 
-            $tasks_software_development, 
+            $tasks_manage_project,
+            $tasks_software_development,
             $tasks_database_design,
             $tasks_ai_research,
             $tasks_UX_UI_design,
@@ -2563,21 +2563,41 @@ class SeedTasksCommand extends Command
                 $new_task->setPathAttachment($task['path_attachment']);
                 $new_task->setResultContent($task['result_content']);
                 $new_task->setResultAttachment($task['result_attachment']);
+
+                //vì end_date luôn nhỏ hơn finish_date nên phải random
+                $intRandom = rand(1,3);
+                if ($intRandom == 1) {
+                    $new_task->setEndDate(new \DateTime($task['finish_date']));
+                    $new_task->setFinishDate(new \DateTime($task['end_date']));
+                    $output->writeln("Random ra 1 nhe");
+                } elseif( $intRandom == 2) {
+                    $new_task->setEndDate(new \DateTime($task['finish_date']));
+                    $new_task->setFinishDate(new \DateTime($task['end_date']));
+                    $output->writeln("Random ra 2 nhe");
+                }
+                else{
+                    $new_task->setEndDate(new \DateTime($task['end_date']));
+                    $output->writeln("Random ra 3 nhe");
+                }
+
+                // $new_task->setEndDate(new \DateTime($task['finish_date']));
+                // $new_task->setFinishDate(new \DateTime($task['end_date']));
+
                 $new_task->setStartDate(new \DateTime($task['start_date']));
-                $new_task->setEndDate(new \DateTime($task['end_date']));
-                $new_task->setReviewDate(new \DateTime($task['review_date']));
-                $new_task->setFinishDate(new \DateTime($task['finish_date']));
+                //dumaaaaaaaaaaaaaaaaaaaaaaaa
+                // $new_task->setReviewDate(new \DateTime($task['review_date']));
+                
+
                 $new_task->setStatus($task['status']);
                 $new_task->setLeader($admin->getUser());
                 $random_member = $members_data[array_rand($members_data)];
                 $new_task->setMember($random_member->getUser());
                 $new_task->setRoom($room);
                 $this->entityManager->persist($new_task);
-                $this->entityManager->flush();
-                $output->writeln('Da tao task voi:'. $new_task->getId() .'Ten cong viec:'.$new_task->getName());
+                $output->writeln('Da tao task voi:'. $new_task->getId() .'Ten cong viec:'.$new_task->getName(). "Người đảm nhận". $new_task->getMember()->getFullName());
             }
         }
-        
+        $this->entityManager->flush();
         $output->writeln("'Seeding complete!'");
         return Command::SUCCESS;
 

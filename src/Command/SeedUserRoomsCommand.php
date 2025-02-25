@@ -44,13 +44,15 @@ class SeedUserRoomsCommand extends Command
         $users = $this->entityManager->getRepository(User::class)->findAll();
         $rooms = $this->entityManager->getRepository(Room::class)->findAll();
 
+        // foreach ($users as $user) {
+        //     $output->writeln("User: {$user->getId()}\n");
+        // }
+        // die();
+
         if (empty($users) || empty($rooms)) {
             $output->writeln("Cần có dữ liệu User và Room trước khi tạo UserRoom!\n");
             return Command::FAILURE;
         }
-
-        $statuses = ['joined', 'pending', 'left', 'removed'];
-        $roles = ['admin', 'member'];
 
         // Mảng để theo dõi các user đã tham gia room nào
         $existingUserRooms = [];
@@ -89,14 +91,14 @@ class SeedUserRoomsCommand extends Command
 
             $output->writeln("Đã tạo UserRoom: {$user->getLastName()} - Room {$room->getId()} - {$userRoom->getStatus()} - {$userRoom->getRole()}\n");
 
-            // Nếu room đã có ít nhất 1 admin và hơn 3 members, dừng thêm user vào room này
-            if ($roomAdmins >= 1 && $roomMembers > 3) {
+            // Nếu room đã có ít nhất 1 admin và hơn 5 members, dừng thêm user vào room này
+            if ($roomAdmins >= 1 && $roomMembers >= 5) {
                 break;
             }
             }
 
-            // Nếu room chưa có admin hoặc chưa có hơn 3 members, thêm user ngẫu nhiên vào room
-            while ($roomAdmins < 1 || $roomMembers <= 3) {
+            // Nếu room chưa có admin hoặc chưa có hơn 5 members, thêm user ngẫu nhiên vào room
+            while ($roomAdmins < 1 || $roomMembers < 5) {
             $user = $faker->randomElement($users);
             $userRoomKey = $user->getId() . '_' . $room->getId();
             if (isset($existingUserRooms[$userRoomKey])) {
@@ -125,6 +127,32 @@ class SeedUserRoomsCommand extends Command
             $existingUserRooms[$userRoomKey] = $userRoom->getRole();
 
             $output->writeln("Đã tạo UserRoom: {$user->getLastName()} - Room {$room->getId()} - {$userRoom->getStatus()} - {$userRoom->getRole()}\n");
+            }
+        }
+
+        // Đảm bảo tất cả các user đều có nhóm
+        foreach ($users as $user) {
+            $userInRoom = false;
+            foreach ($rooms as $room) {
+            $userRoomKey = $user->getId() . '_' . $room->getId();
+            if (isset($existingUserRooms[$userRoomKey])) {
+                $userInRoom = true;
+                break;
+            }
+            }
+
+            if (!$userInRoom) {
+            $room = $faker->randomElement($rooms);
+            $userRoom = new UserRoom();
+            $userRoom->setUser($user);
+            $userRoom->setRoom($room);
+            $userRoom->setRole('member');
+            $userRoom->setStatus('joined');
+            $userRoom->setJoinDate($faker->dateTimeBetween('-1 year', 'now'));
+
+            $this->entityManager->persist($userRoom);
+
+            $output->writeln("Đã thêm User: {$user->getLastName()} vào Room {$room->getId()} dưới vai trò member\n");
             }
         }
 

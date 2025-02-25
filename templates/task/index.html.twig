@@ -404,7 +404,7 @@ function submitForm(actionPath, actionType) {
 
       //sử dụng fetch lấy dữ liệu từ API
       //fetch(`/api/room/${roomId}/task/${taskId}`, {
-      fetch(`/api/room/1/task/1/predict`, {
+      fetch(`/api/room/2/task/1/predict`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -416,6 +416,7 @@ function submitForm(actionPath, actionType) {
           console.error('Error:', data.error);
           return;
         }
+        console.log(data);
         if(data['status'] == 'success'){
           //console.log(data['data']);
           const tbody = document.querySelector('#predictionModal tbody');

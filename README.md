@@ -63,6 +63,8 @@ git push origin ten-nhanh-moi
 ```
 php bin/console cache:clear
 ```
+## Add Seeder 
+- Remember hide set status in task
 ## Debug
 ```
 dump($exception->getMessage());
@@ -283,3 +285,43 @@ class ContactController extends AbstractController
 - Others:
     - Create database view in symfony
     - Multithread
+- View Database in SQL
+```
+CREATE VIEW v_for_predict AS
+SELECT 
+    member_id, 
+    COUNT(id) AS tong_so_task, 
+    COUNT(CASE WHEN finish_date IS NOT NULL THEN 1 END) AS so_task_done,
+    COUNT(CASE WHEN finish_date IS NULL THEN 1 END) AS so_task_undone,
+    
+    -- Phần trăm thời gian hoàn thành trên tổng thời gian được giao
+    ROUND(
+    (SUM(CASE WHEN finish_date IS NOT NULL THEN DATEDIFF(finish_date, start_date) ELSE 0 END) 
+    / NULLIF(SUM(DATEDIFF(end_date, start_date)), 0)) * 100, 2
+) AS phan_tram_thoi_gian_hoan_thanh_tren_thoi_gian_duoc_giao,
+
+
+    -- Phần trăm hoàn thành 5 task gần nhất
+    ROUND(
+        AVG(
+            CASE 
+                WHEN finish_date IS NOT NULL AND 
+                     task_rank <= 5  -- Chỉ tính 5 task gần nhất
+                THEN (DATEDIFF(finish_date, start_date) / NULLIF(DATEDIFF(end_date, start_date), 0)) * 100 
+                ELSE NULL 
+            END
+        ), 
+        2
+    ) AS phan_tram_hoan_thanh_tren_duoc_giao_5_task_gan_nhat
+
+FROM (
+    -- Xác định rank cho từng task theo start_date (5 task gần nhất)
+    SELECT 
+        task.*, 
+        ROW_NUMBER() OVER (PARTITION BY member_id ORDER BY start_date DESC) AS task_rank
+    FROM task
+) AS ranked_task
+
+GROUP BY member_id;
+
+```
