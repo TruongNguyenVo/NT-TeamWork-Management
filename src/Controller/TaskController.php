@@ -537,6 +537,15 @@ final class TaskController extends AbstractController
     public function apiPredictPercent(Request $request, string $id, string $roomId): JsonResponse
     {
         // lay danh sach cac id cua thanh vien trong room
+        $idsMember = [];
+        $room = $this->roomRepository->find($roomId);
+        $members = $this->roomRepository->findUserByRoom($room, "member", "joined");
+
+        if(count($members) > 0){
+            foreach($members as $member){
+                $idsMember[] = $member->getUser()->getId();
+            }
+        }
         //gọi api của flask (truyen id cua cac thanh vien trong room)
         $httpCLient_predict = HttpClient::create();
         $method = 'POST';
@@ -544,8 +553,13 @@ final class TaskController extends AbstractController
         $header = [
             'Content-Type' => 'application/json',
         ];
+
+        //body sẽ đưa các thông tin đã được lọc sẳn rồi
         $body = [
-            $input = []
+                "Vo Truong Nguyen" => [[8, 4, 2, 0.7, 0.6]],
+                "Truong Nguyen " => [[7, 3, 1, 0.6, 0.5]],
+                "Vo Nguyen" => [[23,3,1,108.96,75.79]],
+                "Vo Nguyen Truong" => [[23,3,1,108.96,75.79]],
         ];
 
         try {

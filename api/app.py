@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 import joblib
-from connectDatabase import query_predict_view
+import connectDatabase
 app = Flask(__name__)
 
 # Load model
@@ -11,24 +11,23 @@ with open('models\\decision_tree_model.pkl', 'rb') as f:
 def predict():
     # ket noi database
 
-    dataset = query_predict_view()
-    # lay cac record cua member (lay id cua member di cho nhanh)
-    # de vao model (da luong cho nhanh)
-    # hien thi du lieu ve symfony
-    # Dữ liệu test đầu vào
- 
-    data = {}
-    # # Dự đoán kết quả
-    for key,value in dataset.items():
-        prediction = model.predict(value)
-        data[key] = prediction[0]
+    requestData = request.get_json()
+    print(f"======={requestData}=========")
+    names = []
+    values = []
+    respondData = {}
 
-    data = {
-        "status": 200,
-        "data": data,
-    }
+    for key, val in requestData.items():
+        names.append(key) # append the name
+        values.extend(val) # append the value (flatten the list)
+
+    values_reshaped = values
+    predictions = model.predict(values_reshaped) # predict the values
+
+    for i, key in enumerate(names):
+        respondData[key] = predictions[i] # add to dictionary
     
-    return jsonify(data)
+    return jsonify(respondData)
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)

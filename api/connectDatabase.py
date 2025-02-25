@@ -27,7 +27,11 @@ def execute_query(connection, query):
         return None
 
 
-def query_predict_view():
+def query_predict_view(requestData):
+
+    temp = []
+    for key, value in requestData.items():
+        temp.append(value)
     # Replace these variables with your MySQL server details
     host_name = "your_host"
     user_name = "your_username"
@@ -45,6 +49,7 @@ def query_predict_view():
     #         print(row)
     # return results
 
+    # nay se tra ve cac gia tri cua cac record cua member
     temp = {
         "Vo Truong Nguyen" : [[8, 4, 2, 0.7, 0.6]],
         "Truong Nguyen ": [[7, 3, 1, 0.6, 0.5]],
