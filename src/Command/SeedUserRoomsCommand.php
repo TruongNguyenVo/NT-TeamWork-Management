@@ -67,29 +67,36 @@ class SeedUserRoomsCommand extends Command
             $userRooms = $faker->randomElements($rooms, rand(1, min(5, count($rooms)))); 
 
             foreach ($userRooms as $room) {
-                // Đảm bảo user chưa có trong room này
-                $userRoomKey = $user->getId() . '_' . $room->getId();
-                if (isset($existingUserRooms[$userRoomKey])) {
-                    continue; // Nếu user đã có trong room này, bỏ qua
-                }
+            // Đảm bảo user chưa có trong room này
+            $userRoomKey = $user->getId() . '_' . $room->getId();
+            if (isset($existingUserRooms[$userRoomKey])) {
+                continue; // Nếu user đã có trong room này, bỏ qua
+            }
 
-                $userRoom = new UserRoom();
-                $userRoom->setUser($user);
-                $userRoom->setRoom($room);
-                $userRoom->setStatus($faker->randomElement($statuses));
-                $userRoom->setRole($faker->randomElement($roles));
-                $userRoom->setJoinDate($faker->dateTimeBetween('-1 year', 'now'));
+            $userRoom = new UserRoom();
+            $userRoom->setUser($user);
+            $userRoom->setRoom($room);
+            $userRoom->setStatus($faker->randomElement(['joined', 'pending']));
 
-                $this->entityManager->persist($userRoom);
+            // Chỉ user có id là 1, 2 và 3 làm admin, các user còn lại làm member
+            if (in_array($user->getId(), [1, 2, 3])) {
+                $userRoom->setRole('admin');
+            } else {
+                $userRoom->setRole('member');
+            }
 
-                // Đánh dấu user đã tham gia room này
-                $existingUserRooms[$userRoomKey] = true;
+            $userRoom->setJoinDate($faker->dateTimeBetween('-1 year', 'now'));
 
-                $output->writeln("Đã tạo UserRoom: {$user->getLastName()} - Room {$room->getId()} - {$userRoom->getStatus()}\n");
+            $this->entityManager->persist($userRoom);
+
+            // Đánh dấu user đã tham gia room này
+            $existingUserRooms[$userRoomKey] = $userRoom->getRole();
+
+            $output->writeln("Đã tạo UserRoom: {$user->getLastName()} - Room {$room->getId()} - {$userRoom->getStatus()} - {$userRoom->getRole()}\n");
             }
         }
 
-        // $this->entityManager->flush();
+        $this->entityManager->flush();
         $output->writeln("'Seeding complete!'");
         return Command::SUCCESS;
     }

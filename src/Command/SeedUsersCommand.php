@@ -51,8 +51,15 @@ class SeedUsersCommand extends Command
         $email_personal->setLastname('Trường');
         $email_personal->setEmail('vonguyen.0407@gmail.com');
 
+        $email_personal_1 = new User();
+        $email_personal_1->setFirstname('Nguyên');
+        $email_personal_1->setLastname('Võ');
+        $email_personal_1->setEmail('vonguyen@gmail.com');
+        $email_personal_1->setPassword(password_hash('123456', PASSWORD_BCRYPT));
+
         $this->entityManager->persist($email_edu);
         $this->entityManager->persist($email_personal);
+        $this->entityManager->persist($email_personal_1);
 
 
         for ($i = 1; $i <= 8; $i++) {

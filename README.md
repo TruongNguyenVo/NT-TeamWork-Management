@@ -172,7 +172,7 @@ Date Delivery is not greater than date order
         }
     }
 
-```
+``` 
 ## Seeder:   
 1. Install Faker: `composer require fakerphp/faker --dev`
 2. Create Seeder: `php bin/console make:command app:seed-users`
