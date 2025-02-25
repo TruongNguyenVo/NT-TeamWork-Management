@@ -49,24 +49,16 @@ class SeedUserRoomsCommand extends Command
             return Command::FAILURE;
         }
 
-                // Danh sách trạng thái với tỉ lệ "joined" cao hơn
-            $statuses = array_merge(
-                    array_fill(0, 80, 'joined'), 
-                    array_fill(0, 10, 'pending'),
-                    array_fill(0, 10, 'left'), 
-                    array_fill(0, 00, 'removed')
-                );
-
         $statuses = ['joined', 'pending', 'left', 'removed'];
         $roles = ['admin', 'member'];
 
         // Mảng để theo dõi các user đã tham gia room nào
         $existingUserRooms = [];
-        foreach ($users as $user) {
-            // Chọn số lượng phòng ngẫu nhiên mà user này sẽ tham gia
-            $userRooms = $faker->randomElements($rooms, rand(1, min(5, count($rooms)))); 
+        foreach ($rooms as $room) {
+            $roomAdmins = 0;
+            $roomMembers = 0;
 
-            foreach ($userRooms as $room) {
+            foreach ($users as $user) {
             // Đảm bảo user chưa có trong room này
             $userRoomKey = $user->getId() . '_' . $room->getId();
             if (isset($existingUserRooms[$userRoomKey])) {
@@ -76,13 +68,53 @@ class SeedUserRoomsCommand extends Command
             $userRoom = new UserRoom();
             $userRoom->setUser($user);
             $userRoom->setRoom($room);
-            $userRoom->setStatus($faker->randomElement(['joined', 'pending']));
 
-            // Chỉ user có id là 1, 2 và 3 làm admin, các user còn lại làm member
-            if (in_array($user->getId(), [1, 2, 3])) {
+            // Nếu chưa có admin trong room này và user có id là 1, 2 hoặc 3, đặt user này làm admin
+            if ($roomAdmins < 1 && in_array($user->getId(), [1, 2, 3])) {
                 $userRoom->setRole('admin');
+                $userRoom->setStatus('joined'); // Admin mặc định là joined
+                $roomAdmins++;
             } else {
                 $userRoom->setRole('member');
+                $userRoom->setStatus('joined'); // Thành viên mặc định là joined
+                $roomMembers++;
+            }
+
+            $userRoom->setJoinDate($faker->dateTimeBetween('-1 year', 'now'));
+
+            $this->entityManager->persist($userRoom);
+
+            // Đánh dấu user đã tham gia room này
+            $existingUserRooms[$userRoomKey] = $userRoom->getRole();
+
+            $output->writeln("Đã tạo UserRoom: {$user->getLastName()} - Room {$room->getId()} - {$userRoom->getStatus()} - {$userRoom->getRole()}\n");
+
+            // Nếu room đã có ít nhất 1 admin và hơn 3 members, dừng thêm user vào room này
+            if ($roomAdmins >= 1 && $roomMembers > 3) {
+                break;
+            }
+            }
+
+            // Nếu room chưa có admin hoặc chưa có hơn 3 members, thêm user ngẫu nhiên vào room
+            while ($roomAdmins < 1 || $roomMembers <= 3) {
+            $user = $faker->randomElement($users);
+            $userRoomKey = $user->getId() . '_' . $room->getId();
+            if (isset($existingUserRooms[$userRoomKey])) {
+                continue; // Nếu user đã có trong room này, bỏ qua
+            }
+
+            $userRoom = new UserRoom();
+            $userRoom->setUser($user);
+            $userRoom->setRoom($room);
+
+            if ($roomAdmins < 1) {
+                $userRoom->setRole('admin');
+                $userRoom->setStatus('joined'); // Admin mặc định là joined
+                $roomAdmins++;
+            } else {
+                $userRoom->setRole('member');
+                $userRoom->setStatus('joined'); // Thành viên mặc định là joined
+                $roomMembers++;
             }
 
             $userRoom->setJoinDate($faker->dateTimeBetween('-1 year', 'now'));
