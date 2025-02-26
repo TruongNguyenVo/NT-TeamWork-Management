@@ -89,7 +89,7 @@ final class TaskController extends AbstractController
                     }
                     
                 }
- 
+
                 //LUU FILE NEU CO
                 $file = $form->get("pathAttachment")->getData();
                 if(file_exists($file)) {
@@ -139,7 +139,7 @@ final class TaskController extends AbstractController
 
     #[Route('/room/{roomId}/overview/member/task/{id}', name: 'app_task_show_member', methods: ['GET','POST'])]
     public function show(Request $request, $roomId, $id): Response
-    {   
+    {
         $room = $this->roomRepository->find($roomId);
         $task = $this->taskRepository->find($id);
         // dump($task);
@@ -172,6 +172,7 @@ final class TaskController extends AbstractController
             }
             if($action == 'unreview'){
                 $task->setStatus('in_progress');
+                // $task->setFinishDate(null);
             }
             
             // dump($resultContent);
@@ -336,9 +337,9 @@ final class TaskController extends AbstractController
         foreach ($tasks as $task) {
             $dataRespond[] = [
                 'name' => $task->getName(),
-                'startDate' => $task->getStartDate()->format('Y-m-d H:i:s'),
-                'endDate' => $task->getEndDate()? $task->getEndDate()->format('Y-m-d H:i:s') : "",
-                'finishDate' => $task->getFinishDate() ? $task->getFinishDate()->format('Y-m-d H:i:s') : "",
+                'startDate' => $task->getStartDate()->format('d/m/Y  (H:i)') ?? "",
+                'endDate' => $task->getEndDate()? $task->getEndDate()->format('d/m/Y  (H:i)')  : "",
+                'finishDate' => $task->getFinishDate() ? $task->getFinishDate()->format('d/m/Y  (H:i)') : "",
                 'status' => $task->getStatusLabel(),
             ];
         }
@@ -355,7 +356,7 @@ final class TaskController extends AbstractController
     
     #[Route(path:'/api/room/{roomId}/consult', name:'api_app_consult_with_chatbot', methods: ['POST'])]
     public function apiConsultWithChatBot(Request $request, int $roomId)
-    {   
+    {
         // Lấy dữ liệu JSON từ body request
         $data = json_decode($request->getContent(), true);
         // $temp = [
@@ -599,14 +600,14 @@ final class TaskController extends AbstractController
             else{
                 $response = [
                     'status'=> 'error',
-                    'message'=> $response->getStatusCode(),
+                    'message'=> "Không thể kết nối với NTBot, hãy quay lại sao. Mã lỗi: " . $response->getStatusCode(),
                 ];
                 return new JsonResponse($response);
             }
         } catch (\Exception $exception) {
             $response = [
                 'status'=> 'error',
-                'message'=> $exception->getMessage(),
+                'message'=> "Không thể thực thi được chức năng. Mã lỗi: " . $exception->getMessage(),
             ];
 
             return new JsonResponse($response);

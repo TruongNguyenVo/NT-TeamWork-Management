@@ -13,6 +13,9 @@ class RoomType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('id', null, [
+                'disabled' => true,
+            ])
             ->add('name')
             ->add('password')
             ->add('description', TextareaType::class, [

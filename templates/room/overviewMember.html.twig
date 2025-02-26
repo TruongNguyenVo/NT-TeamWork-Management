@@ -23,7 +23,7 @@
                     <i class="icon-arrow-right"></i>
                   </li>
                   <li class="nav-item">
-                    <a href="#">{{room.name}}</a>
+                    <a href="{{path('app_room_overview_member',{'id':room.id})}}">{{room.name}}</a>
                   </li>
                 </ul>
               </div>
@@ -120,7 +120,7 @@
                                 <th>Đảm nhận</th>
                                 <th>Bắt đầu</th>
                                 <th>Kết thúc</th>
-                                <th>Kết quả</th>
+                                <th>Hoàn thành</th>
                               </tr>
                             </thead>
                               <tbody>
@@ -128,10 +128,10 @@
                                 <tr>
                                   <td>{{task.name}}</td>
                                   <td>{{task.member.fullName ?? "Chưa có thành viên đảm nhận"}}</td>
-                                  <td>{{task.startDate|date('Y-m-d H:i:s')}}</td>
-                                  <td>{{task.endDate|date('Y-m-d H:i:s')}}</td>
+                                  <td>{{task.startDate| format_date}}</td>
+                                  <td>{{task.endDate| format_date}}</td>
                                   <td>
-                                      <a >Xem chi tiết</a>
+                                      {{task.finishDate is not null ? task.finishDate|format_date : 'Chưa có ngày hoàn thành' }}
                                   </td>
                               </tr>
                               {% endfor %}
@@ -142,7 +142,7 @@
                                 <th>Đảm nhận</th>
                                 <th>Bắt đầu</th>
                                 <th>Kết thúc</th>
-                                <th>Kết quả</th>
+                                <th>Hoàn thành</th>
                               </tr>
                             </tfoot>
                           <tbody>

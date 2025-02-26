@@ -40,6 +40,11 @@
                     <div class="card-body">
                       {{ form_start(form, {'action': path('app_room_overview', {'id': room.id}), 'method': 'POST', 'attr': {'class': 'd-inline', 'id' : 'groupInfoForm',}}) }}
                         <div class="mb-3">
+                          <label for="name" class="form-label">ID nhóm</label>
+                          {{ form_widget(form.id, {'attr': {'class': 'form-control'}}) }}
+                          {{ form_errors(form.id) }}
+                        </div>
+                        <div class="mb-3">
                           <label for="name" class="form-label">Tên nhóm</label>
                           {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
                           {{ form_errors(form.name) }}
@@ -165,8 +170,8 @@
                               <tr>
                                 <td>{{task.name}}</td>
                                 <td>{{task.member.fullName|default('')}}</td>
-                                <td>{{ task.startDate|date('d-m-Y H:i:s') }}</td>
-                                <td>{{ task.endDate|date('d-m-Y H:i:s') }}</td>
+                                <td>{{ task.startDate| format_date }}</td>
+                                <td>{{ task.endDate| format_date }}</td>
                                 <td>
                                     {{task.statusLabel}}
                                 </td>
@@ -240,7 +245,7 @@
                             
                             <tr>
                               <td>{{memberData.member.user.getFullName()}}</td>
-                              <td>{{memberData.member.joinDate|date('d-m-Y H:i:s')}}</td>
+                              <td>{{memberData.member.joinDate| format_date}}</td>
                               <td>{{memberData.taskCount}}</td>
                               
                               {# <td>

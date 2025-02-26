@@ -64,7 +64,7 @@
                         {% for room in rooms %}
                           <tr>
                             <td>{{room.0.name}}</td>
-                            <td>{{room.0.createDate|date('Y-m-d H:i:s')}}</td>
+                            <td>{{room.0.createDate | format_date}}</td>
                             {# <td>{{room.memberCount}}</td> #}
                             <td>
                               <div class="form-button-action">

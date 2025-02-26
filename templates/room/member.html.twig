@@ -58,7 +58,7 @@
                             <tr data-member-id="{{ member.user.id }}" onclick="postData(this)">
                               <td>{{member.user.lastname}} {{member.user.firstname}}</td>
                               <td>
-                                    {{ member.joinDate ? member.joinDate|date('d-m-Y') : 'Chưa được duyệt' }} 
+                                    {{ member.joinDate ? member.joinDate| format_date : 'Chưa được duyệt' }} 
                               </td>
                               <td>
                                 {{member.statusLabel}}
@@ -139,8 +139,6 @@
                         <div class="member-info mb-4">
                           <h4>Thông tin chung</h4>
                           <p><strong>Tên:</strong> <span id="memberName">Trường Nguyên</span></p>
-                          <p><strong>Số nhóm đã tham gia:</strong> <span id="manyGroup">10</span></p>
-                          <p><strong>Tỷ lệ hoàn thành công việc đúng hạn:</strong> <span>100%</span></p>
 
                         </div>
                     <div class="card-body" id="table-infor-task" style="display:none">

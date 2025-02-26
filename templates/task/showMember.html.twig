@@ -19,13 +19,13 @@
                 <li class="nav-home">
                     <a href="#">
                 <li class="nav-item">
-                    <a href="#">Các nhóm tham gia</a>
+                    <a href="">Các nhóm tham gia</a>
                 </li>
                 <li class="separator">
                     <i class="icon-arrow-right"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="#">{{room.name}}</a>
+                    <a href="{{path('app_room_overview_member', {'id':room.id})}}">{{room.name}}</a>
                 </li>
                 <li class="separator">
                     <i class="icon-arrow-right"></i>
@@ -65,7 +65,11 @@
                 </div>
                 <div class="mb-3">
                         <label for="pathAttachment" class="form-label">Tệp đính kèm</label>
-                        <a id="pathAttachment" href="{{task.pathAttachment}}" class="form-control" target="_blank">File đính kèm của nhiệm vụ: {{task.name}}</a>
+                        {% if task.pathAttachment %}
+                            <a id="pathAttachment" href="{{task.pathAttachment}}" class="form-control" target="_blank">File đính kèm của nhiệm vụ: {{task.name}}</a>
+                        {% else %}
+                            <p>Không có tệp đính kèm</p>
+                        {% endif %}
                 </div>
 
                 <hr class="my-4">
@@ -86,14 +90,14 @@
                     </div>
                     {% endif %}
                     {% if task.status != 'review'%}
-                    <div class="mb-3">
-                    <label for="submissionFiles" class="form-label">{{task.resultAttachment ? "Thay thế tệp hiện tại" : "Nộp tệp đính kèm"}}</label>
+                        <div class="mb-3">
+                        <label for="submissionFiles" class="form-label">{{task.resultAttachment ? "Thay thế tệp hiện tại" : "Nộp tệp đính kèm"}}</label>
                         <input type="file" {{task.status == 'review' ? "disable":''}} name="newResultAttachment" class="form-control" multiple>
-                    </div>
+                        </div>
                     {% endif %}
                 </div>
                 <div class="mb-3-md">
-                    <a type="button" class="btn btn-danger" href={{path('app_room_overview_member',{'id':room.id})}}>Đóng</a>
+                    <a type="button" class="btn btn-secondary" href={{path('app_room_overview_member',{'id':room.id})}}>Đóng</a>
                     {% if task.status == 'review' %}
                         <button type="submit" name="action" value="unreview" class="btn btn-primary">Hoàn tác thành chưa hoàn thành</button>
                     {% elseif task.status != 'done' and task.status != 'cancelled' %}
