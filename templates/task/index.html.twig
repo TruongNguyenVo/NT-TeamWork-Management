@@ -189,10 +189,43 @@
             
                       <div class="mb-3">
                         <label for="member" class="form-label">Thành viên</label>
-                        <select class="form-control" id="member" name="member" onchange="showUpdateButton()">
+                        <div class="d-flex">
+                          <select class="form-control" id="member" name="member" onchange="showUpdateButton()">
                           <!-- Các tùy chọn sẽ được thêm bằng JavaScript -->
-                        </select>
+                          </select>
+                          <button type="button" class="btn btn-secondary ms-2" onclick="showPredictionModal()">Dự đoán phần trăm hoàn thành</button>
+                        </div>
                       </div>
+                        <!-- Modal for displaying member name and completion percentage -->
+                        <div class="modal fade" id="predictionModal" tabindex="-1" aria-labelledby="predictionModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="predictionModalLabel">Dự đoán phần trăm hoàn thành</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <table class="table">
+                            <thead>
+                              <tr>
+                              <th>Thành viên</th>
+                              <th>Tỉ lệ hoàn thành</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                              <td id="memberName"></td>
+                              <td id="completionPercentage"></td>
+                              </tr>
+                            </tbody>
+                            </table>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                          </div>
+                          </div>
+                        </div>
+                        </div>
 
                       <div class="mb-3">
                         <label for="content" class="form-label">Mô tả</label>
@@ -365,4 +398,59 @@ function submitForm(actionPath, actionType) {
 }
 
   </script>
+
+  <script>
+    function showPredictionModal() {
+
+      //sử dụng fetch lấy dữ liệu từ API
+      //fetch(`/api/room/${roomId}/task/${taskId}`, {
+      const roomId = {{ room.id }};
+      const taskId = document.getElementById('idTaskShow').value;
+      fetch(`/api/room/${roomId}/task/${taskId}/predict`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error('Error:', data.error);
+          return;
+        }
+        console.log(data);
+        if(data['status'] == 'success'){
+          //console.log(data['data']);
+          const tbody = document.querySelector('#predictionModal tbody');
+          tbody.innerHTML = ''; // Clear existing rows
+          for (const [name, percent] of Object.entries(data['data'])) {
+              //const li = document.createElement("li");
+              //li.textContent = `${name}: ${percent}`;
+              //ul.appendChild(li);
+                const tr = document.createElement('tr');
+                const tdName = document.createElement('td');
+                const tdPercent = document.createElement('td');
+
+                tdName.textContent = name;
+                tdPercent.textContent = percent;
+
+                tr.appendChild(tdName);
+                tr.appendChild(tdPercent);
+                tbody.appendChild(tr);
+                
+              //console.log(`${name}: ${percent}`);
+          }
+          const predictionModal = new bootstrap.Modal(document.getElementById('predictionModal'));
+          predictionModal.show();
+        }
+        //console.log(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+      
+
+      
+      }
+    </script>
 {% endblock %}

@@ -1,6 +1,6 @@
 @echo off
-start /B symfony server:start --port=8386
+start cmd /k "symfony server:start"
+start cmd /k "cd api && python app.py"
+exit
 
-cd api
-source venv/Scripts/activate
-python app.py
+

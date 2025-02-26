@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Process\Process;
 
 #[AsCommand(
     name: 'RunCommands',
@@ -21,34 +22,37 @@ class RunCommandsCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
+    protected function configure()
     {
-        $this
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
-        ;
+        $this->setName('app:run-commands')
+            ->setDescription('Chạy lệnh tùy chỉnh.');
     }
+
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $executionOrder = [
-            '',
-            'roomseeder',
-            'roomuserseeder',
+        $seeders = [
+            'app:seed-users',
+            'app:seed-rooms',
+            'app:seed-userRooms',
+            'app:seed-tasks',
         ];
 
-        $io = new SymfonyStyle($input, $output);
-        $arg1 = $input->getArgument('arg1');
 
-        if ($arg1) {
-            $io->note(sprintf('You passed an argument: %s', $arg1));
+        foreach ($seeders as $seederCommand) {
+            $output->writeln("<info>Đang chạy: {$seederCommand}</info>");
+            
+            // Chạy command Symfony
+            $process = new Process(['php', 'bin/console', $seederCommand]);
+            $process->run();
+
+            // Hiển thị output của từng Seeder
+            if ($process->isSuccessful()) {
+                $output->writeln("<info>{$seederCommand} đã chạy thành công!</info>");
+            } else {
+                $output->writeln("<error>Lỗi khi chạy {$seederCommand}: " . $process->getErrorOutput() . "</error>");
+            }
         }
-
-        if ($input->getOption('option1')) {
-            // ...
-        }
-
-        $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
 
         return Command::SUCCESS;
     }

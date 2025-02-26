@@ -30,3 +30,6 @@
 public/
 api/venv
 
+api/__pycache__/
+.env
+migrations

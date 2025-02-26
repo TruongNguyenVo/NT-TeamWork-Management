@@ -173,6 +173,7 @@ final class TaskController extends AbstractController
             if($action == 'unreview'){
                 $task->setStatus('in_progress');
             }
+            
             // dump($resultContent);
             // die();
 
@@ -529,6 +530,96 @@ final class TaskController extends AbstractController
             }
         }
         
+        return new JsonResponse($response);
+    }
+
+    // API DUNG DE PREDICT PERCENTAGE CUA TASK
+    #[Route(path:'/api/room/{roomId}/task/{id}/predict', name:'api_app_task_predict', methods: ['POST'])]
+    public function apiPredictPercent(Request $request, string $id, string $roomId): JsonResponse
+    {
+        // lay danh sach cac id cua thanh vien trong room
+        $bodyData = [];
+        $room = $this->roomRepository->find($roomId);
+        $members = $this->roomRepository->findUserByRoom($room, "member", "joined");
+
+        if(count($members) > 0){
+            $conn = $this->entityManager->getConnection();
+            foreach($members as $member){
+                $memberId = $member->getUser()->getId();
+                $sql = "SELECT * FROM v_for_predict WHERE member_id = :memberId;";
+                $stmt = $conn->prepare($sql);
+                $result = $stmt->executeQuery(['memberId' => $memberId])->fetchAllAssociative(); // lay ra cac gia tri cua id
+                if($result){
+                    $bodyData[$member->getUser()->getFullName()] = [
+                        [
+                            
+                            $result[0]['tong_so_task'],
+                            $result[0]['so_task_done'],
+                            $result[0]['so_task_undone'],
+                            // rand(10, 100),
+                            // rand(10, 100),
+                            (double)$result[0]['phan_tram_thoi_gian_hoan_thanh_tren_thoi_gian_duoc_giao'],
+                            (double)$result[0]['phan_tram_hoan_thanh_tren_duoc_giao_5_task_gan_nhat'],
+                            ]
+                    ];
+                    // $bodyData[$member->getUser()->getFullName()] = $result;
+                }
+                // return new JsonResponse($bodyData);
+            }
+        }
+        
+        else{
+            $response = [
+                'status'=> 'error',
+                'message'=> "chưa có thành viên trong room",
+            ];
+            return new JsonResponse($response);
+        }
+        // return new JsonResponse($bodyData);
+        //gọi api của flask (truyen id cua cac thanh vien trong room)
+        $httpCLient_predict = HttpClient::create();
+        $method = 'POST';
+        $url = 'http://127.0.0.1:5000/predict';
+        $header = [
+            'Content-Type' => 'application/json',
+        ];
+
+        //body sẽ đưa các thông tin đã được lọc sẳn rồi
+        $body = $bodyData;
+
+        try {
+            $response = $httpCLient_predict->request($method, $url, [
+                'headers' => $header,
+                'json' => $body
+            ]);
+             //request thanh cong
+            if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+                $data = $response->toArray(true);
+            }
+            else{
+                $response = [
+                    'status'=> 'error',
+                    'message'=> $response->getStatusCode(),
+                ];
+                return new JsonResponse($response);
+            }
+        } catch (\Exception $exception) {
+            $response = [
+                'status'=> 'error',
+                'message'=> $exception->getMessage(),
+            ];
+
+            return new JsonResponse($response);
+        }
+
+        
+        $response = [
+            "status" => "success",
+            "data" => $data,
+            // "test" => "test",
+            
+        ];
+
         return new JsonResponse($response);
     }
 }
