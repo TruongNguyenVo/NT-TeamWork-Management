@@ -404,7 +404,9 @@ function submitForm(actionPath, actionType) {
 
       //sử dụng fetch lấy dữ liệu từ API
       //fetch(`/api/room/${roomId}/task/${taskId}`, {
-      fetch(`/api/room/2/task/1/predict`, {
+      const roomId = {{ room.id }};
+      const taskId = document.getElementById('idTaskShow').value;
+      fetch(`/api/room/${roomId}/task/${taskId}/predict`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

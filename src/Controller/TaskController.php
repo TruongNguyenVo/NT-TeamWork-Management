@@ -173,6 +173,7 @@ final class TaskController extends AbstractController
             if($action == 'unreview'){
                 $task->setStatus('in_progress');
             }
+            
             // dump($resultContent);
             // die();
 
@@ -555,6 +556,8 @@ final class TaskController extends AbstractController
                             $result[0]['tong_so_task'],
                             $result[0]['so_task_done'],
                             $result[0]['so_task_undone'],
+                            // rand(10, 100),
+                            // rand(10, 100),
                             (double)$result[0]['phan_tram_thoi_gian_hoan_thanh_tren_thoi_gian_duoc_giao'],
                             (double)$result[0]['phan_tram_hoan_thanh_tren_duoc_giao_5_task_gan_nhat'],
                             ]
@@ -570,7 +573,7 @@ final class TaskController extends AbstractController
                 'status'=> 'error',
                 'message'=> "chưa có thành viên trong room",
             ];
-            // return new JsonResponse($response);
+            return new JsonResponse($response);
         }
         // return new JsonResponse($bodyData);
         //gọi api của flask (truyen id cua cac thanh vien trong room)

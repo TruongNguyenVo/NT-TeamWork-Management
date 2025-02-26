@@ -50,7 +50,7 @@ services:
 # Tip and Trick
 ## How to run Symfony With API
 ```
-double click file `run.bat`
+Open terminal: `start run.bat`
 ```
 ## Create new branch from `dev`'s branch
 ```
