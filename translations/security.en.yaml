@@ -1,0 +1,5 @@
+# translations/security.en.yaml
+Invalid credentials. : "Tài khoản hoặc mật khẩu không đúng."
+Account is disabled. : "Tài khoản của bạn đã bị vô hiệu hóa."
+Account is not activated. : "Tài khoản của bạn chưa được kích hoạt."
+Too many failed login attempts, please try again later. : "Bạn đăng nhập không thành công nhiều lần. Vui lòng thử lại sau."

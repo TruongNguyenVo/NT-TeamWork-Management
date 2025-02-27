@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Phòng {{room.name}}{% endblock %}
+{% block title %}Nhóm {{room.name}}{% endblock %}
 
 {% block body %}
     <div class="container">
@@ -9,7 +9,7 @@
                 <h3 class="fw-bold mb-3">NTTeam</h3>
                 <ul class="breadcrumbs mb-3">
                   <li class="nav-home">
-                    <a href="#">
+                    <a href="/">
                       <i class="icon-home"></i>
                     </a>
                   </li>
@@ -17,17 +17,22 @@
                     <i class="icon-arrow-right"></i>
                   </li>
                   <li class="nav-item">
-                    <a href="#">Các nhóm tham gia</a>
+                    <a href="/">Nhóm quản lý </a>
                   </li>
                   <li class="separator">
                     <i class="icon-arrow-right"></i>
                   </li>
                   <li class="nav-item">
-                    <a href="#">{{room.name}}</a>
+                    <a href="{{path('app_room_overview', {'id':room.id})}}">{{room.name}}</a>
                   </li>
                 </ul>
               </div>
                 {{ form_start(form, {'action': path('app_room_edit', {'id': room.id}), 'method': 'POST', 'attr': {'class': 'd-inline'}}) }}
+                  <div class="mb-3">
+                    <label for="name" class="form-label">ID nhóm</label>
+                    {{ form_widget(form.id, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.id) }}
+                  </div>
                   <div class="mb-3">
                     <label for="name" class="form-label">Tên nhóm</label>
                     {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
@@ -45,10 +50,10 @@
                   </div>
                   <div class="mb-3-md">
                         {# Trở lại trang chính #}
-                        <a href="{{ path('app_home') }}" class="btn btn-primary">Trở lại</a>
+                        <a href="{{ path('app_home') }}" class="btn btn-secondary">Trở lại</a>
                         
                         {# Nút Chỉnh Sửa (Submit Form) #}
-                        <button type="submit" class="btn btn-warning">Chỉnh sửa</button>
+                        <button type="submit" class="btn btn-info">Chỉnh sửa</button>
                         
                     </div>
               </div>  

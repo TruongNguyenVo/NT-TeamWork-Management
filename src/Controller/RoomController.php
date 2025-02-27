@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Room;
 use App\Entity\UserRoom;
 use App\Form\ChangeStatusUserRoomType;
+use App\Form\CreateRoomType;
 use App\Form\User;
 use App\Form\RoomType;
 use App\Form\AttendType;
@@ -52,7 +53,7 @@ final class RoomController extends AbstractController
         
         $room = new Room();
         $user = $this->getUser();
-        $form = $this->createForm(RoomType::class, $room);
+        $form = $this->createForm(CreateRoomType::class, $room);
         $form->handleRequest($request);
         // dump($form);
         // die();
@@ -417,7 +418,7 @@ final class RoomController extends AbstractController
                 // die();
                 $isAdmin = $this->roomRepository->isRole($this->getUser(), $room->getId(), "admin");
                 if($isAdmin === true){
-                    $memberInRoom = $this->roomRepository->findUserByRoom($room->getId(),);
+                    $memberInRoom = $this->roomRepository->findUserByRoom($room->getId(), "member");
                     // dump($memberInRoom[2]->getUser()->getMember());
                     // die();
 

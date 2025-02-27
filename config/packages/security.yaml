@@ -36,6 +36,9 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/login$, roles: PUBLIC_ACCESS  } #symfony 6 thay đổi áp dụng PUBLIC_ACCESS
+        - { path: ^/register$, roles: PUBLIC_ACCESS  } #symfony 6 thay đổi áp dụng PUBLIC_ACCESS
+        - { path: ^/connect/google/check$, roles: PUBLIC_ACCESS  } #symfony 6 thay đổi áp dụng PUBLIC_ACCESS
+        - { path: ^/connect/google$, roles: PUBLIC_ACCESS  } #symfony 6 thay đổi áp dụng PUBLIC_ACCESS
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:

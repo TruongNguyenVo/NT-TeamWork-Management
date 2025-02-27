@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %} 
 
-{% block title %}NTTeam - Nhóm quản lý{% endblock %}
+{% block title %}Thông tin cá nhân{% endblock %}
 {% block sidebar %}
         {% endblock %}
 
@@ -40,7 +40,7 @@
                     </div>
                     <button type="button" class="btn btn-primary" onclick="enableEditing()" id="editButton">Chỉnh sửa</button>
                     <button type="submit" class="btn btn-success d-none" id="saveButton">Lưu</button>
-                    <button type="button" class="btn btn-danger d-none" id="cancelButton" onclick="cancelEditing()">Hủy</button>
+                    <button type="button" class="btn btn-secondary d-none" id="cancelButton" onclick="cancelEditing()">Trở lại</button>
                   {{form_end(profileForm)}}
                 </div>
               </div>

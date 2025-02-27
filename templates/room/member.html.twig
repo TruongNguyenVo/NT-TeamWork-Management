@@ -17,13 +17,13 @@
                     <i class="icon-arrow-right"></i>
                   </li>
                   <li class="nav-item">
-                    <a href="#">{{ room.name }}</a>
+                    <a href="{{path('app_room_overview', {'id':room.id})}}">{{ room.name }}</a>
                   </li>
                   <li class="separator">
                     <i class="icon-arrow-right"></i>
                   </li>
                   <li class="nav-item">
-                    <a href="#">Thông tin thành viên</a>
+                    <a href="{{path('app_room_member', {'id':room.id})}}">Thông tin thành viên</a>
                   </li>
                 </ul>
               </div>
