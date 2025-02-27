@@ -172,7 +172,7 @@ final class TaskController extends AbstractController
             }
             if($action == 'unreview'){
                 $task->setStatus('in_progress');
-                // $task->setFinishDate(null);
+                $task->setFinishDate(null);
             }
             
             // dump($resultContent);
