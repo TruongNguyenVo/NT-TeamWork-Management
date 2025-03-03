@@ -274,8 +274,28 @@ final class RoomController extends AbstractController
         $adminInRoom = $temp[0]->getUser();
         
 
-        $tasks = $this->taskRepository->findBy(["room" => $room]);
+        $tasks = $this->taskRepository->findBy(["room" => $room], ['startDate' => 'ASC']);
+        // dump($tasks);
+        // die();
+        $minDate =[];
+        $maxDate =[];
+        $interval = 0;
+        if($tasks){
+         // Lấy danh sách ngày từ các tasks
+        $dateStarts = array_map(fn($task) => $task->getStartDate(), $tasks);
+        $dateEnds = array_filter(array_map(fn($task) => $task->getEndDate(), $tasks));
+        
+        // Tìm ngày nhỏ nhất và lớn nhất
+        $minDate = min($dateStarts);
+        $maxDate = max($dateEnds);
 
+        
+         // Tính khoảng cách số ngày giữa hai mốc thời gian
+        $interval = $minDate->diff($maxDate)->days;
+        }
+        
+        // dump($minDate, $maxDate, $interval);
+        // die();
         $memberWithTasks =[];
         //gan tat ca cac thanh vien voi nhiem vu = 0
         // Khởi tạo tất cả member với số task = 0
@@ -381,6 +401,9 @@ final class RoomController extends AbstractController
                     'admin' => $adminInRoom,
                     'form' => $form,
                     'tasks' => $tasks,
+                    'minDate' => $minDate,
+                    'maxDate' => $maxDate,
+                    'interval' => $interval, // Truyền số ngày vào Twig
                     'memberWithTasks' =>$memberWithTasks, // nay se tra ve ten cua thanh vien va so luong nhiem vu
                 ]);
                     // dump($isAdmin, $request);
