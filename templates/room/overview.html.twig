@@ -3,48 +3,6 @@
 {% block title %}Tổng quan{% endblock %}
 
 {% block body %}
-<style>
-    .gantt-container-wrapper {
-      overflow-x: auto;
-      max-width: 100%;
-    }
-    .gantt-container {
-      display: grid;
-      grid-template-columns: 250px repeat({{ interval }}, 1fr);
-      border: 1px solid #ddd;
-      font-size: 14px;
-      position: relative;
-      min-width: 1000px;
-    }
-    .gantt-header, .gantt-task {
-      background: #f8f9fa;
-      text-align: center;
-      font-weight: bold;
-      padding: 5px;
-      border: 1px solid #ddd;
-    }
-    .gantt-row {
-      display: grid;
-      grid-template-columns: 250px repeat({{ interval }}, 1fr);
-      border: 1px solid #ddd;
-      align-items: center;
-    }
-    .gantt-task {
-      padding: 5px;
-      border: 1px solid #ddd;
-      position: sticky;
-      left: 0;
-      background: #f8f9fa;
-      z-index: 1;
-    }
-    .gantt-bar {
-      background-color: #007bff;
-      color: white;
-      text-align: center;
-      border-radius: 5px;
-      height: 20px;
-    }
-  </style>
         <div class="container">
 
             <div class="page-inner">
@@ -201,53 +159,86 @@
                     
                     <div class="card-body">
                     {% if tasks != null %}
-                    <div class="gantt-container-wrapper">
-                      <!-- Header -->
-                      <div class="gantt-container">
-                      <div class="gantt-header" style="position: sticky; left: 0; z-index: 2;">Công việc</div>
-                        {# {% set count = interval < 10 ? 5 : 14 %}
-                        {% set intervalTemp = (maxDate.timestamp - minDate.timestamp) // count %}
-                        {% set currentDate = minDate %}
+                    {# hàm vẽ biểu đồ gantt #}
+                    <script src="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.umd.js"></script>
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.css">
+                    
+                    <div id="gantt"></div>
+                    <script>
+                    const tasks = [
+            {
+                id: 'Task 1',
+                name: 'Thiết kế lại trang web',
+                start: '2023-10-01',
+                end: '2023-10-05',
+                progress: 20,
+                dependencies: '',
+            },
+            {
+                id: 'Task 2',
+                name: 'Phát triển tính năng mới',
+                start: '2023-10-06',
+                end: '2023-10-10',
+                progress: 50,
+                dependencies: 'Task 1',
+            },
+  // Thêm các công việc khác
+];
 
-                        {% for i in 0..count %}
-                            <div class="gantt-header" style="white-space: nowrap; min-width: 100px;">
-                                {{ currentDate|date('d/m/Y') }}
-                            </div>
-                            {% set currentDate = currentDate|date_modify('+' ~ intervalTemp ~ ' seconds') %}
-                        {% endfor %} #}
+const gantt = new Gantt('#gantt', tasks, {
+  'language': 'vi',
+  'bar_height': 90,
+  popup: function (task) {
+    return `
+      <div>
+        <h5>${task.name}</h5>
+        <p>Ngày bắt đầu: ${task.start}</p>
+        <p>Ngày kết thúc: ${task.end}</p>
+        <p>Tiến độ: ${task.progress}%</p>
+      </div>
+    `;
+  },
+});
+// Hàm tính khoảng cách ngày giữa hai ngày
+        function dateDiffInDays(date1, date2) {
+            const diffTime = Math.abs(date2 - date1);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        // Tìm nhiệm vụ gần nhất so với ngày hiện tại
+        function findNearestTask(tasks) {
+            const today = new Date();
+            let nearestTask = null;
+            let minDiff = Infinity;
+
+            tasks.forEach(task => {
+                const startDate = new Date(task.start);
+                const endDate = new Date(task.end);
+                const diff = Math.min(dateDiffInDays(today, startDate), dateDiffInDays(today, endDate));
+
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    nearestTask = task;
+                }
+            });
+
+            return nearestTask;
+        }
+
+        // Cuộn đến nhiệm vụ gần nhất khi biểu đồ đã được tải
+        window.addEventListener('load', () => {
+            const nearestTask = findNearestTask(tasks);
+            if (nearestTask) {
+                gantt.scroll_to_task(nearestTask.id);
+            }
+        });
+</script>
 
 
 
 
-                        </div>
 
-                      <!-- Công việc -->
-                      <div id="gantt-rows">
-                        {% for task in tasks %}
-                        <div class="gantt-row">
-                          <div class="gantt-task">{{ task.name }}</div>
-                          {% set startColumn = (task.startDate|date('U') - minDate|date('U')) // (24 * 60 * 60) + 2 %}
-                          {% set spanColumns = (task.endDate|date('U') - task.startDate|date('U')) // (24 * 60 * 60) + 1 %}
-                          {% set barColor = task.status == 'done' ? 'green' : (task.status == 'pending' ? 'blue' : 'red') %}
-                          <div class="gantt-bar" 
-                              style="grid-column: {{ startColumn + 1 }} / span {{ spanColumns }}; 
-                                      background-color: {{ barColor }}; 
-                                      white-space: nowrap; 
-                                      overflow: hidden; 
-                                      text-overflow: ellipsis;"
-                                      "title" = "{{ task.startDate|date('d/m/Y') }} - {{ task.endDate ? task.endDate|date('d/m/Y') : '' }}">
-                            {{ task.startDate|date('d/m/Y') }} - {{ task.endDate ? task.endDate|date('d/m/Y') : '' }}
-                          </div>
-                      </div>
-                        {% endfor %}
-                      </div>
-                      
-                    </div>
 
-                    <!-- Nút Hiển thị thêm -->
-                    <div class="text-center mt-3">
-                      <button id="loadMore" class="btn btn-primary">Hiển thị thêm</button>
-                    </div>
                     {% endif %}
 
                   </div>
