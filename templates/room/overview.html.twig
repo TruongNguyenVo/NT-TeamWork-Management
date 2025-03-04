@@ -182,11 +182,23 @@
                 progress: 50,
                 dependencies: 'Task 1',
             },
+            {
+                id: 'Task 33',
+                name: 'Phát triển tính năng dsadsa',
+                start: '2023-10-07',
+                end: '2023-10-10',
+                progress: 50,
+                dependencies: 'Task 1',
+            },
   // Thêm các công việc khác
 ];
 
 const gantt = new Gantt('#gantt', tasks, {
+  'today_button': false,
   'language': 'vi',
+  'popup_on': 'hover',
+  'scroll_to': 'start',
+  'view_mode': 'Week',
   'bar_height': 90,
   popup: function (task) {
     return `
@@ -199,39 +211,7 @@ const gantt = new Gantt('#gantt', tasks, {
     `;
   },
 });
-// Hàm tính khoảng cách ngày giữa hai ngày
-        function dateDiffInDays(date1, date2) {
-            const diffTime = Math.abs(date2 - date1);
-            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        }
 
-        // Tìm nhiệm vụ gần nhất so với ngày hiện tại
-        function findNearestTask(tasks) {
-            const today = new Date();
-            let nearestTask = null;
-            let minDiff = Infinity;
-
-            tasks.forEach(task => {
-                const startDate = new Date(task.start);
-                const endDate = new Date(task.end);
-                const diff = Math.min(dateDiffInDays(today, startDate), dateDiffInDays(today, endDate));
-
-                if (diff < minDiff) {
-                    minDiff = diff;
-                    nearestTask = task;
-                }
-            });
-
-            return nearestTask;
-        }
-
-        // Cuộn đến nhiệm vụ gần nhất khi biểu đồ đã được tải
-        window.addEventListener('load', () => {
-            const nearestTask = findNearestTask(tasks);
-            if (nearestTask) {
-                gantt.scroll_to_task(nearestTask.id);
-            }
-        });
 </script>
 
 
