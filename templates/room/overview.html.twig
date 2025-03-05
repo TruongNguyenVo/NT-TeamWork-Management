@@ -153,7 +153,6 @@
                               Xem thông tin công việc
                             </a>
                             
-                            
                           </div>
                     </div>
                     
@@ -164,8 +163,31 @@
                     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.css">
                     
                     <div id="gantt"></div>
+                    {# {% for task in tasks %}
+                              <p>{{task.name}}</p>
+                              <p>{% if task.parentTask is not null %}
+                                {{task.parentTask.task.name}}
+                                {% else %}
+                                Không có công việc cha
+                                {% endif %}</p>
+                                <br>
+                              <p>{{task.startDate|date('Y-m-d')}}</p>
+                    {% endfor %} #}
                     <script>
-                    const tasks = [
+                    const tasks =[];
+                    {% for task in tasks %}
+                      tasks.push({
+                          id: "{{task.id}}",
+                          name: "{{task.name}}",
+                          start: "{{task.startDate|date('Y-m-d')}}",
+                          end: "{{task.endDate|date('Y-m-d')}}",
+                          dependencies: "{{task.parentTask ? task.parentTask.task.id : ''}}",
+                          member: "{{task.member.fullName|default('')}}",
+                          status: "{{task.statusLabel}}",
+                      });
+                    {% endfor %}
+
+                    {# const tasks = [
             {
                 id: 'Task 1',
                 name: 'Thiết kế lại trang web',
@@ -191,25 +213,33 @@
                 dependencies: 'Task 1',
             },
   // Thêm các công việc khác
-];
+]; #}
 
 const gantt = new Gantt('#gantt', tasks, {
   'today_button': false,
   'language': 'vi',
-  'popup_on': 'hover',
+  'popup_on': 'click',
   'scroll_to': 'start',
   'view_mode': 'Week',
-  'bar_height': 90,
+  'bar_height': 30,
+  'readonly_dates': true,
   popup: function (task) {
-    return `
-      <div>
-        <h5>${task.name}</h5>
-        <p>Ngày bắt đầu: ${task.start}</p>
-        <p>Ngày kết thúc: ${task.end}</p>
-        <p>Tiến độ: ${task.progress}%</p>
-      </div>
-    `;
-  },
+        const startDate = new Date(task['task']['start']).toLocaleDateString();
+        const endDate = new Date(task['task']['end']).toLocaleDateString();
+        const taskName = task['task']['name'];
+        const member = task['task']['member'];
+        const status = task['task']['status'];
+        return `
+            <div class="p-2 border rounded bg-light">
+              <h6>${taskName}</h6>
+              <p>Thành viên: ${member}</p>
+              <p>Trạng thái: ${status}</p>
+              <p>Ngày bắt đầu: ${startDate}</p>
+              <p>Ngày kết thúc: ${endDate}</p>
+            </div>
+        `;
+          },
+
 });
 
 </script>

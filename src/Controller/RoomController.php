@@ -13,6 +13,7 @@ use App\Repository\UserRepository;
 use App\Repository\RoomRepository;
 use App\Repository\UserRoomRepository;
 use App\Repository\TaskRepository;
+use App\Repository\TaskDependencyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,13 +31,15 @@ final class RoomController extends AbstractController
     private $roomUserRepository;
     private $taskRepository;
     private $userRepository;
-    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository, TaskRepository $taskRepository, UserRepository $userRepository)
+    private $taskDependencyRepository;
+    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository, TaskRepository $taskRepository, UserRepository $userRepository, TaskDependencyRepository $taskDependencyRepository)
     {
         $this->roomUserRepository = $roomUserRepository;
         $this->roomRepository = $roomRepository;
         $this->entityManager = $entityManager;
         $this->taskRepository = $taskRepository;
         $this->userRepository = $userRepository;
+        $this->taskDependencyRepository = $taskDependencyRepository;
     }
 
     // #[Route(name: 'app_room_index', methods: ['GET'])]
@@ -394,6 +397,11 @@ final class RoomController extends AbstractController
 
                     // dump($membersInRoom, $adminInRoom);
                     // die();
+                    foreach($tasks as $task){
+                        $parentTask = $this->taskDependencyRepository->findOneBy(['subTask' => $task]);
+                        $task->parentTask = $parentTask; // them 1 field subTasks vao task
+
+                    }
                     return $this->render('room/overview.html.twig',
                 [
                     'room'=> $room,
@@ -514,9 +522,7 @@ final class RoomController extends AbstractController
         $roomId = $request->attributes->get('id');
 
         $tasks = $this->taskRepository->findBy(["room" => $room]);
-
-        // dump($tasks);
-        // die();
+        //lay cai sub cua cac task
 
         // dump('', $room);
         // die();

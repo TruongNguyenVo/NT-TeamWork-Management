@@ -1,0 +1,11 @@
+{# {% extends 'base.html.twig' %} #}
+
+{% block title %}New TaskDependency{% endblock %}
+
+{% block body %}
+    <h1>Create new TaskDependency</h1>
+
+    {{ include('task_dependency/_form.html.twig') }}
+
+    <a href="{{ path('app_task_dependency_index') }}">back to list</a>
+{% endblock %}

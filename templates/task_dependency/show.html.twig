@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TaskDependency{% endblock %}
+
+{% block body %}
+    <h1>TaskDependency</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ task_dependency.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_task_dependency_index') }}">back to list</a>
+
+    <a href="{{ path('app_task_dependency_edit', {'id': task_dependency.id}) }}">edit</a>
+
+    {{ include('task_dependency/_delete_form.html.twig') }}
+{% endblock %}

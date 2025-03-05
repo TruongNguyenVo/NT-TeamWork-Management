@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Task;
 use App\Entity\Room;
 use App\Entity\User;
+use App\Entity\TaskDependency;
 use App\Form\CreateTaskType;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
@@ -61,8 +62,12 @@ final class TaskController extends AbstractController
         // die();
 
         $task = new Task();
-        $form = $this->createForm(CreateTaskType::class, $task);
+        $tasksInRoom = $this->taskRepository->findBy(['room' => $room]);
+        $form = $this->createForm(CreateTaskType::class, $task, [
+            'tasks_in_room' => $tasksInRoom,
+        ]);
         $form->handleRequest($request);
+
 
         if ($form->isSubmitted() && $form->isValid()) {
             // dump("co the luu roi a",$form->getData());
@@ -101,9 +106,24 @@ final class TaskController extends AbstractController
                     $task->setPathAttachment($newFilename);
                 }
 
+                
 
                 $this->entityManager->persist($task);
 
+                
+
+                // Lưu các task phụ thuộc
+                $selectedTasks = $form->get('taskDependencies')->getData();
+                if(!empty($selectedTasks)) {
+                    foreach ($selectedTasks as $dependsOnTask) {
+                        $taskDependency = new TaskDependency();
+                        $taskDependency->setTask($dependsOnTask);
+                        $taskDependency->setSubTask($task);
+                        $this->entityManager->persist($taskDependency);
+                    }
+                }
+                // dump(''. $task->getId() .'');
+                // die();
                 $this->entityManager->flush();
                 $this->entityManager->commit();
 

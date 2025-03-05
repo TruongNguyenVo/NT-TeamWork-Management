@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit TaskDependency{% endblock %}
+
+{% block body %}
+    <h1>Edit TaskDependency</h1>
+
+    {{ include('task_dependency/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_task_dependency_index') }}">back to list</a>
+
+    {{ include('task_dependency/_delete_form.html.twig') }}
+{% endblock %}

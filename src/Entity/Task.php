@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TaskRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
@@ -62,6 +64,17 @@ class Task
     )]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $status = 'pending';
+
+    /**
+     * @var Collection<int, TaskDependency>
+     */
+    #[ORM\OneToMany(targetEntity: TaskDependency::class, mappedBy: 'task')]
+    private Collection $taskDependencies;
+
+    public function __construct()
+    {
+        $this->taskDependencies = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -239,5 +252,35 @@ class Task
             'cancelled' => 'Đã hủy',
             default => 'Không xác định',
         };
+    }
+
+    /**
+     * @return Collection<int, TaskDependency>
+     */
+    public function getTaskDependencies(): Collection
+    {
+        return $this->taskDependencies ?? new ArrayCollection();
+    }
+
+    public function addTaskDependency(TaskDependency $taskDependency): static
+    {
+        if (!$this->taskDependencies->contains($taskDependency)) {
+            $this->taskDependencies->add($taskDependency);
+            $taskDependency->setTask($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTaskDependency(TaskDependency $taskDependency): static
+    {
+        if ($this->taskDependencies->removeElement($taskDependency)) {
+            // set the owning side to null (unless already changed)
+            if ($taskDependency->getTask() === $this) {
+                $taskDependency->setTask(null);
+            }
+        }
+
+        return $this;
     }
 }

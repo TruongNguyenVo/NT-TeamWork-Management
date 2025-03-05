@@ -6,6 +6,7 @@ use App\Entity\Room;
 use App\Entity\UserRoom;
 use App\Entity\Task;
 use App\Entity\User;
+use App\Entity\TaskDependency;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\AbstractType;
@@ -58,9 +59,23 @@ class CreateTaskType extends AbstractType
                 'widget' => 'single_text',
                 'data' => new \DateTime('+2 hours'),
             ])
-            ->add('endDate', null, [
+            ->add('endDate', DateTimeType::class, [
                 'widget' => 'single_text',
             ])
+            ->add('taskDependencies', EntityType::class, [
+                'class' => Task::class,
+                'choices' => $options['tasks_in_room'] ?? [],
+                'choice_label' => 'name', // or any other property of Task that you want to display
+                'multiple' => true,
+                'required' => false, // Cho phép giá trị rỗng
+                'expanded' => false, // Hiển thị dạng list box thay vì checkbox
+                'mapped' => false, // Không map trực tiếp vào Entity Task
+                'attr' => [
+                    'class' => 'form-control select2', // Dùng Select2 nếu muốn
+                    'data-placeholder' => 'Chọn công việc phụ thuộc',
+                    'size' => 10, // Số dòng hiển thị trong list box
+                ],
+            ]);
             // ->add('finishDate', null, [
             //     'widget' => 'single_text',
             // ])
@@ -86,6 +101,7 @@ class CreateTaskType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Task::class,
+            'tasks_in_room' => [], // Định nghĩa giá trị mặc định để tránh lỗi nếu không có dữ liệu
         ]);
     }
 }
