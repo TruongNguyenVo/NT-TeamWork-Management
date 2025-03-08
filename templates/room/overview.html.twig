@@ -163,16 +163,6 @@
                     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.css">
                     
                     <div id="gantt"></div>
-                    {# {% for task in tasks %}
-                              <p>{{task.name}}</p>
-                              <p>{% if task.parentTask is not null %}
-                                {{task.parentTask.task.name}}
-                                {% else %}
-                                Không có công việc cha
-                                {% endif %}</p>
-                                <br>
-                              <p>{{task.startDate|date('Y-m-d')}}</p>
-                    {% endfor %} #}
                     <script>
                     const tasks =[];
                     {% for task in tasks %}
@@ -187,42 +177,19 @@
                       });
                     {% endfor %}
 
-                    {# const tasks = [
-            {
-                id: 'Task 1',
-                name: 'Thiết kế lại trang web',
-                start: '2023-10-01',
-                end: '2023-10-05',
-                progress: 20,
-                dependencies: '',
-            },
-            {
-                id: 'Task 2',
-                name: 'Phát triển tính năng mới',
-                start: '2023-10-06',
-                end: '2023-10-10',
-                progress: 50,
-                dependencies: 'Task 1',
-            },
-            {
-                id: 'Task 33',
-                name: 'Phát triển tính năng dsadsa',
-                start: '2023-10-07',
-                end: '2023-10-10',
-                progress: 50,
-                dependencies: 'Task 1',
-            },
-  // Thêm các công việc khác
-]; #}
-
 const gantt = new Gantt('#gantt', tasks, {
   'today_button': false,
   'language': 'vi',
   'popup_on': 'click',
   'scroll_to': 'start',
   'view_mode': 'Week',
-  'bar_height': 30,
+  'bar_height': 40,
+  'move_dependencies': false,
   'readonly_dates': true,
+  'padding': 50,
+
+  //'show_expected_progress': true,
+  'view_mode_select': true,
   popup: function (task) {
         const startDate = new Date(task['task']['start']).toLocaleDateString();
         const endDate = new Date(task['task']['end']).toLocaleDateString();
@@ -230,25 +197,16 @@ const gantt = new Gantt('#gantt', tasks, {
         const member = task['task']['member'];
         const status = task['task']['status'];
         return `
-            <div class="p-2 border rounded bg-light">
-              <h6>${taskName}</h6>
-              <p>Thành viên: ${member}</p>
-              <p>Trạng thái: ${status}</p>
-              <p>Ngày bắt đầu: ${startDate}</p>
-              <p>Ngày kết thúc: ${endDate}</p>
+            <div class="p-1 border rounded bg-light" style="font-size: 0.5em;">
+              <h6>Tên công việc: ${taskName}</h6>
+              <p>Thành viên: ${member} | Trạng thái: ${status}</p>
+              <p>Ngày bắt đầu: ${startDate} | Ngày kết thúc: ${endDate}</p>
             </div>
         `;
           },
 
 });
-
 </script>
-
-
-
-
-
-
                     {% endif %}
 
                   </div>

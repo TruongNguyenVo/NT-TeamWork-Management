@@ -10,6 +10,7 @@ use App\Form\CreateTaskType;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
 use App\Repository\UserRepository;
+use App\Repository\TaskDependencyRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,13 +33,15 @@ final class TaskController extends AbstractController
     private $roomUserRepository;
     private $taskRepository;
     private $userRepository;
-    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository, TaskRepository $taskRepository, UserRepository $userRepository)
+    private $taskDependencyRepository;
+    public function __construct(EntityManagerInterface $entityManager, RoomRepository $roomRepository, UserRoomRepository $roomUserRepository, TaskRepository $taskRepository, UserRepository $userRepository, TaskDependencyRepository $taskDependencyRepository)
     {
         $this->roomUserRepository = $roomUserRepository;
         $this->roomRepository = $roomRepository;
         $this->entityManager = $entityManager;
         $this->taskRepository = $taskRepository;
         $this->userRepository = $userRepository;
+        $this->taskDependencyRepository = $taskDependencyRepository;
     }
     // #[Route(name: 'app_task_index', methods: ['GET'])]
     // public function index(TaskRepository $taskRepository): Response
@@ -164,8 +167,16 @@ final class TaskController extends AbstractController
         $task = $this->taskRepository->find($id);
         // dump($task);
         // die();
+        $taskDependencies = $this->taskDependencyRepository->findBy(['subTask' => $task]);
+        $parentTasks = [];
+        foreach ($taskDependencies as $taskDependency) {
+            if ($taskDependency->getTask()->getStatus() === 'done') {
+                $parentTasks[] = $taskDependency->getTask();
+            }
+        }
+        // dump($parentTasks);
+        // die();
         
-
         if ($request->isMethod('POST')) {
             $action = $request->get('action');
             // dump($action);
@@ -209,6 +220,7 @@ final class TaskController extends AbstractController
         return $this->render('task/showMember.html.twig', [
             'room' => $room,
             'task' => $task,
+            'parentTasks' => $parentTasks,
         ]);
     }
 
@@ -281,7 +293,15 @@ final class TaskController extends AbstractController
         //     die();
         // }
 
-        if($task){
+        if($task) {
+            // Xóa các task phụ thuộc trước
+            $taskDependencies = $this->taskDependencyRepository->findBy(['subTask' => $task]);
+            foreach ($taskDependencies as $taskDependency) {
+            $entityManager->remove($taskDependency);
+            }
+            $entityManager->flush();
+
+            // Sau đó xóa task
             $entityManager->remove($task);
             $entityManager->flush();
         }

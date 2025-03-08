@@ -71,7 +71,23 @@
                             <p>Không có tệp đính kèm</p>
                         {% endif %}
                 </div>
-
+                {% for parentTask in parentTasks %}
+                <div class="mb-3">
+                    <h5>Kết quả công việc đã hoàn thành</h5>
+                    {% if parentTask.resultContent %}
+                    <div class="mb-3">
+                        <label for="completedTaskContent" class="form-label">Nội dung công việc đã hoàn thành</label>
+                        <textarea disabled class="form-control" rows="5" name="completedTaskContent" id="completedTaskContent">{{parentTask.resultContent}}</textarea>
+                    </div>
+                    {% endif %}
+                    {% if parentTask.resultAttachment %}
+                    <div class="mb-3">
+                        <label for="completedTaskAttachment" class="form-label">Tệp đính kèm</label>
+                        <a id="completedTaskAttachment" href="{{parentTask.resultAttachment}}" class="form-control" target="_blank">Tệp kết quả của công việc: {{parentTask.name}}</a>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
                 <hr class="my-4">
 
                 <!-- Submission Content Section -->
