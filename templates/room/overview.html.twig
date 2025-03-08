@@ -179,7 +179,9 @@
 
 const gantt = new Gantt('#gantt', tasks, {
   'today_button': false,
+  {# 'view_mode_select': true, #}
   'language': 'vi',
+  
   'popup_on': 'click',
   'scroll_to': 'start',
   'view_mode': 'Week',
@@ -189,7 +191,6 @@ const gantt = new Gantt('#gantt', tasks, {
   'padding': 50,
 
   //'show_expected_progress': true,
-  'view_mode_select': true,
   popup: function (task) {
         const startDate = new Date(task['task']['start']).toLocaleDateString();
         const endDate = new Date(task['task']['end']).toLocaleDateString();
@@ -206,6 +207,8 @@ const gantt = new Gantt('#gantt', tasks, {
           },
 
 });
+</script>
+<script>
 </script>
                     {% endif %}
 
