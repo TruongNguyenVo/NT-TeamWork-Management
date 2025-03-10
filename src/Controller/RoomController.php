@@ -302,28 +302,40 @@ final class RoomController extends AbstractController
         $memberWithTasks =[];
         //gan tat ca cac thanh vien voi nhiem vu = 0
         // Khởi tạo tất cả member với số task = 0
-        foreach ($membersInRoom as $member) {
-            $memberWithTasks[$member->getUser()->getId()] = [
-                'member' => $member, // Lưu luôn đối tượng Member
-                'taskCount' => 0
-            ];
-        }
-        // dump($memberWithTasks);
-        // die();
-        
-        // Đếm số lượng task theo member
-        foreach ($tasks as $task) {
+        foreach($tasks as $task){
             $member = $task->getMember();
-            if ($member) {
-                $memberId = $member->getId();
-                if (isset($memberWithTasks[$memberId])) {
-                    $memberWithTasks[$memberId]['taskCount']++;
-                }
-                // dump($member);
+            if($member === null){
+                $member = "Chưa giao";
             }
+            else{
+                $member = $member->getFullName();
+            }
+            // dump($member);
+            // die();
+            $status = $task->getStatus();
+                // Nếu thành viên chưa có trong danh sách, khởi tạo với giá trị 0 cho mỗi trạng thái
+            if (!isset($memberWithTasks[$member])) {
+                $memberWithTasks[$member] = [
+                    'name' => $member,
+                    'done' => 0,
+                    'in_progress' => 0,
+                    'not_completed' => 0,
+                ];
+            }
+
+                // Tăng số nhiệm vụ tương ứng với trạng thái
+            if ($status === 'done') {
+                $memberWithTasks[$member]['done']++;
+            } elseif ($status === 'in_progress') {
+                $memberWithTasks[$member]['in_progress']++;
+            } elseif ($status !== 'done' || $status !== 'in_progress') {
+                $memberWithTasks[$member]['not_completed']++;
+            }
+
         }
- 
-        // dump($tasks, $memberWithTasks, $membersInRoom);
+
+
+        // dump($memberWithTasks);
         // die();
 
         $form = $this->createForm(RoomType::class, $room);

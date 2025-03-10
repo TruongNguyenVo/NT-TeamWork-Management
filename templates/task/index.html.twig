@@ -194,7 +194,9 @@
                           </select>
                           <!-- Error message placeholder -->
                       
-                          <button type="button" class="btn btn-secondary" onclick="showPredictionModal()">Dự đoán hoàn thành của các thành viên</button>
+                          <button type="button" class="btn btn-secondary" onclick="showPredictionModal()"
+                          style="display:none"
+                          id="btnPredict">Dự đoán hoàn thành của các thành viên</button>
                         </div>
                       </div>
                       <div id="errorMessage" class="alert alert-danger d-none"></div>
@@ -314,6 +316,12 @@
         document.getElementById('finishDate').value = data.finishDate;
         document.getElementById('status').value = data.status;
 
+        console.log(data.status);
+        if(data.status == "pending"){
+          document.getElementById('btnPredict').style.display = 'block';
+        } else {
+          document.getElementById('btnPredict').style.display = 'none';
+        }
 
 
         // Cập nhật các tùy chọn cho trường select member
@@ -420,15 +428,10 @@ function submitForm(actionPath, actionType) {
           console.error('Error:', data.error);
           return;
         }
-        console.log(data);
         if(data['status'] == 'success'){
-          //console.log(data['data']);
           const tbody = document.querySelector('#predictionModal tbody');
-          tbody.innerHTML = ''; // Clear existing rows
+          tbody.innerHTML = ''; 
           for (const [name, percent] of Object.entries(data['data'])) {
-              //const li = document.createElement("li");
-              //li.textContent = `${name}: ${percent}`;
-              //ul.appendChild(li);
                 const tr = document.createElement('tr');
                 const tdName = document.createElement('td');
                 const tdPercent = document.createElement('td');

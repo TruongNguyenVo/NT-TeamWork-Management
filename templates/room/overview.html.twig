@@ -161,10 +161,11 @@
                     {# hàm vẽ biểu đồ gantt #}
                     <script src="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.umd.js"></script>
                     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.css">
-                    
+
                     <div id="gantt"></div>
+                    <button id="loadMore" class="btn btn-primary mt-3">Hiển thị thêm</button>
                     <script>
-                    const tasks =[];
+                    const tasks = [];
                     {% for task in tasks %}
                       tasks.push({
                           id: "{{task.id}}",
@@ -172,44 +173,46 @@
                           start: "{{task.startDate|date('Y-m-d')}}",
                           end: "{{task.endDate|date('Y-m-d')}}",
                           dependencies: "{{task.parentTask ? task.parentTask.task.id : ''}}",
-                          member: "{{task.member.fullName|default('')}}",
+                          member: "{{task.member.fullName|default('Chưa phân công')}}",
                           status: "{{task.statusLabel}}",
                       });
                     {% endfor %}
 
-const gantt = new Gantt('#gantt', tasks, {
-  'today_button': false,
-  {# 'view_mode_select': true, #}
-  'language': 'vi',
-  
-  'popup_on': 'click',
-  'scroll_to': 'start',
-  'view_mode': 'Week',
-  'bar_height': 40,
-  'move_dependencies': false,
-  'readonly_dates': true,
-  'padding': 50,
+                    const gantt = new Gantt('#gantt', tasks.slice(0, 5), {
+                      'today_button': false,
+                      'language': 'vi',
+                      'popup_on': 'click',
+                      'scroll_to': 'start',
+                      'view_mode': 'Week',
+                      'bar_height': 40,
+                      'move_dependencies': false,
+                      'readonly_dates': true,
+                      'padding': 50,
+                      popup: function (task) {
+                            const startDate = new Date(task['task']['start']).toLocaleDateString();
+                            const endDate = new Date(task['task']['end']).toLocaleDateString();
+                            const taskName = task['task']['name'];
+                            const member = task['task']['member'];
+                            const status = task['task']['status'];
+                            return `
+                                <div class="p-1 border rounded bg-light" style="font-size: 0.5em;">
+                                  <h6>Tên công việc: ${taskName}</h6>
+                                  <p>Thành viên: ${member} | Trạng thái: ${status}</p>
+                                  <p>Ngày bắt đầu: ${startDate} | Ngày kết thúc: ${endDate}</p>
+                                </div>
+                            `;
+                      },
+                    });
 
-  //'show_expected_progress': true,
-  popup: function (task) {
-        const startDate = new Date(task['task']['start']).toLocaleDateString();
-        const endDate = new Date(task['task']['end']).toLocaleDateString();
-        const taskName = task['task']['name'];
-        const member = task['task']['member'];
-        const status = task['task']['status'];
-        return `
-            <div class="p-1 border rounded bg-light" style="font-size: 0.5em;">
-              <h6>Tên công việc: ${taskName}</h6>
-              <p>Thành viên: ${member} | Trạng thái: ${status}</p>
-              <p>Ngày bắt đầu: ${startDate} | Ngày kết thúc: ${endDate}</p>
-            </div>
-        `;
-          },
-
-});
-</script>
-<script>
-</script>
+                    let showCount = 5;
+                    document.getElementById('loadMore').addEventListener('click', () => {
+                      showCount += 5;
+                      gantt.refresh(tasks.slice(0, showCount));
+                      if (showCount >= tasks.length) {
+                        document.getElementById('loadMore').style.display = 'none';
+                      }
+                    });
+                    </script>
                     {% endif %}
 
                   </div>
@@ -232,45 +235,88 @@ const gantt = new Gantt('#gantt', tasks, {
                       </div>
                     </div>
                     <div class="card-body">
-  
-                      <div class="table-responsive">
-                        <table
-                          id="add-row"
-                          class="display table table-striped table-hover"
-                        >
-                          <thead>
-                            
-                            <tr>
-                              <th>Tên thành viên</th>
-                              <th>Ngày tham gia</th>
-                              <th>Số công việc đang tiếp nhận</th>
-                              {# <th style="width: 10%">Thao tác</th> #}
-                            </tr>
-                          </thead>
-                          <tbody>
-                          {% for memberData in memberWithTasks %}
-                            
-                            <tr>
-                              <td>{{memberData.member.user.getFullName()}}</td>
-                              <td>{{memberData.member.joinDate| format_date}}</td>
-                              <td>{{memberData.taskCount}}</td>
-                              
-                            </tr>
-                            
+                    {% if memberWithTasks != null %}
+                      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                      <canvas id="taskChart"></canvas>
+                      <script>
+                        var ctx = document.getElementById('taskChart').getContext('2d');
+
+                        var labels = [];
+                        var completedData = [];
+                        var inProgressData = [];
+                        var notCompletedData = [];
+
+                        var membersData = [
+                          {% for member, data in memberWithTasks %}
+                          ["{{ data.name }}", {{ data.done }}, {{ data.in_progress }}, {{ data.not_completed }}],
                           {% endfor %}
-                          </tbody>
-                          <tfoot>
-                            <tr>
-                              <th>Tên thành viên</th>
-                              <th>Ngày tham gia</th>
-                              <th>Số công việc đang tiếp nhận</th>
-                              {# <th>Thao tác</th> #}
-                            </tr>
-                          </tfoot>
-                          <tbody>
-                            
-                          </tbody>
-                        </table>
+                        ];
+                        
+
+                        for (var i = 0; i < membersData.length; i++) {
+                          labels.push(membersData[i][0]);
+                          completedData.push(membersData[i][1]);
+                          inProgressData.push(membersData[i][2]);
+                          notCompletedData.push(membersData[i][3]);
+                        }
+
+                        var data = {
+                          labels: labels,
+                          datasets: [
+                          {
+                          label: "Hoàn thành",
+                          data: completedData,
+                          backgroundColor: "#4CAF50"
+                          },
+                          {
+                          label: "Đang làm",
+                          data: inProgressData,
+                          backgroundColor: "#FFC107"
+                          },
+                          {
+                          label: "Chưa hoàn thành",
+                          data: notCompletedData,
+                          backgroundColor: "#F44336"
+                          }
+                          ]
+                        };
+
+                        var config = {
+                            type: 'bar',
+                            data: data,
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: { position: 'top' } // Hiển thị chú thích ở trên
+                                },
+                                scales: {
+                                    x: { 
+                                        stacked: true, // Xếp chồng theo chiều ngang
+                                        ticks: {
+                                            maxRotation: 0,
+                                            minRotation: 0,
+                                            autoSkip: false,
+                                            maxTicksLimit: 10 // Giới hạn số lượng nhãn trên trục x
+                                        },
+                                            barPercentage: 0.5, // Thu nhỏ chiều rộng từng cột (giá trị nhỏ hơn làm cột hẹp hơn)
+                                            categoryPercentage: 0.6 // Giảm chiều rộng tổng thể của nhóm cột
+                                    },
+                                    y: { 
+                                        stacked: true, 
+                                        beginAtZero: true // Xếp chồng theo chiều dọc
+                                    }
+                                }
+                            }
+                        };
+
+                        new Chart(ctx, config);
+                      </script>
+                      {% else %}
+                      <div class="alert alert-info" role="alert">
+                        Chưa có thành viên nào tham gia nhóm
+                      </div>
+                    {% endif %}
+                    
                       </div>
                     </div>
                   </div>

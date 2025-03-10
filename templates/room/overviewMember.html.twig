@@ -55,8 +55,8 @@
                             {% for task in tasksOfUser %}
                               <tr>
                                 <td>{{task.name}}</td>
-                                <td>{{task.startDate|date('Y-m-d H:i:s')}}</td>
-                                <td>{{task.endDate|date('Y-m-d H:i:s')}}</td>
+                                <td>{{task.startDate|format_date}}</td>
+                                <td>{{task.endDate|format_date}}</td>
                                 <td>
                                     {{task.statusLabel}}
                                 </td>
