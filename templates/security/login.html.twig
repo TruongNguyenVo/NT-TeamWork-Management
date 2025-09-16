@@ -246,36 +246,41 @@
             }
         </style>
       {% else %}
+        <!-- Logo Section -->
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="{{ asset('assets/logo.png') }}" alt="Logo" style="max-width: 150px; height: auto;">
+        </div>
+
         <form action="{{ path('app_login') }}" method="post">
 
-        {% if error %}
-          <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
+          {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+          {% endif %}
 
-        <div class="user-details">
-          <!-- Input for Email -->
-          <div class="input-box full-width">
-            <span class="details">Email</span>
-            <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" required autofocus>
+          <div class="user-details">
+            <!-- Input for Email -->
+            <div class="input-box full-width">
+          <span class="details">Email</span>
+          <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" required autofocus>
+            </div>
+            <!-- Input for Password -->
+            <div class="input-box full-width">
+          <span class="details">Mật khẩu</span>
+          <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+            </div>
           </div>
-          <!-- Input for Password -->
-          <div class="input-box full-width">
-            <span class="details">Mật khẩu</span>
-            <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-          </div>
-        </div>
 
-        <input type="hidden" name="_csrf_token"
-          value="{{ csrf_token('authenticate') }}"
-    >
-        <!-- Submit button and Google Login button -->
-        <div class="button">
-          <input type="submit" value="Đăng nhập">
-          <a href="/connect/google">
-            <i class="fa fa-google"></i> Đăng nhập bằng Google
-          </a>
-        </div>
-      </form>
+          <input type="hidden" name="_csrf_token"
+            value="{{ csrf_token('authenticate') }}"
+          >
+          <!-- Submit button and Google Login button -->
+          <div class="button">
+            <input type="submit" value="Đăng nhập">
+            <a href="/connect/google">
+          <i class="fa fa-google"></i> Đăng nhập bằng Google
+            </a>
+          </div>
+        </form>
       <!-- Register link -->
       <div class="login-link">
         <span>Chưa có tài khoản? <a href="/register">Đăng ký</a></span>

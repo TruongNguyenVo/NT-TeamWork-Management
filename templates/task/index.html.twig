@@ -307,7 +307,6 @@
           console.error('Error:', data.error);
           return;
         }
-  
         // Hiển thị thông tin chi tiết của Task trong khung chi tiết công việc
         document.getElementById('idTaskShow').value = data.id
         document.getElementById('name').value = data.name;
@@ -428,6 +427,7 @@ function submitForm(actionPath, actionType) {
           console.error('Error:', data.error);
           return;
         }
+        console.log(data);
         if(data['status'] == 'success'){
           const tbody = document.querySelector('#predictionModal tbody');
           tbody.innerHTML = ''; 

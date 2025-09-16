@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 import joblib
-import connectDatabase
 app = Flask(__name__)
 
 # Load model
@@ -20,6 +19,7 @@ def predict():
     for key, val in requestData.items():
         names.append(key) # append the name
         values.extend(val) # append the value (flatten the list)
+    print(requestData)
 
     values_reshaped = values
     predictions = model.predict_proba(values_reshaped) # predict the values

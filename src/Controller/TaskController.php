@@ -597,10 +597,10 @@ final class TaskController extends AbstractController
                             $result[0]['tong_so_task'],
                             $result[0]['so_task_done'],
                             $result[0]['so_task_undone'],
-                            // rand(10, 100),
-                            // rand(10, 100),
-                            (double)$result[0]['phan_tram_thoi_gian_hoan_thanh_tren_thoi_gian_duoc_giao'],
-                            (double)$result[0]['phan_tram_hoan_thanh_tren_duoc_giao_5_task_gan_nhat'],
+                            rand(10, 100),
+                            rand(10, 100),
+                            // (double)$result[0]['phan_tram_thoi_gian_hoan_thanh_tren_thoi_gian_duoc_giao'],
+                            // (double)$result[0]['phan_tram_hoan_thanh_tren_duoc_giao_5_task_gan_nhat'],
                             ]
                     ];
                     // $bodyData[$member->getUser()->getFullName()] = $result;
@@ -664,3 +664,4 @@ final class TaskController extends AbstractController
         return new JsonResponse($response);
     }
 }
+ 

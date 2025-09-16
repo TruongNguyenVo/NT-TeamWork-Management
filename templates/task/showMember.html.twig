@@ -71,9 +71,9 @@
                             <p>Không có tệp đính kèm</p>
                         {% endif %}
                 </div>
+                <h5>Kết quả công việc đã hoàn thành</h5>
                 {% for parentTask in parentTasks %}
-                <div class="mb-3">
-                    <h5>Kết quả công việc đã hoàn thành</h5>
+                <div class="mb-3">                    
                     {% if parentTask.resultContent %}
                     <div class="mb-3">
                         <label for="completedTaskContent" class="form-label">Nội dung công việc đã hoàn thành</label>

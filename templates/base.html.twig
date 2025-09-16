@@ -90,7 +90,7 @@
                   <ul class="nav nav-collapse" style="list-style-type: none;">
                   <li class="{{app.request.attributes.get('_route') == 'app_home' ? 'active' }}">
                     <a href="{{path('app_home')}}">
-                    <span class="sub-item" style="font-size: 16px;">Xem tất cả nhóm</span>
+                    <span class="sub-item" style="font-size: 16px;">Xem danh sách nhóm</span>
                     </a>
                   </li>
                   
@@ -289,7 +289,7 @@
                       </li>
                       <li>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/profile">Cài đặt tài khoản</a>
+                        <a class="dropdown-item" href="/profile">Thay đổi thông tin tài khoản</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="/{{app.user ? 'logout' : ''}}">Đăng xuất</a>
                       </li>
