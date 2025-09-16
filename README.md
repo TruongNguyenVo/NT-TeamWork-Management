@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# NT-TeamWork-Management
-=======
 `Update [25/1/2024]`
 # Project:
 ## Start Project:
@@ -328,4 +325,3 @@ FROM (
 GROUP BY member_id;
 
 ```
->>>>>>> dev_v2
