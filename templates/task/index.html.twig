@@ -1,0 +1,456 @@
+{# {% extends 'base.html.twig' %}
+
+{% block title %}Task index{% endblock %}
+
+{% block body %}
+    <h1>Task index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Content</th>
+                <th>PathAttachment</th>
+                <th>ResultContent</th>
+                <th>ResultAttachment</th>
+                <th>StartDate</th>
+                <th>EndDate</th>
+                <th>FinishDate</th>
+                <th>Status</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for task in tasks %}
+            <tr>
+                <td>{{ task.id }}</td>
+                <td>{{ task.name }}</td>
+                <td>{{ task.content }}</td>
+                <td>{{ task.pathAttachment }}</td>
+                <td>{{ task.resultContent }}</td>
+                <td>{{ task.resultAttachment }}</td>
+                <td>{{ task.startDate ? task.startDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ task.endDate ? task.endDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ task.finishDate ? task.finishDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ task.status }}</td>
+                <td>
+                    <a href="{{ path('app_task_show', {'id': task.id}) }}">show</a>
+                    <a href="{{ path('app_task_edit', {'id': task.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="11">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_task_new') }}">Create new</a>
+{% endblock %} #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Quản lý công việc{% endblock %}
+
+{% block body %}
+        <div class="container">
+            <div class="page-inner">
+              <div class="page-header">
+                <h3 class="fw-bold mb-3">NTTeam</h3>
+                <ul class="breadcrumbs mb-3">
+                  <li class="nav-home">
+                    <a href="#">
+                      <i class="icon-home"></i>
+                    </a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">{{room.name}}</a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">Thông tin công việc</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="row">  
+                <div class="col-md-12" id="task-info">
+                  <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <h4 class="card-title">Thông tin công việc</h4>
+                            <a
+                              class="btn btn-primary btn-round ms-auto"
+                              href="{{ path ('app_task_new', {'id': room.id}) }}"
+                            >
+                              <i class="fa fa-plus"></i>
+                              Thêm công việc mới
+                            </a>
+                          </div>
+                    </div>
+                    <div class="card-body">
+                    <div class="table-responsive">
+                      <table
+                        id="add-row"
+                        class="display table table-striped table-hover"
+                      >
+                          <thead>
+                            <tr>
+                              <th>Công việc</th>
+                              <th>Đảm nhận</th>
+                              <th>Bắt đầu</th>
+                              <th>Kết thúc</th>
+                              <th>Trạng thái</th>
+                            </tr>
+                          </thead>
+                            <tbody>
+
+                            {% for task in tasks %}
+                            <tr data-task-id="{{ task.id }}" onclick="postData(this)">
+                                <td>{{task.name}}</td>
+                                <td>{{task.member.fullName ?? ""}}</td>
+                                <td>{{ task.startDate ? task.startDate|date('H:i (d/m/Y) ') : '' }}</td>
+                                <td>{{ task.endDate ? task.endDate|date('H:i d/m/Y') : '' }}</td>
+                                <td>
+                                    {{ task.getStatusLabel() }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                          <tfoot>
+                            <tr>
+                              <th>Tên công việc</th>
+                              <th>Người đảm nhận</th>
+                              <th>Bắt đầu</th>
+                              <th>Kết thúc</th>
+                              <th>Trạng thái</th>
+                            </tr>
+                          </tfoot>
+                        <tbody>
+
+                        </tbody>
+                        </table>
+
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                
+              <!-- khung hien thi chi tiết công việc -->
+              <div class="col-md-12" id="task-infor" style="display:none;">
+                <div class="card">
+                  <div class="card-header">
+                    <div class="d-flex align-items-center">
+                      <h4 class="card-title">Chi tiết thông tin công việc</h4>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <form class="row" action="" enctype="multipart/form-data" id="formUpdateAndDelete" method="POST">
+                        
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Tên công việc</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Nhập tên công việc" onkeyup="showUpdateButton()">
+                      </div>
+                      <div class="mb-3">
+                        <label for="startDate" class="form-label">Ngày bắt đầu</label>
+                        <input type="datetime-local" class="form-control" id="startDate" name="startDate" onchange="showUpdateButton()">
+                      </div>
+                      <div class="mb-3">
+                        <label for="endDate" class="form-label">Ngày kết thúc</label>
+                        <input type="datetime-local" class="form-control" id="endDate" name="endDate" onchange="showUpdateButton()">
+                      </div>
+                      <div class="mb-3">
+                        <label for="finishDate" class="form-label">Ngày hoàn thành</label>
+                        <input disabled type="datetime-local" class="form-control" id="finishDate" name="finishDate">
+                      </div>
+                      <div class="mb-3">
+                        <label for="reviewDate" class="form-label">Ngày chờ nhận xét</label>
+                        <input disabled type="datetime-local" class="form-control" id="reviewDate" name="reviewDate">
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="status" class="form-label">Trạng thái</label>
+                        <select class="form-control" id="status" name="status"  onchange="showUpdateButton()">
+                          <option value="pending">Chờ xử lý</option>
+                          <option value="review" disabled>Chờ nhận xét</option>
+                          <option value="in_progress" disabled>Đang thực hiện</option>
+                          <option value="done">Hoàn thành</option>
+                          <option value="cancelled">Đã hủy</option>
+                        </select>
+                      </div>
+            
+                      <div class="mb-3">
+                        <label for="member" class="form-label">Thành viên</label>
+                        <div class="d-flex">
+                          <select class="form-control" id="member" name="member" onchange="showUpdateButton()">
+                          <!-- Các tùy chọn sẽ được thêm bằng JavaScript -->
+                          </select>
+                          <button type="button" class="btn btn-secondary ms-2" onclick="showPredictionModal()">Dự đoán phần trăm hoàn thành</button>
+                        </div>
+                      </div>
+                        <!-- Modal for displaying member name and completion percentage -->
+                        <div class="modal fade" id="predictionModal" tabindex="-1" aria-labelledby="predictionModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="predictionModalLabel">Dự đoán phần trăm hoàn thành</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <table class="table">
+                            <thead>
+                              <tr>
+                              <th>Thành viên</th>
+                              <th>Tỉ lệ hoàn thành</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                              <td id="memberName"></td>
+                              <td id="completionPercentage"></td>
+                              </tr>
+                            </tbody>
+                            </table>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                          </div>
+                          </div>
+                        </div>
+                        </div>
+
+                      <div class="mb-3">
+                        <label for="content" class="form-label">Mô tả</label>
+                        <textarea class="form-control" rows="5" id="content" name="content" onkeyup="showUpdateButton()"></textarea>
+                      </div>
+                      <div class="mb-3">
+                        <label for="pathAttachment" class="form-label">Tệp đính kèm</label>
+                        <a id="pathAttachment" href="#" class="form-control" target="_blank">Không có tệp đính kèm</a>
+                      </div>
+                      <div class="mb-3">
+                        <label for="pathAttachment" class="form-label">Thay tệp mới</label>
+                        <input type="file" name="newPathAttachment" class="form-control" target="_blank" onchange="showUpdateButton()">
+                      </div>
+                      <div class="mb-3">
+                        <label for="resultContent" class="form-label">Nội dung kết quả</label>
+                        <textarea disabled class="form-control" rows="5" id="resultContent" name="resultContent"></textarea>
+                      </div>
+                      <div class="mb-3">
+                        <label for="resultAttachment" class="form-label">Tệp kết quả đính kèm</label>
+                        {# <input disabled type="text" class="form-control" id="resultAttachment" name="resultAttachment"> #}
+                        <a id="resultAttachment" href="#" class="form-control" target="_blank">Không có tệp đính kèm</a>
+                      </div>
+
+                      <div class="mb-3-md">
+                        <input type ="hidden" id="idTaskShow" name="idTaskShow">
+                            
+                        <input type="hidden" name="_csrf_token" id="csrf_token" value="{{ csrf_token('task_edit') }}">
+                        <button type="button" class="btn btn-warning" onclick="hideTaskInfo()">Đóng</button>
+                        <!-- Nút Xóa -->
+                        <button type="button" class="btn btn-danger" 
+                            onclick="submitForm('{{ path('app_task_delete', {'roomId': room.id, 'id': 'TASK_ID'}) }}', 'delete')">
+                            Xóa
+                        </button>
+
+                        <!-- Nút Cập nhật -->
+                        <button type="button" class="btn btn-primary" id="updateButton" disabled 
+                            onclick="submitForm('{{ path('app_task_edit', {'roomId': room.id, 'id': 'TASK_ID'}) }}', 'edit')" onchange="showUpdateButton()">
+                            Cập nhật
+                        </button>
+
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+                
+
+              </div>
+            </div>
+          </div>
+{% endblock %}
+
+{% block javascripts %}
+  <script>
+    // Ẩn khung chi tiết công việc
+      function hideTaskInfo() {
+            document.getElementById('task-infor').style.display = 'none';
+        }
+  </script>
+    <script>
+    // post api
+    function postData(row) {
+      const taskId = row.getAttribute('data-task-id');
+      const roomId = {{ room.id }};
+  
+      fetch(`/api/room/${roomId}/task/${taskId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error('Error:', data.error);
+          return;
+        }
+  
+        // Hiển thị thông tin chi tiết của Task trong khung chi tiết công việc
+        document.getElementById('idTaskShow').value = data.id
+        document.getElementById('name').value = data.name;
+        document.getElementById('startDate').value = data.startDate;
+        document.getElementById('endDate').value = data.endDate;
+        document.getElementById('finishDate').value = data.finishDate;
+        document.getElementById('status').value = data.status;
+
+
+
+        // Cập nhật các tùy chọn cho trường select member
+      const memberSelect = document.getElementById('member');
+      memberSelect.innerHTML = ''; // Xóa các tùy chọn hiện tại
+
+      // Thêm các tùy chọn từ arrMember
+      data.arrMember.forEach(member => {
+        const option = document.createElement('option');
+        option.value = member.id;
+        option.textContent = member.fullName;
+        memberSelect.appendChild(option);
+      });
+
+      // Đặt giá trị mặc định cho trường select
+      memberSelect.value = data.memberId;
+
+
+
+        document.getElementById('content').value = data.content;
+        let attachmentLink = document.getElementById('pathAttachment');
+        let basePath = window.location.origin + "/";
+        if (data.pathAttachment && data.pathAttachment !== "null") {
+          attachmentLink.href = basePath +  data.pathAttachment;
+          attachmentLink.textContent = data.pathAttachment.split('/').pop(); // Hiển thị tên file
+        } else {
+            attachmentLink.textContent = "Không có tệp đính kèm";
+            attachmentLink.href = "#"; // Không có file thì không điều hướng
+        }
+        document.getElementById('resultContent').value = data.resultContent;
+
+        let attachmentResultLink = document.getElementById('resultAttachment');
+        if (data.resultAttachment && data.resultAttachment !== "null") {
+            attachmentResultLink.href = basePath +  data.resultAttachment;
+            attachmentResultLink.textContent = data.resultAttachment.split('/').pop(); // Hiển thị tên file
+        } else {
+            attachmentResultLink.textContent = "Không có tệp kết quả đính kèm";
+            attachmentResultLink.href = "#";
+        }
+        //document.getElementById('resultAttachment').value = data.resultAttachment;
+
+        //HIEN THI JSON DATA
+        console.log(data);
+
+        // Hiển thị khung chi tiết công việc
+        document.getElementById('task-infor').style.display = 'block';
+        // Cuộn đến khung chi tiết công việc
+        document.getElementById('task-infor').scrollIntoView();
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    }
+  
+    // Ẩn khung chi tiết công việc
+    function hideTaskInfo() {
+      document.getElementById('task-infor').style.display = 'none';
+    }
+      // Hiển thị nút "Cập nhật" khi có thay đổi trong các trường dữ liệu
+  function showUpdateButton() {
+    document.getElementById('updateButton').disabled = false;
+    console.log("hello");
+  }
+
+function submitForm(actionPath, actionType) {
+    var form = document.getElementById("formUpdateAndDelete");
+    var idTaskShow = document.getElementById("idTaskShow").value;
+    
+    // Lấy input chứa CSRF token
+    var csrfInput = document.getElementById("csrf_token");
+
+    // Thay đổi CSRF token theo hành động (chỉnh sửa hoặc xóa)
+    if (actionType === 'delete') {
+        csrfInput.value = "{{ csrf_token('task_delete') }}";  // Token cho xóa
+    } else {
+        csrfInput.value = "{{ csrf_token('task_edit') }}";  // Token cho cập nhật
+    }
+
+    // Cập nhật URL với ID công việc
+    var actionUrl = actionPath.replace("TASK_ID", idTaskShow);
+    
+    form.setAttribute("action", actionUrl);
+    form.submit();
+}
+
+  </script>
+
+  <script>
+    function showPredictionModal() {
+
+      //sử dụng fetch lấy dữ liệu từ API
+      //fetch(`/api/room/${roomId}/task/${taskId}`, {
+      const roomId = {{ room.id }};
+      const taskId = document.getElementById('idTaskShow').value;
+      fetch(`/api/room/${roomId}/task/${taskId}/predict`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error('Error:', data.error);
+          return;
+        }
+        console.log(data);
+        if(data['status'] == 'success'){
+          //console.log(data['data']);
+          const tbody = document.querySelector('#predictionModal tbody');
+          tbody.innerHTML = ''; // Clear existing rows
+          for (const [name, percent] of Object.entries(data['data'])) {
+              //const li = document.createElement("li");
+              //li.textContent = `${name}: ${percent}`;
+              //ul.appendChild(li);
+                const tr = document.createElement('tr');
+                const tdName = document.createElement('td');
+                const tdPercent = document.createElement('td');
+
+                tdName.textContent = name;
+                tdPercent.textContent = percent;
+
+                tr.appendChild(tdName);
+                tr.appendChild(tdPercent);
+                tbody.appendChild(tr);
+                
+              //console.log(`${name}: ${percent}`);
+          }
+          const predictionModal = new bootstrap.Modal(document.getElementById('predictionModal'));
+          predictionModal.show();
+        }
+        //console.log(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+      
+
+      
+      }
+    </script>
+{% endblock %}

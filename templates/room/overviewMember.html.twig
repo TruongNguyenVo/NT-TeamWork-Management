@@ -1,0 +1,162 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{room.name}}{% endblock %}
+
+{% block body %}
+        <div class="container">
+            <div class="page-inner">
+              <div class="page-header">
+                <h3 class="fw-bold mb-3">NTTeam</h3>
+                <ul class="breadcrumbs mb-3">
+                  <li class="nav-home">
+                    <a href="#">
+                      <i class="icon-home"></i>
+                    </a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">Các nhóm tham gia</a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">{{room.name}}</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="row">
+  
+                <div class="col-md-12">
+                  <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <h4 class="card-title">Thông tin công việc của bạn</h4>
+                          </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table
+                          id="basic-datatables"
+                          class="display table table-striped table-hover"
+                        >
+                          <thead>
+                            <tr>
+                              <th>Công việc</th>
+                              <th>Bắt đầu</th>
+                              <th>Kết thúc</th>
+                              <th>Trạng thái</th>
+                              <th>Thao tác</th>
+                            </tr>
+                          </thead>
+                            <tbody>
+                            {% for task in tasksOfUser %}
+                              <tr>
+                                <td>{{task.name}}</td>
+                                <td>{{task.startDate|date('Y-m-d H:i:s')}}</td>
+                                <td>{{task.endDate|date('Y-m-d H:i:s')}}</td>
+                                <td>
+                                    {{task.statusLabel}}
+                                </td>
+                                <td>
+                                    <div class="form-button-action">
+                                        <a title="Xem công việc" class="btn btn-link btn-primary" href="{{path('app_task_show_member', {'roomId':room.id, 'id':task.id})}}">
+                                            <i class="fa fa-eye"></i>
+                                            </a>
+                                        {% if task.status != "done"%}
+                                        {# <button type="button" data-bs-toggle="tooltip" title="Chỉnh sửa kết quả" class="btn btn-link btn-primary" data-original-title="Edit Task">
+                                          <i class="fa fa-edit"></i>
+                                          </button> #}
+                                        {# <button type="button" data-bs-toggle="tooltip" title="Đánh dấu hoàn thành" class="btn btn-link btn-success" data-original-title="Remove">
+                                        <i class="fa fa-check"></i>
+                                        </button>
+                                        <button type="button" data-bs-toggle="tooltip" title="Không hoàn thành" class="btn btn-link btn-danger" data-original-title="Remove">
+                                          <i class="fa fa-times"></i>
+                                        </button> #}
+                                      {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                          <tfoot>
+                            <tr>
+                              <th>Tên công việc</th>
+                              <th>Bắt đầu</th>
+                              <th>Kết thúc</th>
+                              <th>Trạng thái</th>
+                              <th>Thao tác</th>
+                            </tr>
+                          </tfoot>
+                        <tbody>
+
+                        </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+
+                <!-- khung hien thi cong viec hoan thanh -->
+                <div class="col-md-12" id="success-task">
+                    <div class="card">
+                      <div class="card-header">
+                          <div class="d-flex align-items-center">
+                              <h4 class="card-title">Thông tin công việc hoàn thành của nhóm</h4>
+                            </div>
+                      </div>
+                      <div class="card-body">
+                        <div class="table-responsive">
+                          <table
+                            id="basic-datatables"
+                            class="display table table-striped table-hover"
+                          >
+                            <thead>
+                              <tr>
+                                <th>Công việc</th>
+                                <th>Đảm nhận</th>
+                                <th>Bắt đầu</th>
+                                <th>Kết thúc</th>
+                                <th>Kết quả</th>
+                              </tr>
+                            </thead>
+                              <tbody>
+                              {% for task in tasksDone%}
+                                <tr>
+                                  <td>{{task.name}}</td>
+                                  <td>{{task.member.fullName ?? "Chưa có thành viên đảm nhận"}}</td>
+                                  <td>{{task.startDate|date('Y-m-d H:i:s')}}</td>
+                                  <td>{{task.endDate|date('Y-m-d H:i:s')}}</td>
+                                  <td>
+                                      <a >Xem chi tiết</a>
+                                  </td>
+                              </tr>
+                              {% endfor %}
+  
+                            <tfoot>
+                              <tr>
+                                <th>Tên công việc</th>
+                                <th>Đảm nhận</th>
+                                <th>Bắt đầu</th>
+                                <th>Kết thúc</th>
+                                <th>Kết quả</th>
+                              </tr>
+                            </tfoot>
+                          <tbody>
+  
+                          </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %} 
+
+{% block title %}Nhóm quản lý{% endblock %}
+        
+        {# container #}
+        {% block body %}
+        <div class="container">
+          <div class="page-inner">
+            <div class="page-header">
+              <h3 class="fw-bold mb-3">Nhóm quản lý</h3>
+              <ul class="breadcrumbs mb-3">
+                <li class="nav-home">
+                  <a href="#">
+                    <i class="icon-home"></i>
+                  </a>
+                </li>
+                <li class="separator">
+                  <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                  <a href="#">Tất cả nhóm</a>
+                </li>
+              </ul>
+            </div>
+            <div class="row">
+
+              <div class="col-md-12">
+                <div class="card">
+                  <div class="card-header">
+                    <div class="d-flex align-items-center">
+                      <!-- <h4 class="card-title">Add Row</h4> -->
+                      <a
+                      href="{{ path('app_room_new') }}"
+                      class="btn btn-primary btn-round ms-auto"
+                    >
+                      <i class="fa fa-plus"></i>
+                      Thêm nhóm mới
+                    </a>
+                  </div>
+                  <div class="card-body">
+
+                    <div class="table-responsive">
+                      <table
+                        id="add-row"
+                        class="display table table-striped table-hover"
+                      >
+                        <thead>
+                          <tr>
+                            <th>Tên nhóm</th>
+                            <th>Ngày tạo</th>
+                            {# <th>Số lượng thành viên</th> #}
+                            <th style="width: 10%">Thao tác</th>
+                          </tr>
+                        </thead>
+                        <tfoot>
+                          <tr>
+                            <th>Tên nhóm</th>
+                            <th>Ngày tạo</th>
+                            {# <th>Số lượng thành viên</th> #}
+                            <th>Thao tác</th>
+                          </tr>
+                        </tfoot>
+                        <tbody>
+                        {% for room in rooms %}
+                          <tr>
+                            <td>{{room.0.name}}</td>
+                            <td>{{room.0.createDate|date('Y-m-d H:i:s')}}</td>
+                            {# <td>{{room.memberCount}}</td> #}
+                            <td>
+                              <div class="form-button-action">
+                                <a
+                                  href="{{ path('app_room_overview', {'id': room.0.id}) }}"
+                                  type="button"
+                                  title="Xem chi tiết nhóm"
+                                  class="btn btn-link btn-primary btn-lg"
+                                >
+                                  <i class="fa fa-eye"></i>
+                                </a>
+                                <a
+                                  href="{{ path('app_room_show', {'id': room.0.id}) }}"
+                                  type="button"
+                                  title="Sửa thông tin nhóm"
+                                  class="btn btn-link btn-primary btn-lg"
+                                
+                                >
+                                  <i class="fa fa-edit"></i>
+                                </a>
+                                <a
+                                  href="{{ path('app_room_delete', {'id': room.0.id}) }}"
+                                  type="button"
+                                  title="Giải tán nhóm"
+                                  class="btn btn-link btn-danger btn-lg"
+                                >
+                                  <i class="fa fa-times"></i>
+                                </a>
+                              </div>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+      </div>
+
+        {% endblock %}

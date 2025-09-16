@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %} 
+
+{% block title %}NTTeam - Nhóm quản lý{% endblock %}
+{% block sidebar %}
+        {% endblock %}
+
+        {% block body %}
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Thông tin cá nhân</h4>
+                </div>
+                <div class="card-body">
+                  {{ form_start(profileForm, {'attr': {'id': 'profileForm'}}) }}
+                    <div class="mb-3">
+                     <label for="lastname">Họ</label>
+        {{form_widget(profileForm.lastname, {'attr': {'class': 'form-control', 'readonly': 'true'}, 'value': app.user.lastname, })}}
+        {{form_errors(profileForm.lastname)}}
+                    </div>
+                    <div class="mb-3">
+        <label for="firstname">Tên</label>
+        {{form_widget(profileForm.firstname, {'attr': {'class': 'form-control', 'readonly' : 'true'}, 'value': app.user.firstname,})}}
+        {{form_errors(profileForm.firstname)}}
+                    </div>
+                    <div class="mb-3">
+                      <label for="email" class="form-label">Email</label>
+                    {{form_widget(profileForm.email, {'attr': {'class': 'form-control', 'readonly' : 'true'}, 'value': app.user.email,})}}
+                    {{form_errors(profileForm.email)}}
+                    </div>
+                    <div class="mb-3">
+                      <label for="password" class="form-label">Mật khẩu mới</label>
+                      <div class="input-group">
+                        {{form_widget(profileForm.password, {'attr': {'class': 'form-control', 'readonly' : 'true'}, 'value': ''})}}
+                        <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility()">
+                          <i class="fa fa-eye" id="togglePasswordIcon"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="enableEditing()" id="editButton">Chỉnh sửa</button>
+                    <button type="submit" class="btn btn-success d-none" id="saveButton">Lưu</button>
+                    <button type="button" class="btn btn-danger d-none" id="cancelButton" onclick="cancelEditing()">Hủy</button>
+                  {{form_end(profileForm)}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endblock %}
+        {% block javascripts %}
+        <script>
+            function togglePasswordVisibility() {
+                const passwordInput = document.getElementById('password');
+                const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+                if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                togglePasswordIcon.classList.remove('fa-eye');
+                togglePasswordIcon.classList.add('fa-eye-slash');
+                } else {
+                passwordInput.type = 'password';
+                togglePasswordIcon.classList.remove('fa-eye-slash');
+                togglePasswordIcon.classList.add('fa-eye');
+                }
+            }
+    
+            function enableEditing() {
+                const form = document.getElementById('profileForm');
+                const inputs = form.getElementsByTagName('input');
+                for (let i = 0; i < inputs.length; i++) {
+                    if (inputs[i].name === 'profile[email]') {
+                        continue;
+                    }
+                    else{
+                        inputs[i].readOnly = false;
+                    }
+                }
+                const saveButton = document.getElementById('saveButton');
+                const cancelButton = document.getElementById('cancelButton');
+                saveButton.classList.remove('d-none');
+                cancelButton.classList.remove('d-none');
+
+                const editButton = document.getElementById('editButton');
+                editButton.classList.add('d-none');
+            }
+    
+            function cancelEditing() {
+                const form = document.getElementById('profileForm');
+                const inputs = form.getElementsByTagName('input');
+                for (let i = 0; i < inputs.length; i++) {
+                    if (inputs[i].name === 'profile[email]') {
+                        continue;
+                    }
+                    else{
+                        inputs[i].readOnly = true;
+                    }
+                }
+                const saveButton = document.getElementById('saveButton');
+                const cancelButton = document.getElementById('cancelButton');
+                saveButton.classList.add('d-none');
+                cancelButton.classList.add('d-none');
+                const editButton = document.getElementById('editButton');
+                editButton.classList.remove('d-none');
+            }
+        </script>
+        {% endblock %}

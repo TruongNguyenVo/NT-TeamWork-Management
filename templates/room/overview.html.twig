@@ -1,0 +1,432 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tổng quan {% endblock %}
+
+{% block body %}
+        <div class="container">
+
+            <div class="page-inner">
+              <div class="page-header">
+                <h3 class="fw-bold mb-3">NTTeam</h3>
+                <ul class="breadcrumbs mb-3">
+                  <li class="nav-home">
+                    <a href="#">
+                      <i class="icon-home"></i>
+                    </a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">{{room.name}}</a>
+                  </li>
+                  <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#">Tổng quan</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <h4 class="card-title">Thông tin nhóm</h4>
+                          </div>
+                    </div>
+                    
+                    <div class="card-body">
+                      {{ form_start(form, {'action': path('app_room_overview', {'id': room.id}), 'method': 'POST', 'attr': {'class': 'd-inline', 'id' : 'groupInfoForm',}}) }}
+                        <div class="mb-3">
+                          <label for="name" class="form-label">Tên nhóm</label>
+                          {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                          {{ form_errors(form.name) }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="office" class="form-label">Mật khẩu</label>
+                            {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.password) }}
+                        </div>
+                        <div class="mb-3">
+                          <label for="office" class="form-label">Mô tả</label>
+                          {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows':'5'}}) }}
+                          {{ form_errors(form.description) }}
+                        </div>
+                        <div class="mb-3">
+                          <label for="groupLeader" class="form-label">Trưởng nhóm</label>
+                          <select class="form-control" id="groupLeader" disabled name="groupLeader">
+                          <option value="{{ admin.id }}">{{admin.fullname}}</option>
+                          {% for member in members %}
+                            <option value="{{member.user.id}}">{{member.user.fullname}}</option>
+                            <!-- Add more options as needed -->
+                          {% endfor %}
+                          </select>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="enableEditing()" id="editButton">Chỉnh sửa</button>
+                        <button type="submit" class="btn btn-success d-none" id="saveButton">Lưu</button>
+                        <button type="button" class="btn btn-danger d-none" id="cancelButton" onclick="cancelEditing()">Hủy</button>
+                      {{form_end(form)}}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-12">
+                  <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <h4 class="card-title">Thông tin công việc</h4>
+                            {# tu dong tao task #}
+                            {% if tasks == null%}
+                            <!-- Button kích hoạt modal -->
+                              <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#chatbotModal">
+                                  <i class="fa fa-robot"></i>
+                                    Gợi ý công việc tự động với NTBot
+                              </button>
+                            {% endif %}
+                            <!-- Modal -->
+                              <div class="modal fade" id="chatbotModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+                                  <div class="modal-dialog modal-xl">
+                                      <div class="modal-content">
+                                          <div class="modal-header">
+                                              <h5 class="modal-title" id="modalTitle">Gơi ý công việc tự động với NTBot</h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                              <!-- Error message placeholder -->
+                                              <div id="errorMessage" class="alert alert-danger d-none"></div>
+                                              <!-- Form nhập thông tin công việc -->
+                                              <form id="taskForm">
+                                                  <div class="mb-3">
+                                                      <label for="taskName" class="form-label">Tên nhóm</label>
+                                                      <input type="text" class="form-control" id="taskName" value="{{room.name}}" disabled>
+                                                  </div>
+                                                  <div class="mb-3">
+                                                      <label for="taskDescription" class="form-label">Mô tả</label>
+                                                      <textarea class="form-control" id="taskDescription" rows="3" disabled>{{room.description}}</textarea>
+                                                  </div>
+                                                  <div class="mb-3">
+                                                      <label for="taskDescription" class="form-label">Số lượng thành viên dự kiến</label>
+                                                      <input type="number" id="quantityMember" min="1" value="1"  class="form-control">
+                                                  </div>
+                                                  <div class="mb-3">
+                                                      <label for="taskDescription" class="form-label">Yêu cầu</label>
+                                                      <textarea class="form-control" id="taskRequire" rows="3"></textarea>
+                                                  </div>
+                                                  <div class="mb-3">
+                                                      <label for="taskDeadline" class="form-label">Thời gian bắt đầu</label>
+                                                      <input type="date" class="form-control" id="roomStart">
+                                                  </div>
+                                                  <div class="mb-3">
+                                                      <label for="taskDeadline" class="form-label">Hạn chót</label>
+                                                      <input type="date" class="form-control" id="roomEnd">
+                                                  </div>
+                                                  <button type="button" class="btn btn-primary" onclick="sendToChatBot()" id="btnRecommendByChatBot">Tham khảo</button>
+                                              </form>
+                                              <div id="taskDataTable" class="mt-4"></div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+
+
+
+                            <a
+                              class="btn btn-primary btn-round ms-auto"
+                              href = {{path('app_room_task', {'id': room.id})}}
+                            >
+                              <i class="fa fa-eye"></i>
+                              Xem thông tin công việc
+                            </a>
+                            
+                            
+                          </div>
+                    </div>
+                    
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table
+                          id="basic-datatables"
+                          class="display table table-striped table-hover"
+                        >
+                          <thead>
+                            <tr>
+                              <th>Công việc</th>
+                              <th>Đảm nhận</th>
+                              <th>Bắt đầu</th>
+                              <th>Kết thúc</th>
+                              <th>Trạng thái</th>
+                              {# <th>Thao tác</th> #}
+                            </tr>
+                          </thead>
+                            <tbody>
+                            {% for task in tasks %}
+                              <tr>
+                                <td>{{task.name}}</td>
+                                <td>{{task.member.fullName|default('')}}</td>
+                                <td>{{ task.startDate|date('d-m-Y H:i:s') }}</td>
+                                <td>{{ task.endDate|date('d-m-Y H:i:s') }}</td>
+                                <td>
+                                    {{task.statusLabel}}
+                                </td>
+                                {# <td>
+                                    <div class="form-button-action">
+                                        <button type="button" data-bs-toggle="tooltip" title="Chỉnh sửa thông tin" class="btn btn-link btn-primary" data-original-title="Edit Task">
+                                          <i class="fa fa-edit"></i>
+                                          </button>
+                                        <button type="button" data-bs-toggle="tooltip" title="Giao người khác" class="btn btn-link btn-primary" data-original-title="Remove">
+                                        <i class="fa fa-arrow-right"></i>
+                                        </button>
+                                        <button type="button" data-bs-toggle="tooltip" title="Xóa công việc" class="btn btn-link btn-danger" data-original-title="Remove">
+                                          <i class="fa fa-times"></i>
+                                          </button>
+                                    </div>
+                                </td> #}
+                            </tr>
+                            {% endfor %}
+
+                          <tfoot>
+                            <tr>
+                              <th>Tên công việc</th>
+                              <th>Người đảm nhận</th>
+                              <th>Bắt đầu</th>
+                              <th>Kết thúc</th>
+                              <th>Trạng thái</th>
+                              {# <th>Thao tác</th> #}
+                            </tr>
+                          </tfoot>
+                        <tbody>
+
+                        </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="col-md-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <div class="d-flex align-items-center">
+                        <h4 class="card-title">Thông tin thành viên</h4>
+                        <a
+                              class="btn btn-primary btn-round ms-auto"
+                              href= {{path('app_room_member', {'id': room.id})}}
+                            >
+                              <i class="fa fa-eye"></i>
+                              Xem thông tin thành viên
+                            </a>
+                      </div>
+                    </div>
+                    <div class="card-body">
+  
+                      <div class="table-responsive">
+                        <table
+                          id="add-row"
+                          class="display table table-striped table-hover"
+                        >
+                          <thead>
+                            
+                            <tr>
+                              <th>Tên thành viên</th>
+                              <th>Ngày tham gia</th>
+                              <th>Số công việc đang tiếp nhận</th>
+                              {# <th style="width: 10%">Thao tác</th> #}
+                            </tr>
+                          </thead>
+                          <tbody>
+                          {% for memberData in memberWithTasks %}
+                            
+                            <tr>
+                              <td>{{memberData.member.user.getFullName()}}</td>
+                              <td>{{memberData.member.joinDate|date('d-m-Y H:i:s')}}</td>
+                              <td>{{memberData.taskCount}}</td>
+                              
+                              {# <td>
+                                <div class="form-button-action">
+                                  <button
+                                    type="button"
+                                    data-bs-toggle="tooltip"
+                                    title="Xem chi tiết thành viên"
+                                    class="btn btn-link btn-primary"
+                                  >
+                                    <i class="fa fa-eye"></i>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    data-bs-toggle="tooltip"
+                                    title="Xóa thành viên"
+                                    class="btn btn-link btn-danger"
+                                    data-original-title="Remove"
+                                  >
+                                    <i class="fa fa-times"></i>
+                                  </button>
+                                </div>
+                              </td> #}
+                              
+                            </tr>
+                            
+                          {% endfor %}
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <th>Tên thành viên</th>
+                              <th>Ngày tham gia</th>
+                              <th>Số công việc đang tiếp nhận</th>
+                              {# <th>Thao tác</th> #}
+                            </tr>
+                          </tfoot>
+                          <tbody>
+                            
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+{% endblock %}
+{% block javascripts %}
+<script>
+  function enableEditing() {
+    document.getElementById('editButton').style.display = "none";
+    document.getElementById('room_name').readOnly = false;
+    document.getElementById('room_description').readOnly = false;
+    document.getElementById('room_password').readOnly = false;
+    document.getElementById('groupLeader').disabled = false; // Change readOnly to disabled
+    document.getElementById('saveButton').classList.remove('d-none');
+    document.getElementById('cancelButton').classList.remove('d-none');
+  }
+
+  function cancelEditing() {
+    document.getElementById('editButton').style.display = "block";
+    document.getElementById('room_name').readOnly = true;
+    document.getElementById('room_password').readOnly = true;
+    document.getElementById('room_description').readOnly = true;
+    document.getElementById('groupLeader').disabled = true; // Change readOnly to disabled
+    document.getElementById('saveButton').classList.add('d-none');
+    document.getElementById('cancelButton').classList.add('d-none');
+  }
+</script>
+<script>
+
+    function formatDate(isoString) {
+        return new Date(isoString).toLocaleDateString('en-GB'); // 'en-GB' gives dd/mm/yyyy
+    }
+
+    function sendToChatBot() {
+
+      
+        // Collect form data
+        const roomName = document.getElementById('taskName').value;
+        const roomDescription = document.getElementById('taskDescription').value;
+        const quantityMember = document.getElementById('quantityMember').value;
+        const roomRequire = document.getElementById('taskRequire').value;
+        const roomStart = document.getElementById('roomStart').value;
+        const roomEnd = document.getElementById('roomEnd').value;
+        const roomId = {{room.id}};
+
+        // Example of fetching data from the backend
+        fetch(`/api/room/${roomId}/consult`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                roomName,
+                roomDescription,
+                quantityMember,
+                roomRequire,
+                roomStart,
+                roomEnd,
+                roomId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+              console.error('Error:', data.error);
+            return;
+          }
+            if(data['status'] == 'error'){
+              console.log(data['message']);
+              document.getElementById('errorMessage').textContent = data.message;
+              document.getElementById('errorMessage').classList.remove('d-none');
+              // Cuộn đến khung chi tiết công việc
+              document.getElementById('errorMessage').scrollIntoView();
+              return;
+            }
+
+            if(data['tasks'].length != 0){
+              // Create a table with the fetched data
+            const table = document.createElement('table');
+            table.classList.add('table', 'table-bordered');
+
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            const headers = ['Tên công việc', 'Mô tả', 'Bắt đầu', 'Hạn chót', 'Thành viên', 'Gợi ý dành cho chủ nhóm'];
+            headers.forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            const tbody = document.createElement('tbody');
+
+            data['tasks'].forEach(task =>{
+                let taskName = task['name'];
+                let taskContent = task['content'];
+                let taskStartDate = task['startDate'];
+                let taskEndDate=task['endDate'];
+                let taskMember=task['member'];
+                //let taskRecommend="done";
+                let taskRecommend=task['recommend'];
+                
+                const tr = document.createElement('tr');
+                const tdName = document.createElement('td');
+                tdName.textContent = taskName;
+                const tdContent = document.createElement('td');
+                tdContent.textContent = taskContent;
+                const tdStartDate = document.createElement('td');
+                tdStartDate.textContent = formatDate(taskStartDate);
+                const tdEndDate = document.createElement('td');
+                tdEndDate.textContent = formatDate(taskEndDate);
+                const tdMember = document.createElement('td');
+                tdMember.textContent = taskMember;
+                const tdRecommend=document.createElement('td');
+                tdRecommend.textContent=taskRecommend;
+                
+
+                tr.appendChild(tdName);
+                tr.appendChild(tdContent);
+                tr.appendChild(tdStartDate);
+                tr.appendChild(tdEndDate);
+                tr.appendChild(tdMember);
+                tr.appendChild(tdRecommend);
+                tbody.appendChild(tr);
+                console.log(`${taskName} - ${taskContent} - ${taskStartDate} - ${taskEndDate} - ${taskMember}`);
+              });
+              table.appendChild(tbody);
+
+              // Insert the table into the taskDataTable div
+              const taskDataTable = document.getElementById('taskDataTable');
+              taskDataTable.innerHTML = ''; // Clear any existing content
+              taskDataTable.appendChild(table);
+
+              // Cuộn đến khung chi tiết công việc
+              document.getElementById('taskDataTable').scrollIntoView();
+            }
+            //thay doi text cua button
+            document.getElementById('btnRecommendByChatBot').textContent="Tham khảo lại";
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error fetching tasks:', error);
+        });
+    }
+</script>
+{% endblock javascripts %}

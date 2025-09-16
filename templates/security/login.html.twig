@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Đăng nhập </title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Importing Google Fonts - Poppins */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      background: linear-gradient(135deg, #71b7e6, #9b59b6);
+    }
+    .container {
+      max-width: 700px;
+      width: 100%;
+      background-color: #fff;
+      padding: 25px 30px;
+      border-radius: 5px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    }
+    .container .title {
+      font-size: 25px;
+      font-weight: 500;
+      position: relative;
+    }
+    .container .title::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 30px;
+      border-radius: 5px;
+      background: linear-gradient(135deg, #71b7e6, #9b59b6);
+    }
+    .content form .user-details {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin: 20px 0 12px 0;
+    }
+    form .user-details .input-box {
+      margin-bottom: 15px;
+      width: 100%;
+    }
+    form .input-box span.details {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    .user-details .input-box input {
+      height: 45px;
+      width: 100%;
+      outline: none;
+      font-size: 16px;
+      border-radius: 5px;
+      padding-left: 15px;
+      border: 1px solid #ccc;
+      border-bottom-width: 2px;
+      transition: all 0.3s ease;
+    }
+    .user-details .input-box input:focus,
+    .user-details .input-box input:valid {
+      border-color: #9b59b6;
+    }
+    .show-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #9b59b6;
+    }
+    .input-box {
+      position: relative;
+    }
+    form .button {
+      height: 45px;
+      margin: 35px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    form .button input,
+    form .button a {
+      height: 100%;
+      width: 48%;
+      border-radius: 5px;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      line-height: 45px;
+      text-decoration: none;
+    }
+    form .button input {
+      background: linear-gradient(135deg, #71b7e6, #9b59b6);
+    }
+    form .button input:hover {
+      background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+    }
+    form .button a {
+      background: #db4437;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    form .button a i {
+      margin-right: 8px;
+    }
+    form .button a:hover {
+      background: #c23321;
+    }
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .login-link a {
+      color: #9b59b6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+    /* Responsive media query code for mobile devices */
+    @media(max-width: 584px) {
+      .container {
+        max-width: 100%;
+      }
+      form .user-details .input-box {
+        margin-bottom: 15px;
+        width: 100%;
+      }
+      .content form .user-details {
+        max-height: 300px;
+        overflow-y: scroll;
+      }
+      .user-details::-webkit-scrollbar {
+        width: 5px;
+      }
+    }
+    /* Responsive media query code for mobile devices */
+    @media(max-width: 459px) {
+      .container .content .category {
+        flex-direction: column;
+      }
+    }
+  </style>
+  <!-- Font Awesome for eye icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Title section -->
+    <div class="title">Đăng nhập</div>
+    <div class="content">
+      <!-- Login form -->
+      
+{# <form method="post">
+    {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+    {% if app.user %}
+        <div class="mb-3">
+            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+        </div>
+    {% endif %}
+
+    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+    <label for="inputEmail">Email</label>
+    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+    <label for="inputPassword">Password</label>
+    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+
+    <input type="hidden" name="_csrf_token"
+          value="{{ csrf_token('authenticate') }}"
+    >
+
+    <button class="btn btn-lg btn-primary" type="submit">
+        Sign in
+    </button>
+</form> #}
+      <form method="post">
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        {% if app.user %}
+        <div class="mb-3">
+            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+        </div>
+        {% endif %}
+
+        <div class="user-details">
+          <!-- Input for Email -->
+          <div class="input-box full-width">
+            <span class="details">Email</span>
+            <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" required autofocus>
+          </div>
+          <!-- Input for Password -->
+          <div class="input-box full-width">
+            <span class="details">Mật khẩu</span>
+            <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+          </div>
+        </div>
+
+        <input type="hidden" name="_csrf_token"
+           value="{{ csrf_token('authenticate') }}"
+    >
+        <!-- Submit button and Google Login button -->
+        <div class="button">
+          <input type="submit" value="Đăng nhập">
+          <a href="/connect/google">
+            <i class="fa fa-google"></i> Đăng nhập bằng Google
+          </a>
+        </div>
+      </form>
+      <!-- Register link -->
+      <div class="login-link">
+        <span>Chưa có tài khoản? <a href="/register">Đăng ký</a></span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tham gia nhóm{% endblock %}
+
+{% block body %}
+<div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <div class="card mt-5">
+                <div class="card-header">
+                  <h4 class="card-title">Tham gia nhóm</h4>
+                </div>
+                <div class="card-body">
+                  {% for type, messages in app.flashes %}
+                      {% for message in messages %}
+                          <div class="alert alert-{{ type }}">
+                              {{ message }}
+                          </div>
+                      {% endfor %}
+                  {% endfor %}
+                  {{ form_start(form, {'action': path('app_room_attend'), 'method': 'POST', 'attr': {'class': 'd-inline'}}) }}
+                    <div class="mb-3">
+                      <label for="groupId" class="form-label">ID Nhóm</label>
+                      {{ form_widget(form.id, {'attr': {'class': 'form-control','min': 0, 'onkeyup': 'checkRoomId()'}}) }}
+                    {{ form_errors(form.id) }}
+                    </div>
+                    <div class="mb-3">
+                      <label for="groupPassword" class="form-label">Mật khẩu</label>
+                      {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.password) }}
+                    </div>
+                    <button type="submit" class="btn btn-primary" >Tham gia nhóm</button>
+                  {{form_end(form)}}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Nhóm đang chờ duyệt</h4>
+                </div>
+                <div class="card-body">
+                    {% if pendingRoom is empty %}
+                        <p>Không có nhóm nào đang chờ duyệt.</p>
+                    {% else %}
+                        <table class="table table-bordered">
+                                  <thead>
+                                      <tr>
+                                          <th>Tên</th>
+                                          <th>Số thành viên</th>
+                                          <th>Ngày tạo</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      {% for roomData in pendingRoom %}
+                                          {% set room = roomData[0] %}
+                                          <tr>
+                                              <input type="hidden" name="idRoom" value={{room.id}}>
+                                              <td>{{ room.name }}</td>
+                                              <td>{{ roomData.memberCount }}</td>
+                                              <td>{{ room.createDate|date('Y-m-d H:i:s') }}</td>
+                                          </tr>
+                                      {% endfor %}
+                                  </tbody>
+                              </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{# <script>
+  let idRoomValues = Array.from(document.querySelectorAll("input[name='idRoom']")).map(input => input.value);
+  function checkRoomId(){
+
+  }
+  console.log(idRoomValues);
+
+</script> #}
+{% endblock %}
